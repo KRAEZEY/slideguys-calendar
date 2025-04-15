@@ -13,7 +13,7 @@
       }
 
       .container {
-        max-width: 600px;
+        max-width: 700px;
         margin: 50px auto;
         background: white;
         border-radius: 12px;
@@ -43,14 +43,24 @@
         margin-bottom: 30px;
       }
 
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
       input,
       select {
         width: 100%;
         padding: 10px 14px;
-        margin-bottom: 20px;
         border-radius: 8px;
         border: 1px solid #ccc;
         font-size: 16px;
+      }
+
+      .full-width {
+        grid-column: span 2;
       }
 
       button {
@@ -66,6 +76,16 @@
 
       button:hover {
         background-color: #155da8;
+      }
+
+      @media (max-width: 600px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .full-width {
+          grid-column: span 1;
+        }
       }
     </style>
   </head>
@@ -84,26 +104,27 @@
         Rescheduling is subject to availability.
       </p>
       <form id="booking-form">
-        <input type="text" id="name" placeholder="Full Name" required />
-        <input type="tel" id="phone" placeholder="Phone Number" required />
-        <input type="email" id="email" placeholder="Email" required />
-        <input type="text" id="address" placeholder="Address" required />
-        <select id="unit" required>
-          <option value="">Select Unit</option>
-          <option value="Unit 1">Unit 1</option>
-          <option value="Unit 2">Unit 2</option>
-          <option value="Unit 3">Unit 3</option>
-        </select>
-        <input type="date" id="date" required />
+        <div class="form-grid">
+          <input type="text" id="name" placeholder="Full Name" required />
+          <input type="tel" id="phone" placeholder="Phone Number" required />
+          <input type="email" id="email" placeholder="Email" required />
+          <input type="text" id="address" placeholder="Address" required />
+          <select id="unit" required>
+            <option value="">Select Unit</option>
+            <option value="Unit 1">Unit 1</option>
+            <option value="Unit 2">Unit 2</option>
+            <option value="Unit 3">Unit 3</option>
+          </select>
+          <input type="date" id="date" required />
+        </div>
         <button type="submit">Reserve</button>
       </form>
     </div>
 
-    <!-- ✅ Updated EmailJS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
       (function () {
-        emailjs.init("PXm_wNk9aIao8Hlpp"); // Your public key
+        emailjs.init("PXm_wNk9aIao8Hlpp");
       })();
 
       document
@@ -127,31 +148,24 @@
             date,
           };
 
-          // Send to customer
           emailjs
             .send("service_1zxrd0j", "template_nqep0gt", params)
-            .then(
-              function () {
-                console.log("Customer confirmation sent.");
-              },
-              function (error) {
-                console.error("Error sending customer email:", error);
-                alert("There was a problem sending the confirmation email.");
-              }
-            );
-
-          // Send to admin
-          emailjs
-            .send("service_1zxrd0j", "template_6z2dcsj", params)
-            .then(
-              function () {
-                alert("Booking confirmed!");
-              },
-              function (error) {
-                console.error("Admin email error:", error);
-                alert("There was a problem sending the booking details to admin.");
-              }
-            );
+            .then(() => {
+              console.log("✅ Customer confirmation sent.");
+              return emailjs.send(
+                "service_1zxrd0j",
+                "template_6z2dcsj",
+                params
+              );
+            })
+            .then(() => {
+              alert("Booking confirmed!");
+              document.getElementById("booking-form").reset();
+            })
+            .catch((error) => {
+              console.error("❌ Email sending error:", error);
+              alert("There was a problem sending confirmation emails.");
+            });
         });
     </script>
   </body>
