@@ -1,126 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Slide Guys Booking</title>
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
-      text-align: center;
-      padding: 20px;
-    }
-    .container {
-      background-color: white;
-      border-radius: 10px;
-      padding: 30px;
-      max-width: 800px;
-      margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h1 {
-      color: #2c3e50;
-    }
-    input, select {
-      padding: 10px;
-      margin: 5px;
-      width: 180px;
-      max-width: 90%;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    button {
-      padding: 12px;
-      margin-top: 10px;
-      width: 95%;
-      background-color: #2980b9;
-      color: white;
-      font-size: 18px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #3498db;
-    }
-    img.logo {
-      width: 200px;
-      margin-bottom: 15px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <img src="https://slideguys-calendar.vercel.app/logo.png" alt="Slide Guys Logo" class="logo" />
-    <h1>Slide Guys Booking</h1>
-    <p>Select a unit and the date you would like to reserve. No cancellations. Rescheduling is subject to availability.</p>
-    <form id="booking-form">
-      <input type="text" id="name" placeholder="Name" required />
-      <input type="tel" id="phone" placeholder="Phone Number" required />
-      <input type="email" id="email" placeholder="Email Address" required />
-      <input type="text" id="address" placeholder="Address" required />
-      <select id="unit" required>
-        <option value="" disabled selected>Select a Unit</option>
-        <option value="Unit 1">Unit 1</option>
-        <option value="Unit 2">Unit 2</option>
-        <option value="Unit 3">Unit 3</option>
-        <!-- Add up to Unit 20 as needed -->
-      </select>
-      <input type="date" id="date" required />
-      <button type="submit">Reserve</button>
-    </form>
-  </div>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Slide Guys Booking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f9f9f9;
+        margin: 0;
+        padding: 0;
+      }
 
-  <script>
-    (function(){
-      emailjs.init("PXm_wNk9aIao8Hlpp");
-    })();
+      .container {
+        max-width: 600px;
+        margin: 50px auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 40px 30px;
+      }
 
-    document.getElementById('booking-form').addEventListener('submit', function(e) {
-      e.preventDefault();
+      .logo {
+        text-align: center;
+        margin-bottom: 20px;
+      }
 
-      const name = document.getElementById('name').value;
-      const phone = document.getElementById('phone').value;
-      const email = document.getElementById('email').value;
-      const address = document.getElementById('address').value;
-      const unit = document.getElementById('unit').value;
-      const date = document.getElementById('date').value;
+      .logo img {
+        width: 180px;
+        height: auto;
+      }
 
-      const adminParams = {
-        name: name,
-        phone: phone,
-        email: email,
-        address: address,
-        unit: unit,
-        date: date
-      };
+      h2 {
+        text-align: center;
+        color: #1b6ec2;
+        margin-bottom: 10px;
+      }
 
-      const customerParams = {
-        name: name,
-        email: email,
-        unit: unit,
-        date: date
-      };
+      p.instructions {
+        text-align: center;
+        font-size: 15px;
+        margin-bottom: 30px;
+      }
 
-      // First send to admin
-      emailjs.send('service_1zxrd0j', 'template_6z2dcsj', adminParams)
-        .then(() => {
-          // Then send to customer
-          emailjs.send('service_1zxrd0j', 'template_nqep0gt', customerParams)
-            .then(() => {
-              alert("Thanks! Your booking is confirmed. A confirmation email has been sent.");
-              document.getElementById("booking-form").reset();
-            }, (error) => {
-              console.error('Customer email error:', error);
-              alert("Booking confirmed, but there was an issue sending the confirmation email to the customer.");
-            });
-        }, (error) => {
-          console.error('Admin email error:', error);
-          alert("There was a problem sending the booking details to admin.");
+      input,
+      select {
+        width: 100%;
+        padding: 10px 14px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        background-color: #1b6ec2;
+        color: white;
+        font-size: 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #155da8;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="logo">
+        <img
+          src="https://slideguys-calendar.vercel.app/logo.png"
+          alt="Slide Guys Logo"
+        />
+      </div>
+      <h2>Slide Guys Booking</h2>
+      <p class="instructions">
+        Select a unit and the date you would like to reserve. No cancellations.
+        Rescheduling is subject to availability.
+      </p>
+      <form id="booking-form">
+        <input type="text" id="name" placeholder="Full Name" required />
+        <input type="tel" id="phone" placeholder="Phone Number" required />
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="text" id="address" placeholder="Address" required />
+        <select id="unit" required>
+          <option value="">Select Unit</option>
+          <option value="Unit 1">Unit 1</option>
+          <option value="Unit 2">Unit 2</option>
+          <option value="Unit 3">Unit 3</option>
+        </select>
+        <input type="date" id="date" required />
+        <button type="submit">Reserve</button>
+      </form>
+    </div>
+
+    <!-- ✅ Updated EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+      (function () {
+        emailjs.init("PXm_wNk9aIao8Hlpp"); // Your public key
+      })();
+
+      document
+        .getElementById("booking-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const name = document.getElementById("name").value;
+          const phone = document.getElementById("phone").value;
+          const email = document.getElementById("email").value;
+          const address = document.getElementById("address").value;
+          const unit = document.getElementById("unit").value;
+          const date = document.getElementById("date").value;
+
+          const params = {
+            name,
+            phone,
+            email,
+            address,
+            unit,
+            date,
+          };
+
+          // Send to customer
+          emailjs
+            .send("service_1zxrd0j", "template_nqep0gt", params)
+            .then(
+              function () {
+                console.log("Customer confirmation sent.");
+              },
+              function (error) {
+                console.error("Error sending customer email:", error);
+                alert("There was a problem sending the confirmation email.");
+              }
+            );
+
+          // Send to admin
+          emailjs
+            .send("service_1zxrd0j", "template_6z2dcsj", params)
+            .then(
+              function () {
+                alert("Booking confirmed!");
+              },
+              function (error) {
+                console.error("Admin email error:", error);
+                alert("There was a problem sending the booking details to admin.");
+              }
+            );
         });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
