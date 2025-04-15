@@ -1,117 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Slide Guys Booking</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f9f9f9;
-      padding: 40px 20px;
-    }
-
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    .logo {
-      display: block;
-      margin: 0 auto 20px auto;
-      max-width: 200px;
-    }
-
-    h2 {
-      text-align: center;
-      color: #1b6ec2;
-      margin-bottom: 20px;
-    }
-
-    .description {
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 14px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-
-    .form-grid input,
-    .form-grid select {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-
-    .form-grid input[type="date"] {
-      padding-right: 0;
-    }
-
-    .full-width {
-      grid-column: span 2;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      background-color: #1b6ec2;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 20px;
-    }
-
-    button:hover {
-      background-color: #1455a0;
-    }
-
-    @media (max-width: 500px) {
-      .form-grid {
-        grid-template-columns: 1fr;
+  <head>
+    <meta charset="UTF-8" />
+    <title>Slide Guys Booking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f9f9f9;
+        margin: 0;
+        padding: 0;
       }
-      .full-width {
-        grid-column: span 1;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <img src="https://chat.openai.com/share/logo-slide-guys.png" alt="Slide Guys Logo" class="logo">
-    <h2>Slide Guys Booking</h2>
-    <p class="description">
-      Select a unit and the date you would like to reserve. No cancellations. Rescheduling is subject to availability.
-    </p>
 
-    <form id="bookingForm">
-      <div class="form-grid">
-        <input type="text" name="name" placeholder="Full Name" required />
-        <input type="tel" name="phone" placeholder="Phone Number" required />
-        <input type="email" name="email" placeholder="Email Address" required />
-        <input type="text" name="address" placeholder="Address" required />
-        <select name="unit" required>
-          <option value="">Select a Unit</option>
+      .container {
+        max-width: 600px;
+        margin: 50px auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 40px 30px;
+      }
+
+      .logo {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .logo img {
+        width: 180px;
+        height: auto;
+      }
+
+      h2 {
+        text-align: center;
+        color: #1b6ec2;
+        margin-bottom: 10px;
+      }
+
+      p.instructions {
+        text-align: center;
+        font-size: 15px;
+        margin-bottom: 30px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 10px 14px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        background-color: #1b6ec2;
+        color: white;
+        font-size: 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #155da8;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="logo">
+        <img
+          src="https://slideguys-calendar.vercel.app/logo.png"
+          alt="Slide Guys Logo"
+        />
+      </div>
+      <h2>Slide Guys Booking</h2>
+      <p class="instructions">
+        Select a unit and the date you would like to reserve. No cancellations.
+        Rescheduling is subject to availability.
+      </p>
+      <form id="booking-form">
+        <input type="text" id="name" placeholder="Full Name" required />
+        <input type="tel" id="phone" placeholder="Phone Number" required />
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="text" id="address" placeholder="Address" required />
+        <select id="unit" required>
+          <option value="">Select Unit</option>
           <option value="Unit 1">Unit 1</option>
           <option value="Unit 2">Unit 2</option>
           <option value="Unit 3">Unit 3</option>
-          <!-- Add more units if needed -->
         </select>
-        <input type="date" name="date" required />
-      </div>
+        <input type="date" id="date" required />
+        <button type="submit">Reserve</button>
+      </form>
+    </div>
 
-      <button type="submit">Reserve</button>
-    </form>
-  </div>
-</body>
+    <!-- ✅ Updated EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+      (function () {
+        emailjs.init("PXm_wNk9aIao8Hlpp"); // Your public key
+      })();
+
+      document
+        .getElementById("booking-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const name = document.getElementById("name").value;
+          const phone = document.getElementById("phone").value;
+          const email = document.getElementById("email").value;
+          const address = document.getElementById("address").value;
+          const unit = document.getElementById("unit").value;
+          const date = document.getElementById("date").value;
+
+          const params = {
+            name,
+            phone,
+            email,
+            address,
+            unit,
+            date,
+          };
+
+          // Send to customer
+          emailjs
+            .send("service_1zxrd0j", "template_nqep0gt", params)
+            .then(
+              function () {
+                console.log("Customer confirmation sent.");
+              },
+              function (error) {
+                console.error("Error sending customer email:", error);
+                alert("There was a problem sending the confirmation email.");
+              }
+            );
+
+          // Send to admin
+          emailjs
+            .send("service_1zxrd0j", "template_6z2dcsj", params)
+            .then(
+              function () {
+                alert("Booking confirmed!");
+              },
+              function (error) {
+                console.error("Admin email error:", error);
+                alert("There was a problem sending the booking details to admin.");
+              }
+            );
+        });
+    </script>
+  </body>
 </html>
