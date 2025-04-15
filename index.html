@@ -98,26 +98,27 @@
       };
 
       const customerTemplateParams = {
+        name: name, // Added this so {{name}} works in customer email
         email: email,
         unit: unit,
         date: date
       };
 
-      // Send to admin
-      emailjs.send('service_1zxrd0j', 'template_6z2dcsj', adminTemplateParams)
+      // Send to admin (Order Confirmation)
+      emailjs.send('service_1zxrd0j', 'template_nqep0gt', adminTemplateParams)
         .then(() => {
-          // Then send to customer
+          // Then send to customer (Auto-Reply)
           emailjs.send('service_1zxrd0j', 'template_6z2dcsj', customerTemplateParams)
             .then(() => {
               alert("Thanks! Your booking is confirmed. A confirmation email has been sent.");
               document.getElementById("booking-form").reset();
             }, (error) => {
               console.error('Customer email error:', error);
-              alert("Booking confirmed, but there was an issue sending the email to the customer.");
+              alert("Booking confirmed, but there was an issue sending the confirmation email to the customer.");
             });
         }, (error) => {
           console.error('Admin email error:', error);
-          alert("There was a problem sending the email.");
+          alert("There was a problem sending the booking to admin.");
         });
     });
   </script>
