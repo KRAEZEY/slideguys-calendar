@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -16,26 +16,30 @@
       background-color: white;
       border-radius: 10px;
       padding: 30px;
-      max-width: 800px;
+      max-width: 600px;
       margin: auto;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     h1 {
       color: #2c3e50;
     }
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
     input, select {
-      padding: 12px;
-      margin: 8px;
-      width: 95%;
-      max-width: 500px;
-      border-radius: 6px;
+      padding: 10px;
+      margin: 8px 0;
+      width: 90%;
+      border-radius: 5px;
       border: 1px solid #ccc;
       font-size: 16px;
     }
     button {
-      padding: 14px;
-      margin-top: 10px;
-      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      width: 95%;
       background-color: #2980b9;
       color: white;
       font-size: 18px;
@@ -47,7 +51,7 @@
       background-color: #3498db;
     }
     img.logo {
-      width: 200px;
+      width: 180px;
       margin-bottom: 20px;
     }
   </style>
@@ -67,7 +71,7 @@
         <option value="Unit 1">Unit 1</option>
         <option value="Unit 2">Unit 2</option>
         <option value="Unit 3">Unit 3</option>
-        <!-- Add more units as needed -->
+        <!-- Add up to Unit 20 as needed -->
       </select>
       <input type="date" id="date" required />
       <button type="submit">Reserve</button>
@@ -89,7 +93,7 @@
       const unit = document.getElementById('unit').value;
       const date = document.getElementById('date').value;
 
-      const adminTemplateParams = {
+      const adminParams = {
         name: name,
         phone: phone,
         email: email,
@@ -98,30 +102,29 @@
         date: date
       };
 
-      const customerTemplateParams = {
+      const customerParams = {
         email: email,
         unit: unit,
         date: date
       };
 
-      // Send to admin using correct template
-      emailjs.send('service_1zxrd0j', 'template_6z2dcsj', adminTemplateParams)
+      // Send to admin
+      emailjs.send('service_1zxrd0j', 'template_6z2dcsj', adminParams)
         .then(() => {
           // Then send to customer
-          emailjs.send('service_1zxrd0j', 'template_nqep0gt', customerTemplateParams)
+          emailjs.send('service_1zxrd0j', 'template_nqep0gt', customerParams)
             .then(() => {
               alert("Thanks! Your booking is confirmed. A confirmation email has been sent.");
               document.getElementById("booking-form").reset();
             }, (error) => {
               console.error('Customer email error:', error);
-              alert("Booking confirmed, but there was an issue sending the confirmation email.");
+              alert("Booking confirmed, but there was an issue sending the email to the customer.");
             });
         }, (error) => {
           console.error('Admin email error:', error);
-          alert("There was a problem sending the booking to admin.");
+          alert("There was a problem sending the admin email.");
         });
     });
   </script>
 </body>
 </html>
-
