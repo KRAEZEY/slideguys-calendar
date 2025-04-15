@@ -1,42 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slide Guys Booking</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Slide Guys Booking</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .logo {
+      max-width: 250px;
+      margin: 0 auto 20px;
+    }
+
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    p.description {
+      color: #444;
+      margin-bottom: 30px;
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    input, select {
+      padding: 10px;
+      font-size: 16px;
+      width: 100%;
+      max-width: 300px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      background-color: #2980b9;
+      color: white;
+      font-size: 18px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #1c5982;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Slide Guys Booking</h1>
-        <p>Select a unit and the date you would like to reserve. No cancellations. Rescheduling is subject to availability.</p>
-        
-        <div id="confirmation"></div>
-    </div>
-    <script src="script.js"></script>
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-<script>
-  emailjs.init("PXm_wNk9aIao8Hlpp");
-</script><form id="booking-form">
-  <input type="text" name="name" placeholder="Name" required />
-  <input type="tel" name="phone" placeholder="Phone Number" required />
-  <input type="email" name="email" placeholder="Email Address" required />
-  <input type="text" name="address" placeholder="Address" required />
+  <div class="container">
+    <img src="slide-guys-logo.png" alt="Slide Guys Logo" class="logo" />
+    <h1>Slide Guys Booking</h1>
+    <p class="description">
+      Select a unit and the date you would like to reserve. No cancellations.<br/>
+      Rescheduling is subject to availability.
+    </p>
+    <form id="booking-form">
+      <input type="text" name="name" placeholder="Name" required />
+      <input type="tel" name="phone" placeholder="Phone Number" required />
+      <input type="email" name="email" placeholder="Email Address" required />
+      <input type="text" name="address" placeholder="Address" required />
 
-  <select name="unit" required>
-    <option value="">Select a Unit</option>
-    <option value="Unit 1">Unit 1</option>
-    <option value="Unit 2">Unit 2</option>
-    <!-- Add more units as needed -->
-  </select>
+      <select name="unit" required>
+        <option value="">Select a Unit</option>
+        <option value="Unit 1">Unit 1</option>
+        <option value="Unit 2">Unit 2</option>
+      </select>
 
-  <input type="date" name="date" required />
+      <input type="date" name="date" required />
 
-  <button type="submit">Reserve</button>
-</form>
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-<script>
-  emailjs.init("PXm_wNk9aIao8Hlpp");
-</script>
+      <button type="submit">Reserve</button>
+    </form>
+  </div>
+
+  <!-- EmailJS Script -->
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init("PXm_wNk9aIao8Hlpp");
+    })();
+
+    document.getElementById("booking-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = {
+        name: form.name.value,
+        phone: form.phone.value,
+        email: form.email.value,
+        address: form.address.value,
+        unit: form.unit.value,
+        date: form.date.value,
+      };
+
+      emailjs.send("service_1zxrd0j", "template_6z2dcsj", formData)
+        .then(() => {
+          alert("Reservation sent! Confirmation email on the way.");
+          form.reset();
+        })
+        .catch((error) => {
+          console.error("EmailJS error:", error);
+          alert("There was a problem sending the email.");
+        });
+    });
+  </script>
 </body>
 </html>
+
