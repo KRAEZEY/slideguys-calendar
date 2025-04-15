@@ -4,128 +4,122 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Slide Guys Booking</title>
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      margin: 0;
-      padding: 0;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 50px auto;
-      padding: 20px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background-color: #f2f2f2;
       text-align: center;
+      padding: 20px;
     }
-
-    .logo {
-      max-width: 250px;
-      margin: 0 auto 20px;
+    .container {
+      background-color: white;
+      border-radius: 10px;
+      padding: 30px;
+      max-width: 800px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
     h1 {
       color: #2c3e50;
-      margin-bottom: 10px;
     }
-
-    p.description {
-      color: #444;
-      margin-bottom: 30px;
-    }
-
-    form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
-    }
-
     input, select {
       padding: 10px;
-      font-size: 16px;
-      width: 100%;
-      max-width: 300px;
-      box-sizing: border-box;
+      margin: 5px;
+      width: 180px;
+      max-width: 90%;
+      border-radius: 5px;
+      border: 1px solid #ccc;
     }
-
     button {
-      width: 100%;
-      padding: 15px;
+      padding: 12px;
+      margin-top: 10px;
+      width: 95%;
       background-color: #2980b9;
       color: white;
       font-size: 18px;
       border: none;
+      border-radius: 6px;
       cursor: pointer;
-      border-radius: 5px;
-      transition: background-color 0.3s ease;
     }
-
     button:hover {
-      background-color: #1c5982;
+      background-color: #3498db;
+    }
+    img.logo {
+      width: 200px;
+      margin-bottom: 15px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <img src="slide-guys-logo.png" alt="Slide Guys Logo" class="logo" />
+    <img src="https://slideguys-calendar.vercel.app/logo.png" alt="Slide Guys Logo" class="logo" />
     <h1>Slide Guys Booking</h1>
-    <p class="description">
-      Select a unit and the date you would like to reserve. No cancellations.<br/>
-      Rescheduling is subject to availability.
-    </p>
+    <p>Select a unit and the date you would like to reserve. No cancellations. Rescheduling is subject to availability.</p>
     <form id="booking-form">
-      <input type="text" name="name" placeholder="Name" required />
-      <input type="tel" name="phone" placeholder="Phone Number" required />
-      <input type="email" name="email" placeholder="Email Address" required />
-      <input type="text" name="address" placeholder="Address" required />
-
-      <select name="unit" required>
-        <option value="">Select a Unit</option>
+      <input type="text" id="name" placeholder="Name" required />
+      <input type="tel" id="phone" placeholder="Phone Number" required />
+      <input type="email" id="email" placeholder="Email Address" required />
+      <input type="text" id="address" placeholder="Address" required />
+      <select id="unit" required>
+        <option value="" disabled selected>Select a Unit</option>
         <option value="Unit 1">Unit 1</option>
         <option value="Unit 2">Unit 2</option>
+        <option value="Unit 3">Unit 3</option>
+        <!-- Add up to Unit 20 as needed -->
       </select>
-
-      <input type="date" name="date" required />
-
+      <input type="date" id="date" required />
       <button type="submit">Reserve</button>
     </form>
   </div>
 
-  <!-- EmailJS Script -->
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <script>
-    (function () {
+    (function(){
       emailjs.init("PXm_wNk9aIao8Hlpp");
     })();
 
-    document.getElementById("booking-form").addEventListener("submit", function (e) {
+    document.getElementById('booking-form').addEventListener('submit', function(e) {
       e.preventDefault();
 
-      const form = e.target;
-      const formData = {
-        name: form.name.value,
-        phone: form.phone.value,
-        email: form.email.value,
-        address: form.address.value,
-        unit: form.unit.value,
-        date: form.date.value,
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+      const email = document.getElementById('email').value;
+      const address = document.getElementById('address').value;
+      const unit = document.getElementById('unit').value;
+      const date = document.getElementById('date').value;
+
+      const adminTemplateParams = {
+        name: name,
+        phone: phone,
+        email: email,
+        address: address,
+        unit: unit,
+        date: date
       };
 
-      emailjs.send("service_1zxrd0j", "template_6z2dcsj", formData)
+      const customerTemplateParams = {
+        email: email,
+        unit: unit,
+        date: date
+      };
+
+      // Send to admin
+      emailjs.send('service_1zxrd0j', 'template_6z2dcsj', adminTemplateParams)
         .then(() => {
-          alert("Reservation sent! Confirmation email on the way.");
-          form.reset();
-        })
-        .catch((error) => {
-          console.error("EmailJS error:", error);
+          // Then send to customer
+          emailjs.send('service_1zxrd0j', 'template_6z2dcsj', customerTemplateParams)
+            .then(() => {
+              alert("Thanks! Your booking is confirmed. A confirmation email has been sent.");
+              document.getElementById("booking-form").reset();
+            }, (error) => {
+              console.error('Customer email error:', error);
+              alert("Booking confirmed, but there was an issue sending the email to the customer.");
+            });
+        }, (error) => {
+          console.error('Admin email error:', error);
           alert("There was a problem sending the email.");
         });
     });
   </script>
 </body>
 </html>
-
