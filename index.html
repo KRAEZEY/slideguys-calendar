@@ -4,125 +4,147 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Slide Guys Booking</title>
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
-      text-align: center;
-      padding: 20px;
+      background-color: #f7f9fc;
+      padding: 40px;
+      color: #333;
     }
+
     .container {
-      background-color: white;
-      border-radius: 10px;
-      padding: 30px;
-      max-width: 600px;
+      max-width: 500px;
       margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
-    h1 {
-      color: #2c3e50;
+
+    .logo {
+      display: block;
+      margin: 0 auto 20px;
+      max-width: 200px;
     }
-    form {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+
+    h2 {
+      text-align: center;
+      color: #1b6ec2;
     }
-    input, select {
-      padding: 10px;
-      margin: 8px 0;
-      width: 90%;
-      border-radius: 5px;
+
+    form input, form select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
       border: 1px solid #ccc;
+      border-radius: 6px;
       font-size: 16px;
     }
+
     button {
+      width: 100%;
+      margin-top: 20px;
       padding: 12px;
-      margin-top: 15px;
-      width: 95%;
-      background-color: #2980b9;
+      background-color: #1b6ec2;
       color: white;
-      font-size: 18px;
       border: none;
       border-radius: 6px;
+      font-size: 16px;
       cursor: pointer;
     }
-    button:hover {
-      background-color: #3498db;
+
+    .note {
+      font-size: 14px;
+      margin-top: 10px;
+      text-align: center;
+      color: #666;
     }
-    img.logo {
-      width: 180px;
-      margin-bottom: 20px;
+
+    .success {
+      text-align: center;
+      color: green;
+      margin-top: 10px;
+    }
+
+    .error {
+      text-align: center;
+      color: red;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <img src="https://slideguys-calendar.vercel.app/logo.png" alt="Slide Guys Logo" class="logo" />
-    <h1>Slide Guys Booking</h1>
-    <p>Select a unit and the date you would like to reserve. No cancellations. Rescheduling is subject to availability.</p>
+    <img src="https://kraezeyape.my.canva.site/slide-guys/logo.png" alt="Slide Guys Logo" class="logo" />
+    <h2>Slide Guys Booking</h2>
+    <p class="note">Each unit can only be reserved once per day. No cancellations. Rescheduling is subject to availability.</p>
+
     <form id="booking-form">
-      <input type="text" id="name" placeholder="Name" required />
-      <input type="tel" id="phone" placeholder="Phone Number" required />
-      <input type="email" id="email" placeholder="Email Address" required />
-      <input type="text" id="address" placeholder="Address" required />
-      <select id="unit" required>
+      <input type="text" name="name" placeholder="Your Name" required />
+      <input type="email" name="email" placeholder="Your Email" required />
+      <input type="tel" name="phone" placeholder="Phone Number" required />
+      <input type="text" name="address" placeholder="Address" required />
+      <input type="date" name="date" required />
+      <select name="unit" required>
         <option value="" disabled selected>Select a Unit</option>
         <option value="Unit 1">Unit 1</option>
         <option value="Unit 2">Unit 2</option>
         <option value="Unit 3">Unit 3</option>
-        <!-- Add up to Unit 20 as needed -->
+        <!-- Add more units as needed -->
       </select>
-      <input type="date" id="date" required />
-      <button type="submit">Reserve</button>
+      <button type="submit">Submit Booking</button>
     </form>
+
+    <p id="form-message" class="success" style="display:none;">Booking submitted successfully!</p>
+    <p id="form-error" class="error" style="display:none;">There was a problem submitting your booking.</p>
   </div>
 
-  <script>
-    (function(){
-      emailjs.init("PXm_wNk9aIao8Hlpp");
-    })();
+  <script type="text/javascript">
+    emailjs.init("PXm_wNk9aIao8Hlpp"); // Your public key
 
-    document.getElementById('booking-form').addEventListener('submit', function(e) {
+    document.getElementById("booking-form").addEventListener("submit", function(e) {
       e.preventDefault();
 
-      const name = document.getElementById('name').value;
-      const phone = document.getElementById('phone').value;
-      const email = document.getElementById('email').value;
-      const address = document.getElementById('address').value;
-      const unit = document.getElementById('unit').value;
-      const date = document.getElementById('date').value;
-
-      const adminParams = {
-        name: name,
-        phone: phone,
-        email: email,
-        address: address,
-        unit: unit,
-        date: date
-      };
+      const form = this;
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
 
       const customerParams = {
-        email: email,
-        unit: unit,
-        date: date
+        name: data.name,
+        email: data.email,
+        unit: data.unit,
+        date: data.date,
       };
 
-      // Send to admin
-      emailjs.send('service_1zxrd0j', 'template_6z2dcsj', adminParams)
+      const adminParams = {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        address: data.address,
+        unit: data.unit,
+        date: data.date,
+      };
+
+      // Send customer email
+      emailjs.send("service_1zxrd0j", "template_nqep0gt", customerParams)
         .then(() => {
-          // Then send to customer
-          emailjs.send('service_1zxrd0j', 'template_nqep0gt', customerParams)
-            .then(() => {
-              alert("Thanks! Your booking is confirmed. A confirmation email has been sent.");
-              document.getElementById("booking-form").reset();
-            }, (error) => {
-              console.error('Customer email error:', error);
-              alert("Booking confirmed, but there was an issue sending the email to the customer.");
-            });
-        }, (error) => {
-          console.error('Admin email error:', error);
+          console.log("Customer email sent");
+
+          // Send admin email next
+          return emailjs.send("service_1zxrd0j", "template_6z2dcsj", adminParams);
+        })
+        .then(() => {
+          console.log("Admin email sent");
+          document.getElementById("form-message").style.display = "block";
+          document.getElementById("form-error").style.display = "none";
+          form.reset();
+        })
+        .catch((error) => {
+          console.error("Error:", error);
           alert("There was a problem sending the admin email.");
+          document.getElementById("form-message").style.display = "none";
+          document.getElementById("form-error").style.display = "block";
         });
     });
   </script>
