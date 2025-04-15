@@ -93,20 +93,20 @@
       const unit = document.getElementById('unit').value;
       const date = document.getElementById('date').value;
 
-      const adminParams = {
+      const adminParams = {{
         name: name,
         phone: phone,
         email: email,
         address: address,
         unit: unit,
         date: date
-      };
+      }};
 
-      const customerParams = {
+      const customerParams = {{
         email: email,
         unit: unit,
         date: date
-      };
+      }};
 
       // Send to admin
       emailjs.send('service_1zxrd0j', 'template_6z2dcsj', adminParams)
