@@ -4,149 +4,75 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Slide Guys Booking</title>
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f7f9fc;
-      padding: 40px;
-      color: #333;
-    }
-
-    .container {
-      max-width: 500px;
-      margin: auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    }
-
-    .logo {
-      display: block;
-      margin: 0 auto 20px;
-      max-width: 200px;
-    }
-
-    h2 {
-      text-align: center;
-      color: #1b6ec2;
-    }
-
-    form input, form select {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
-    }
-
-    button {
-      width: 100%;
-      margin-top: 20px;
-      padding: 12px;
-      background-color: #1b6ec2;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .note {
-      font-size: 14px;
-      margin-top: 10px;
-      text-align: center;
-      color: #666;
-    }
-
-    .success {
-      text-align: center;
-      color: green;
-      margin-top: 10px;
-    }
-
-    .error {
-      text-align: center;
-      color: red;
-      margin-top: 10px;
-    }
-  </style>
 </head>
-<body>
-  <div class="container">
-    <img src="https://kraezeyape.my.canva.site/slide-guys/logo.png" alt="Slide Guys Logo" class="logo" />
-    <h2>Slide Guys Booking</h2>
-    <p class="note">Each unit can only be reserved once per day. No cancellations. Rescheduling is subject to availability.</p>
+<body style="font-family: Arial, sans-serif; background: #f9f9f9; padding: 20px;">
 
+  <div style="max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+    <h2 style="text-align: center; color: #1b6ec2;">Slide Guys Booking</h2>
+    <p style="text-align: center;">One unit per day. No cancellations. Rescheduling subject to availability.</p>
+    
     <form id="booking-form">
-      <input type="text" name="name" placeholder="Your Name" required />
-      <input type="email" name="email" placeholder="Your Email" required />
-      <input type="tel" name="phone" placeholder="Phone Number" required />
-      <input type="text" name="address" placeholder="Address" required />
-      <input type="date" name="date" required />
-      <select name="unit" required>
-        <option value="" disabled selected>Select a Unit</option>
-        <option value="Unit 1">Unit 1</option>
-        <option value="Unit 2">Unit 2</option>
-        <option value="Unit 3">Unit 3</option>
-        <!-- Add more units as needed -->
-      </select>
-      <button type="submit">Submit Booking</button>
+      <label>Name:</label><br />
+      <input type="text" name="name" required style="width: 100%; padding: 10px; margin-bottom: 10px;" /><br />
+
+      <label>Phone:</label><br />
+      <input type="tel" name="phone" required style="width: 100%; padding: 10px; margin-bottom: 10px;" /><br />
+
+      <label>Email:</label><br />
+      <input type="email" name="email" required style="width: 100%; padding: 10px; margin-bottom: 10px;" /><br />
+
+      <label>Address:</label><br />
+      <input type="text" name="address" required style="width: 100%; padding: 10px; margin-bottom: 10px;" /><br />
+
+      <label>Unit:</label><br />
+      <input type="text" name="unit" required style="width: 100%; padding: 10px; margin-bottom: 10px;" /><br />
+
+      <label>Date:</label><br />
+      <input type="date" name="date" required style="width: 100%; padding: 10px; margin-bottom: 20px;" /><br />
+
+      <button type="submit" style="width: 100%; background-color: #1b6ec2; color: white; padding: 12px; border: none; border-radius: 5px; font-size: 16px;">Book Now</button>
     </form>
 
-    <p id="form-message" class="success" style="display:none;">Booking submitted successfully!</p>
-    <p id="form-error" class="error" style="display:none;">There was a problem submitting your booking.</p>
+    <p id="response" style="text-align: center; margin-top: 20px;"></p>
   </div>
 
-  <script type="text/javascript">
-    emailjs.init("PXm_wNk9aIao8Hlpp"); // Your public key
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init("PXm_wNk9aIao8Hlpp");
 
-    document.getElementById("booking-form").addEventListener("submit", function(e) {
-      e.preventDefault();
+      document.getElementById("booking-form").addEventListener("submit", function (e) {
+        e.preventDefault();
 
-      const form = this;
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
+        const form = e.target;
+        const formData = new FormData(form);
+        const customerEmail = formData.get("email");
 
-      const customerParams = {
-        name: data.name,
-        email: data.email,
-        unit: data.unit,
-        date: data.date,
-      };
-
-      const adminParams = {
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        address: data.address,
-        unit: data.unit,
-        date: data.date,
-      };
-
-      // Send customer email
-      emailjs.send("service_1zxrd0j", "template_nqep0gt", customerParams)
-        .then(() => {
-          console.log("Customer email sent");
-
-          // Send admin email next
-          return emailjs.send("service_1zxrd0j", "template_6z2dcsj", adminParams);
-        })
-        .then(() => {
-          console.log("Admin email sent");
-          document.getElementById("form-message").style.display = "block";
-          document.getElementById("form-error").style.display = "none";
+        // Send to Admin
+        emailjs.send("service_1zxrd0j", "template_6z2dcsj", {
+          name: formData.get("name"),
+          phone: formData.get("phone"),
+          email: customerEmail,
+          address: formData.get("address"),
+          unit: formData.get("unit"),
+          date: formData.get("date")
+        }).then(() => {
+          // Then send to Customer
+          return emailjs.send("service_1zxrd0j", "template_nqep0gt", {
+            name: formData.get("name"),
+            email: customerEmail,
+            unit: formData.get("unit"),
+            date: formData.get("date")
+          });
+        }).then(() => {
+          document.getElementById("response").innerText = "Booking submitted successfully!";
           form.reset();
-        })
-        .catch((error) => {
+        }).catch((error) => {
           console.error("Error:", error);
-          alert("There was a problem sending the admin email.");
-          document.getElementById("form-message").style.display = "none";
-          document.getElementById("form-error").style.display = "block";
+          document.getElementById("response").innerText = "There was an error sending your booking. Please try again.";
         });
-    });
+      });
+    })();
   </script>
 </body>
 </html>
