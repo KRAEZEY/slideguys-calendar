@@ -126,8 +126,7 @@
       // Initialize Supabase
       const client = supabase.createClient(
         "https://vaobmohukgcqfvnclqyh.supabase.co",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M
-"
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M"
       );
 
       // Initialize EmailJS
@@ -135,57 +134,59 @@
         emailjs.init("PXm_wNk9aIao8Hlpp");
       })();
 
-      document.getElementById("booking-form").addEventListener("submit", async function (e) {
+      const form = document.getElementById("booking-form");
+
+      form.addEventListener("submit", async function (e) {
         e.preventDefault();
 
-        const name = document.getElementById("name").value;
-        const phone = document.getElementById("phone").value;
-        const email = document.getElementById("email").value;
-        const address = document.getElementById("address").value;
+        const name = document.getElementById("name").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const address = document.getElementById("address").value.trim();
         const unit = document.getElementById("unit").value;
         const date = document.getElementById("date").value;
 
-        const params = { name, phone, email, address, unit, date };
-
-        // 1. Insert into Supabase
-        const { data, error } = await client.from("bookings").insert([
-          {
-            name,
-            phone,
-            email,
-            address,
-            unit_id: unit,
-            date
-          }
-        ]);
-
-        if (error) {
-          console.error("Supabase insert error:", error);
-          alert("There was a problem saving your booking. Please try again.");
+        if (!name || !phone || !email || !address || !unit || !date) {
+          alert("Please fill in all fields.");
           return;
         }
 
-        // 2. Send confirmation email to customer
-        emailjs.send("service_1zxrd0j", "template_nqep0gt", params).then(
-          function () {
-            console.log("Customer confirmation sent.");
-          },
-          function (error) {
-            console.error("Error sending customer email:", error);
-            alert("There was a problem sending the confirmation email.");
-          }
-        );
+        const params = { name, phone, email, address, unit, date };
 
-        // 3. Send notification email to admin
-        emailjs.send("service_1zxrd0j", "template_6z2dcsj", params).then(
-          function () {
-            alert("Booking confirmed!");
-          },
-          function (error) {
-            console.error("Admin email error:", error);
-            alert("There was a problem sending the booking details to admin.");
+        try {
+          // Check for duplicate booking
+          const { data: existing, error: existingError } = await client
+            .from("bookings")
+            .select("*")
+            .eq("unit", unit)
+            .eq("date", date);
+
+          if (existingError) throw existingError;
+
+          if (existing.length > 0) {
+            alert("This unit is already booked for that date. Please choose another.");
+            return;
           }
-        );
+
+          // Insert booking
+          const { error: insertError } = await client.from("bookings").insert([
+            { name, phone, email, address, unit, date }
+          ]);
+
+          if (insertError) throw insertError;
+
+          // Send confirmation to customer
+          await emailjs.send("service_1zxrd0j", "template_nqep0gt", params);
+
+          // Send notification to admin
+          await emailjs.send("service_1zxrd0j", "template_6z2dcsj", params);
+
+          alert("✅ Booking confirmed! You will receive an email shortly.");
+          form.reset();
+        } catch (err) {
+          console.error("Booking failed:", err);
+          alert("There was an error saving your booking. Please try again.");
+        }
       });
     </script>
   </body>
