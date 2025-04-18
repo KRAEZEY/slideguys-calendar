@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Slide Guys Admin Dashboard</title>
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css' rel='stylesheet' />
+    <link
+      href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css"
+      rel="stylesheet"
+    />
     <style>
       body {
         font-family: sans-serif;
@@ -68,12 +71,13 @@
       <div id="calendar"></div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-    <script>
-      const supabase = supabase.createClient(
+    <script type="module">
+      import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+      const supabase = createClient(
         'https://vaobmohukgcqfvnclqyh.supabase.co',
-        'public-anon-key-here'
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M'
       );
 
       const calendarEl = document.getElementById('calendar');
@@ -108,7 +112,7 @@
       async function loadUnits() {
         const { data: units, error } = await supabase.from('units').select();
         if (error) return console.error('Failed to load units:', error);
-        units.forEach(unit => {
+        units.forEach((unit) => {
           const opt = document.createElement('option');
           opt.value = unit.id;
           opt.textContent = unit.name;
@@ -123,7 +127,7 @@
           .select('id, name, phone, email, address, date, unit_id, units(name)');
 
         if (error) return console.error('Failed to fetch bookings:', error);
-        bookings = data.map(b => ({
+        bookings = data.map((b) => ({
           title: `${b.units.name} - ${b.name}`,
           start: b.date,
           extendedProps: {
@@ -136,12 +140,13 @@
 
       function filterBookings() {
         const unitId = unitFilter.value;
-        const filtered = unitId === 'all'
-          ? bookings
-          : bookings.filter(b => b.extendedProps.unit_id === unitId);
+        const filtered =
+          unitId === 'all'
+            ? bookings
+            : bookings.filter((b) => b.extendedProps.unit_id === unitId);
 
         calendar.removeAllEvents();
-        filtered.forEach(event => calendar.addEvent(event));
+        filtered.forEach((event) => calendar.addEvent(event));
       }
 
       function renderCalendar() {
@@ -154,9 +159,11 @@
             right: 'dayGridMonth,timeGridWeek,timeGridDay',
           },
           events: bookings,
-          eventClick: function(info) {
+          eventClick: function (info) {
             const b = info.event.extendedProps;
-            alert(`Name: ${b.name}\nPhone: ${b.phone}\nEmail: ${b.email}\nAddress: ${b.address}\nUnit: ${b.units.name}`);
+            alert(
+              `Name: ${b.name}\nPhone: ${b.phone}\nEmail: ${b.email}\nAddress: ${b.address}\nUnit: ${b.units.name}`
+            );
           },
         });
         calendar.render();
