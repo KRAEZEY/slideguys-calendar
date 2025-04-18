@@ -91,6 +91,8 @@
         }
       }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   </head>
 
   <body>
@@ -120,20 +122,17 @@
       </form>
     </div>
 
-    <!-- EmailJS -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script>
+      // Initialize Supabase
+      const client = supabase.createClient(
+        "https://vaobmohukgcqfvnclqyh.supabase.co", // replace with your Supabase URL
+        "your-anon-key-here" // replace with your actual anon key
+      );
+
+      // Initialize EmailJS
       (function () {
         emailjs.init("PXm_wNk9aIao8Hlpp");
       })();
-
-      const supabase = supabase.createClient(
-        'https://vaobmohukgcqfvnclqyh.supabase.co',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M'
-      );
 
       document.getElementById("booking-form").addEventListener("submit", async function (e) {
         e.preventDefault();
@@ -147,14 +146,14 @@
 
         const params = { name, phone, email, address, unit, date };
 
-        // Step 1: Save to Supabase
-        const { data, error } = await supabase.from("bookings").insert([
+        // 1. Insert into Supabase
+        const { data, error } = await client.from("bookings").insert([
           {
             name,
             phone,
             email,
             address,
-            unit_id: unit, // change to "unit" if needed
+            unit_id: unit,
             date
           }
         ]);
@@ -165,7 +164,7 @@
           return;
         }
 
-        // Step 2: Email to customer
+        // 2. Send confirmation email to customer
         emailjs.send("service_1zxrd0j", "template_nqep0gt", params).then(
           function () {
             console.log("Customer confirmation sent.");
@@ -176,11 +175,10 @@
           }
         );
 
-        // Step 3: Email to admin
+        // 3. Send notification email to admin
         emailjs.send("service_1zxrd0j", "template_6z2dcsj", params).then(
           function () {
             alert("Booking confirmed!");
-            document.getElementById("booking-form").reset();
           },
           function (error) {
             console.error("Admin email error:", error);
