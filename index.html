@@ -65,32 +65,36 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
-      // Fix: Set today's date as the minimum in date picker
+      // Set today's date as the minimum for the date input
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('date').setAttribute('min', today);
 
-      // Initialize Supabase client
+      // Initialize Supabase
       const supabaseUrl = 'https://vaobmohukgcqfvnclqyh.supabase.co';
       const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M';
       const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+      // Load Units into Dropdown
       async function loadUnits() {
-        const { data, error } = await supabase.from('units').select('*');
+        const { data, error } = await supabase.from('units').select('id, name');
         const unitSelect = document.getElementById('unit');
-        if (data) {
-          data.forEach(unit => {
-            const option = document.createElement('option');
-            option.value = unit.id;
-            option.textContent = unit.name;
-            unitSelect.appendChild(option);
-          });
-        } else {
+
+        if (error) {
           console.error('Error loading units:', error);
+          return;
         }
+
+        data.forEach(unit => {
+          const option = document.createElement('option');
+          option.value = unit.id;
+          option.textContent = unit.name;
+          unitSelect.appendChild(option);
+        });
       }
 
       await loadUnits();
 
+      // Handle Form Submission
       document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -101,6 +105,7 @@
         const unit_id = document.getElementById('unit').value;
         const date = document.getElementById('date').value;
 
+        // Check for existing booking
         const { data: existing, error: checkError } = await supabase
           .from('bookings')
           .select('*')
@@ -113,6 +118,7 @@
           return;
         }
 
+        // Insert booking
         const { error } = await supabase.from('bookings').insert([
           { name, phone, email, address, unit_id, date }
         ]);
