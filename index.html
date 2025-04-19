@@ -100,14 +100,28 @@
         const phone = document.getElementById('phone').value.trim();
         const email = document.getElementById('email').value.trim();
         const address = document.getElementById('address').value.trim();
-        const unit = document.getElementById('unit').value;
+        const unitName = document.getElementById('unit').value;
         const date = document.getElementById('date').value;
 
-        // Check for existing booking
+        // Lookup unit ID by name
+        const { data: unitData, error: unitError } = await supabase
+          .from('units')
+          .select('id')
+          .eq('name', unitName)
+          .single();
+
+        if (unitError || !unitData) {
+          alert('Error finding unit ID for "' + unitName + '"');
+          return;
+        }
+
+        const unitId = unitData.id;
+
+        // Check if unit already booked on selected date
         const { data: existing, error: checkError } = await supabase
           .from('bookings')
           .select('*')
-          .eq('unit', unit)
+          .eq('unit', unitId)
           .eq('date', date);
 
         if (existing && existing.length > 0) {
@@ -117,12 +131,12 @@
         }
 
         // Insert booking
-        const { error } = await supabase.from('bookings').insert([
-          { name, phone, email, address, unit, date }
+        const { error: insertError } = await supabase.from('bookings').insert([
+          { name, phone, email, address, unit: unitId, date }
         ]);
 
-        if (error) {
-          alert('Error booking: ' + error.message);
+        if (insertError) {
+          alert('Error booking: ' + insertError.message);
         } else {
           document.getElementById('successMessage').style.display = 'block';
           document.getElementById('errorMessage').style.display = 'none';
