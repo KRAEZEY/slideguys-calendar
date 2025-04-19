@@ -130,13 +130,11 @@
       // Initialize EmailJS
       emailjs.init("PXm_wNk9aIao8Hlpp");
 
-      // Supabase client
       const supabase = createClient(
         'https://vaobmohukgcqfvnclqyh.supabase.co',
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M'
       );
 
-      // Handle form submit
       document.getElementById("booking-form").addEventListener("submit", async function (e) {
         e.preventDefault();
 
@@ -147,9 +145,8 @@
         const unit = document.getElementById("unit").value;
         const date = document.getElementById("date").value;
 
-        const params = { name, phone, email, address, unit, date };
+        const params = { name, phone, email, address, unit_id: unit, date };
 
-        // 1. Insert booking into Supabase
         const { error } = await supabase.from("bookings").insert([params]);
 
         if (error) {
@@ -158,10 +155,9 @@
           return;
         }
 
-        // 2. Send emails
         try {
-          await emailjs.send("service_1zxrd0j", "template_nqep0gt", params); // to customer
-          await emailjs.send("service_1zxrd0j", "template_6z2dcsj", params); // to admin
+          await emailjs.send("service_1zxrd0j", "template_nqep0gt", params); // customer
+          await emailjs.send("service_1zxrd0j", "template_6z2dcsj", params); // admin
           alert("Booking confirmed!");
           document.getElementById("booking-form").reset();
         } catch (err) {
