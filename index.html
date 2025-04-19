@@ -145,7 +145,11 @@
         ]);
 
         if (insertError) {
-          alert('Error booking: ' + insertError.message);
+          const isDuplicate = insertError.message.includes('unique_unit_per_day');
+          const message = isDuplicate
+            ? 'We apologize this unit has been reserved already.'
+            : 'An error occurred while booking. Please try again.';
+          alert(message);
         } else {
           // Send confirmation emails via EmailJS
           const params = { name, phone, email, address, unit: unitName, date };
