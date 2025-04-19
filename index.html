@@ -122,21 +122,21 @@
 
     <!-- EmailJS -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script>
+    <!-- Supabase v2 using ESM (module script) -->
+    <script type="module">
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
       // Initialize EmailJS
-      (function () {
-        emailjs.init("PXm_wNk9aIao8Hlpp");
-      })();
+      emailjs.init("PXm_wNk9aIao8Hlpp");
 
-      // Initialize Supabase
-      const supabase = supabase.createClient(
+      // Supabase client
+      const supabase = createClient(
         'https://vaobmohukgcqfvnclqyh.supabase.co',
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M'
       );
 
+      // Handle form submit
       document.getElementById("booking-form").addEventListener("submit", async function (e) {
         e.preventDefault();
 
