@@ -53,14 +53,10 @@
   </main>
 
   <script>
-    // Supabase
     const supabase = supabase.createClient(
       "https://vaobmohukgcqfvnclqyh.supabase.co",
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M"
     );
-
-    // EmailJS
-    emailjs.init("PXm_wNk9aIao8Hlpp");
 
     async function loadUnits() {
       const { data, error } = await supabase.from("units").select("name");
@@ -88,7 +84,12 @@
 
     document.addEventListener("DOMContentLoaded", loadUnits);
 
-    document.getElementById("booking-form").addEventListener("submit", async function(e) {
+    emailjs.init("PXm_wNk9aIao8Hlpp");
+
+    const form = document.getElementById("booking-form");
+    const status = document.getElementById("status-message");
+
+    form.addEventListener("submit", async function (e) {
       e.preventDefault();
 
       const name = document.getElementById("name").value;
@@ -98,34 +99,36 @@
       const unit = document.getElementById("unit").value;
       const date = document.getElementById("date").value;
 
-      const { error } = await supabase.from("bookings").insert([{ name, phone, email, address, unit, date }]);
-
-      const status = document.getElementById("status-message");
+      const { error } = await supabase.from("bookings").insert([
+        { name, phone, email, address, unit, date }
+      ]);
 
       if (error) {
-        console.error("Booking failed:", error.message);
-        status.textContent = "There was an error with your reservation. Please try again.";
+        console.error("Supabase insert error:", error.message);
+        status.textContent = "Something went wrong. Please try again.";
         return;
       }
 
+      // Send customer confirmation email
       emailjs.send("service_1zxrd0j", "template_nqep0gt", {
         name, phone, email, address, unit, date
       }).then(() => {
-        console.log("Customer email sent");
+        console.log("✅ Customer email sent successfully");
       }).catch(err => {
-        console.error("Customer email error:", err);
+        console.error("❌ Customer email error:", err);
       });
 
+      // Send business notification email
       emailjs.send("service_1zxrd0j", "template_6z2dcsj", {
         name, phone, email, address, unit, date
       }).then(() => {
-        console.log("Business email sent");
+        console.log("✅ Business email sent successfully");
       }).catch(err => {
-        console.error("Business email error:", err);
+        console.error("❌ Business email error:", err);
       });
 
-      status.textContent = "Booking successful! A confirmation has been sent to your email.";
-      document.getElementById("booking-form").reset();
+      status.textContent = "Booking successful! Confirmation sent to your email.";
+      form.reset();
     });
   </script>
 </body>
