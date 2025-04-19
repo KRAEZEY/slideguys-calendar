@@ -120,13 +120,24 @@
       </form>
     </div>
 
+    <!-- EmailJS -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script>
+      // Initialize EmailJS
       (function () {
         emailjs.init("PXm_wNk9aIao8Hlpp");
       })();
 
-      document.getElementById("booking-form").addEventListener("submit", function (e) {
+      // Initialize Supabase
+      const supabase = supabase.createClient(
+        'https://vaobmohukgcqfvnclqyh.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M'
+      );
+
+      document.getElementById("booking-form").addEventListener("submit", async function (e) {
         e.preventDefault();
 
         const name = document.getElementById("name").value;
@@ -138,27 +149,25 @@
 
         const params = { name, phone, email, address, unit, date };
 
-        // Send to customer
-        emailjs.send("service_1zxrd0j", "template_nqep0gt", params).then(
-          function () {
-            console.log("Customer confirmation sent.");
-          },
-          function (error) {
-            console.error("Error sending customer email:", error);
-            alert("There was a problem sending the confirmation email.");
-          }
-        );
+        // 1. Insert booking into Supabase
+        const { error } = await supabase.from("bookings").insert([params]);
 
-        // Send to admin
-        emailjs.send("service_1zxrd0j", "template_6z2dcsj", params).then(
-          function () {
-            alert("Booking confirmed!");
-          },
-          function (error) {
-            console.error("Admin email error:", error);
-            alert("There was a problem sending the booking details to admin.");
-          }
-        );
+        if (error) {
+          console.error("Supabase insert error:", error);
+          alert("There was a problem saving your booking. Please try again.");
+          return;
+        }
+
+        // 2. Send emails
+        try {
+          await emailjs.send("service_1zxrd0j", "template_nqep0gt", params); // to customer
+          await emailjs.send("service_1zxrd0j", "template_6z2dcsj", params); // to admin
+          alert("Booking confirmed!");
+          document.getElementById("booking-form").reset();
+        } catch (err) {
+          console.error("EmailJS error:", err);
+          alert("Booking saved but failed to send confirmation email.");
+        }
       });
     </script>
   </body>
