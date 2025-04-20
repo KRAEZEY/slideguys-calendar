@@ -20,7 +20,8 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
 
-    .form-control {
+    .form-control,
+    .form-select {
       background-color: #e9f0ff;
     }
 
@@ -38,49 +39,6 @@
       margin-bottom: 20px;
       border-radius: 12px;
     }
-
-    .unit-dropdown {
-      position: relative;
-      text-align: left;
-      margin-bottom: 1rem;
-    }
-
-    .unit-option {
-      display: flex;
-      align-items: center;
-      padding: 10px;
-      cursor: pointer;
-    }
-
-    .unit-option img {
-      height: 40px;
-      width: 40px;
-      border-radius: 8px;
-      margin-right: 10px;
-    }
-
-    .unit-list {
-      position: absolute;
-      width: 100%;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      max-height: 200px;
-      overflow-y: auto;
-      z-index: 10;
-      display: none;
-    }
-
-    .unit-dropdown.open .unit-list {
-      display: block;
-    }
-
-    #unitDisplay {
-      background-color: #e9f0ff;
-      padding: 10px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
@@ -94,13 +52,9 @@
       <input type="tel" id="phone" class="form-control mb-2" placeholder="Phone Number" required />
       <input type="email" id="email" class="form-control mb-2" placeholder="Email Address" required />
       <input type="text" id="address" class="form-control mb-2" placeholder="Address" required />
-
-      <div class="unit-dropdown" id="unitDropdown">
-        <div id="unitDisplay">Select a unit</div>
-        <div class="unit-list" id="unitList"></div>
-      </div>
-      <input type="hidden" id="unit" required />
-
+      <select id="unit" class="form-select mb-2" required>
+        <option value="" disabled selected>Select a unit</option>
+      </select>
       <input type="date" id="date" class="form-control mb-3" required />
       <button type="submit" class="btn btn-primary w-100">Reserve</button>
     </form>
@@ -129,53 +83,44 @@
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('date').setAttribute('min', today);
 
+      const isAdmin = false; // Set this to true in admin environments
+
       const supabaseUrl = 'https://vaobmohukgcqfvnclqyh.supabase.co';
       const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M';
       const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-      // Load Units into Custom Dropdown
+      // Load Units into Dropdown
       async function loadUnits() {
-        const { data, error } = await supabase.from('units').select('id, name, thumbnail_url');
+        const { data, error } = await supabase.from('units').select('name');
+        const unitSelect = document.getElementById('unit');
+
         if (error) {
           console.error('Error loading units:', error);
           return;
         }
 
-        const unitList = document.getElementById('unitList');
-        const unitDisplay = document.getElementById('unitDisplay');
-        const unitHidden = document.getElementById('unit');
-
         data.forEach(unit => {
-          const div = document.createElement('div');
-          div.className = 'unit-option';
-          div.innerHTML = `
-            <img src="${unit.thumbnail_url}" alt="${unit.name}" />
-            <span>${unit.name}</span>
-          `;
-          div.addEventListener('click', () => {
-            unitDisplay.textContent = unit.name;
-            unitHidden.value = unit.name;
-            document.getElementById('unitDropdown').classList.remove('open');
-          });
-          unitList.appendChild(div);
-        });
-
-        unitDisplay.addEventListener('click', () => {
-          document.getElementById('unitDropdown').classList.toggle('open');
-        });
-
-        document.addEventListener('click', (e) => {
-          if (!document.getElementById('unitDropdown').contains(e.target)) {
-            document.getElementById('unitDropdown').classList.remove('open');
-          }
+          const option = document.createElement('option');
+          option.value = unit.name;
+          option.textContent = unit.name;
+          unitSelect.appendChild(option);
         });
       }
 
       await loadUnits();
 
-      // Handle Booking Form Submission
+      // Handle Form Submission
       document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        const selectedDate = new Date(document.getElementById('date').value);
+        const currentYear = new Date().getFullYear();
+        const bookingYear = selectedDate.getFullYear();
+
+        if (!isAdmin && bookingYear > currentYear) {
+          alert("Bookings for next year will open on January 1st.");
+          return;
+        }
 
         const name = document.getElementById('name').value.trim();
         const phone = document.getElementById('phone').value.trim();
@@ -198,7 +143,7 @@
 
         const unitId = unitData.id;
 
-        // Check for existing booking
+        // Check if unit already booked on selected date
         const { data: existing, error: checkError } = await supabase
           .from('bookings')
           .select('*')
@@ -223,16 +168,22 @@
             : 'An error occurred while booking. Please try again.';
           alert(message);
         } else {
-          // Send confirmation emails
+          // Send confirmation emails via EmailJS
           const params = { name, phone, email, address, unit: unitName, date };
 
-          emailjs.send("service_1zxrd0j", "template_nqep0gt", params);
-          emailjs.send("service_1zxrd0j", "template_6z2dcsj", params);
+          emailjs.send("service_1zxrd0j", "template_nqep0gt", params).then(
+            () => console.log("Customer email sent."),
+            (error) => console.error("Error sending customer email:", error)
+          );
+
+          emailjs.send("service_1zxrd0j", "template_6z2dcsj", params).then(
+            () => console.log("Admin email sent."),
+            (error) => console.error("Error sending admin email:", error)
+          );
 
           document.getElementById('successMessage').style.display = 'block';
           document.getElementById('errorMessage').style.display = 'none';
           document.getElementById('bookingForm').reset();
-          document.getElementById('unitDisplay').textContent = 'Select a unit';
         }
       });
     });
