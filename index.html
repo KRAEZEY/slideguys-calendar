@@ -20,8 +20,7 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
 
-    .form-control,
-    .form-select {
+    .form-control {
       background-color: #e9f0ff;
     }
 
@@ -39,6 +38,49 @@
       margin-bottom: 20px;
       border-radius: 12px;
     }
+
+    .unit-dropdown {
+      position: relative;
+      text-align: left;
+      margin-bottom: 1rem;
+    }
+
+    .unit-option {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .unit-option img {
+      height: 40px;
+      width: 40px;
+      border-radius: 8px;
+      margin-right: 10px;
+    }
+
+    .unit-list {
+      position: absolute;
+      width: 100%;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 10;
+      display: none;
+    }
+
+    .unit-dropdown.open .unit-list {
+      display: block;
+    }
+
+    #unitDisplay {
+      background-color: #e9f0ff;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -52,9 +94,13 @@
       <input type="tel" id="phone" class="form-control mb-2" placeholder="Phone Number" required />
       <input type="email" id="email" class="form-control mb-2" placeholder="Email Address" required />
       <input type="text" id="address" class="form-control mb-2" placeholder="Address" required />
-      <select id="unit" class="form-select mb-2" required>
-        <option value="" disabled selected>Select a unit</option>
-      </select>
+
+      <div class="unit-dropdown" id="unitDropdown">
+        <div id="unitDisplay">Select a unit</div>
+        <div class="unit-list" id="unitList"></div>
+      </div>
+      <input type="hidden" id="unit" required />
+
       <input type="date" id="date" class="form-control mb-3" required />
       <button type="submit" class="btn btn-primary w-100">Reserve</button>
     </form>
@@ -87,27 +133,47 @@
       const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M';
       const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-      // Load Units into Dropdown
+      // Load Units into Custom Dropdown
       async function loadUnits() {
-        const { data, error } = await supabase.from('units').select('name');
-        const unitSelect = document.getElementById('unit');
-
+        const { data, error } = await supabase.from('units').select('id, name, thumbnail_url');
         if (error) {
           console.error('Error loading units:', error);
           return;
         }
 
+        const unitList = document.getElementById('unitList');
+        const unitDisplay = document.getElementById('unitDisplay');
+        const unitHidden = document.getElementById('unit');
+
         data.forEach(unit => {
-          const option = document.createElement('option');
-          option.value = unit.name;
-          option.textContent = unit.name;
-          unitSelect.appendChild(option);
+          const div = document.createElement('div');
+          div.className = 'unit-option';
+          div.innerHTML = `
+            <img src="${unit.thumbnail_url}" alt="${unit.name}" />
+            <span>${unit.name}</span>
+          `;
+          div.addEventListener('click', () => {
+            unitDisplay.textContent = unit.name;
+            unitHidden.value = unit.name;
+            document.getElementById('unitDropdown').classList.remove('open');
+          });
+          unitList.appendChild(div);
+        });
+
+        unitDisplay.addEventListener('click', () => {
+          document.getElementById('unitDropdown').classList.toggle('open');
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!document.getElementById('unitDropdown').contains(e.target)) {
+            document.getElementById('unitDropdown').classList.remove('open');
+          }
         });
       }
 
       await loadUnits();
 
-      // Handle Form Submission
+      // Handle Booking Form Submission
       document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -132,7 +198,7 @@
 
         const unitId = unitData.id;
 
-        // Check if unit already booked on selected date
+        // Check for existing booking
         const { data: existing, error: checkError } = await supabase
           .from('bookings')
           .select('*')
@@ -157,30 +223,16 @@
             : 'An error occurred while booking. Please try again.';
           alert(message);
         } else {
-          // Send confirmation emails via EmailJS
+          // Send confirmation emails
           const params = { name, phone, email, address, unit: unitName, date };
 
-          emailjs.send("service_1zxrd0j", "template_nqep0gt", params).then(
-            function () {
-              console.log("Customer email sent.");
-            },
-            function (error) {
-              console.error("Error sending customer email:", error);
-            }
-          );
-
-          emailjs.send("service_1zxrd0j", "template_6z2dcsj", params).then(
-            function () {
-              console.log("Admin email sent.");
-            },
-            function (error) {
-              console.error("Error sending admin email:", error);
-            }
-          );
+          emailjs.send("service_1zxrd0j", "template_nqep0gt", params);
+          emailjs.send("service_1zxrd0j", "template_6z2dcsj", params);
 
           document.getElementById('successMessage').style.display = 'block';
           document.getElementById('errorMessage').style.display = 'none';
           document.getElementById('bookingForm').reset();
+          document.getElementById('unitDisplay').textContent = 'Select a unit';
         }
       });
     });
