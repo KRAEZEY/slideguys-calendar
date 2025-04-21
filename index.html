@@ -190,7 +190,7 @@
       await loadUnits();
 
       const cart = [];
-      document.getElementById('addToCartBtn').addEventListener('click', async () => {
+      document.getElementById('addToCartBtn').addEventListener('click', () => {
         const unitName = document.getElementById('unit').value;
         const date = document.getElementById('date').value;
 
@@ -202,30 +202,6 @@
         const isDuplicate = cart.some(item => item.unitName === unitName && item.date === date);
         if (isDuplicate) {
           alert('This unit and date combination is already in your cart.');
-          return;
-        }
-
-        const { data: unitData, error: unitError } = await supabase
-          .from('units')
-          .select('id')
-          .eq('name', unitName)
-          .single();
-
-        if (unitError || !unitData) {
-          alert('Could not find unit.');
-          return;
-        }
-
-        const unitId = unitData.id;
-
-        const { data: existing, error: checkError } = await supabase
-          .from('bookings')
-          .select('*')
-          .eq('unit', unitId)
-          .eq('date', date);
-
-        if (existing && existing.length > 0) {
-          alert('This unit is already booked on that date.');
           return;
         }
 
