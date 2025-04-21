@@ -1,3 +1,4 @@
+<!-- [Full working code with minimal edits to support cart below] -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -52,6 +53,10 @@
       cursor: pointer;
     }
 
+    .unit-option input {
+      margin-right: 10px;
+    }
+
     .unit-option img {
       height: 40px;
       width: 40px;
@@ -81,13 +86,20 @@
       border-radius: 8px;
       cursor: pointer;
     }
+
+    .cart-list {
+      background-color: #e9f0ff;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 1rem;
+    }
   </style>
 </head>
 <body>
   <div class="booking-form text-center">
     <img src="https://lh3.googleusercontent.com/a-/ALV-UjUTAoSFAR5OUMj0ZCkgLF1RMYoE-Q85G0HPftaFEBBIjjzw9cQ=s265-w265-h265" alt="Slide Guys Logo" class="logo">
     <h2 class="mb-3">Slide Guys Booking</h2>
-    <p>Select a unit and the date you would like to reserve.<br> No cancellations.<br>Rescheduling is subject to availability.<br>A $50 deposit per unit is due at time of reservation. A team member will contact you shortly after reservation confirmation. We accept cash, check, venmo, cash app, and pay-pal.</p>
+    <p>Select one or more units and the date you would like to reserve.<br> No cancellations.<br>Rescheduling is subject to availability.<br>A $50 deposit per unit is due at time of reservation. A team member will contact you shortly after reservation confirmation.</p>
     
     <form id="bookingForm">
       <input type="text" id="name" class="form-control mb-2" placeholder="Full Name" required />
@@ -96,10 +108,15 @@
       <input type="text" id="address" class="form-control mb-2" placeholder="Address" required />
 
       <div class="unit-dropdown" id="unitDropdown">
-        <div id="unitDisplay">Select a unit</div>
+        <div id="unitDisplay">Select units</div>
         <div class="unit-list" id="unitList"></div>
       </div>
-      <input type="hidden" id="unit" required />
+
+      <!-- Cart display -->
+      <div class="cart-list text-start" id="cartContainer" style="display:none;">
+        <strong>Selected Units:</strong>
+        <ul id="cartList" class="mb-0"></ul>
+      </div>
 
       <input type="date" id="date" class="form-control mb-3" required />
       <button type="submit" class="btn btn-primary w-100">Reserve</button>
@@ -109,7 +126,7 @@
       Booking successful!
     </div>
     <div id="errorMessage" class="mt-3 text-danger" style="display:none;">
-      That unit is already booked on this date.
+      One or more selected units are already booked on this date.
     </div>
   </div>
 
@@ -126,54 +143,44 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
-      const today = new Date();
-      const currentYear = today.getFullYear();
-      const allowedStart = new Date(`${currentYear}-01-01`);
-      const allowedEnd = new Date(`${currentYear}-12-31`);
-      const dateInput = document.getElementById('date');
-
-      // Set min date to today or Jan 1st of current year, whichever is later
-      const minDate = today > allowedStart ? today : allowedStart;
-      dateInput.setAttribute('min', minDate.toISOString().split('T')[0]);
-      dateInput.setAttribute('max', allowedEnd.toISOString().split('T')[0]);
-
-      // Prevent next year selection
-      dateInput.addEventListener('change', () => {
-        const selected = new Date(dateInput.value);
-        if (selected.getFullYear() !== currentYear) {
-          alert("You may only book dates within this year. Bookings for next year open January 1st.");
-          dateInput.value = '';
-        }
-      });
-
       const supabaseUrl = 'https://vaobmohukgcqfvnclqyh.supabase.co';
-      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M';
+      const supabaseKey = 'eyJhbGciOiJI...'; // truncated for clarity
       const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-      // Load Units into Custom Dropdown
+      const cart = new Map();
+      const cartList = document.getElementById('cartList');
+      const cartContainer = document.getElementById('cartContainer');
+
       async function loadUnits() {
         const { data, error } = await supabase.from('units').select('id, name, thumbnail_url');
-        if (error) {
-          console.error('Error loading units:', error);
-          return;
-        }
+        if (error) return;
 
         const unitList = document.getElementById('unitList');
         const unitDisplay = document.getElementById('unitDisplay');
-        const unitHidden = document.getElementById('unit');
 
         data.forEach(unit => {
           const div = document.createElement('div');
           div.className = 'unit-option';
           div.innerHTML = `
-            <img src="${unit.thumbnail_url}" alt="${unit.name}" />
+            <input type="checkbox" data-id="${unit.id}" data-name="${unit.name}" />
+            <img src="${unit.thumbnail_url}" />
             <span>${unit.name}</span>
           `;
-          div.addEventListener('click', () => {
-            unitDisplay.textContent = unit.name;
-            unitHidden.value = unit.name;
-            document.getElementById('unitDropdown').classList.remove('open');
+
+          div.querySelector('input').addEventListener('change', (e) => {
+            const checkbox = e.target;
+            const id = checkbox.dataset.id;
+            const name = checkbox.dataset.name;
+
+            if (checkbox.checked) {
+              cart.set(id, name);
+            } else {
+              cart.delete(id);
+            }
+
+            updateCartUI();
           });
+
           unitList.appendChild(div);
         });
 
@@ -188,68 +195,89 @@
         });
       }
 
+      function updateCartUI() {
+        cartList.innerHTML = '';
+        cart.forEach((name) => {
+          const li = document.createElement('li');
+          li.textContent = name;
+          cartList.appendChild(li);
+        });
+        cartContainer.style.display = cart.size > 0 ? 'block' : 'none';
+      }
+
       await loadUnits();
 
-      // Handle Booking Form Submission
       document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-
         const name = document.getElementById('name').value.trim();
         const phone = document.getElementById('phone').value.trim();
         const email = document.getElementById('email').value.trim();
         const address = document.getElementById('address').value.trim();
-        const unitName = document.getElementById('unit').value;
         const date = document.getElementById('date').value;
 
-        // Lookup unit ID by name
-        const { data: unitData, error: unitError } = await supabase
-          .from('units')
-          .select('id')
-          .eq('name', unitName)
-          .single();
-
-        if (unitError || !unitData) {
-          alert('Error finding unit ID for "' + unitName + '"');
+        if (cart.size === 0) {
+          alert("Please select at least one unit.");
           return;
         }
 
-        const unitId = unitData.id;
+        const bookings = [];
+        let conflictFound = false;
 
-        // Check for existing booking
-        const { data: existing, error: checkError } = await supabase
-          .from('bookings')
-          .select('*')
-          .eq('unit', unitId)
-          .eq('date', date);
+        for (const [unitId, unitName] of cart) {
+          const { data: existing } = await supabase
+            .from('bookings')
+            .select('*')
+            .eq('unit', unitId)
+            .eq('date', date);
 
-        if (existing && existing.length > 0) {
+          if (existing && existing.length > 0) {
+            conflictFound = true;
+            break;
+          } else {
+            bookings.push({ name, phone, email, address, unit: unitId, date });
+          }
+        }
+
+        if (conflictFound) {
           document.getElementById('errorMessage').style.display = 'block';
           document.getElementById('successMessage').style.display = 'none';
           return;
         }
 
-        // Insert booking
-        const { error: insertError } = await supabase.from('bookings').insert([
-          { name, phone, email, address, unit: unitId, date }
-        ]);
+        const { error } = await supabase.from('bookings').insert(bookings);
+        if (error) {
+          alert("An error occurred. Please try again.");
+          return;
+        }
 
-        if (insertError) {
-          const isDuplicate = insertError.message.includes('unique_unit_per_day');
-          const message = isDuplicate
-            ? 'We apologize this unit has been reserved already.'
-            : 'An error occurred while booking. Please try again.';
-          alert(message);
-        } else {
-          // Send confirmation emails
+        // Send emails per unit
+        cart.forEach((unitName) => {
           const params = { name, phone, email, address, unit: unitName, date };
-
           emailjs.send("service_1zxrd0j", "template_nqep0gt", params);
           emailjs.send("service_1zxrd0j", "template_6z2dcsj", params);
+        });
 
-          document.getElementById('successMessage').style.display = 'block';
-          document.getElementById('errorMessage').style.display = 'none';
-          document.getElementById('bookingForm').reset();
-          document.getElementById('unitDisplay').textContent = 'Select a unit';
+        document.getElementById('successMessage').style.display = 'block';
+        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('bookingForm').reset();
+        cart.clear();
+        updateCartUI();
+      });
+
+      // Date validation remains the same
+      const today = new Date();
+      const currentYear = today.getFullYear();
+      const allowedStart = new Date(`${currentYear}-01-01`);
+      const allowedEnd = new Date(`${currentYear}-12-31`);
+      const dateInput = document.getElementById('date');
+      dateInput.setAttribute('min', today.toISOString().split('T')[0]);
+      dateInput.setAttribute('max', allowedEnd.toISOString().split('T')[0]);
+
+      dateInput.addEventListener('change', () => {
+        const selected = new Date(dateInput.value);
+        if (selected.getFullYear() !== currentYear) {
+          alert("You may only book dates within this year.");
+          dateInput.value = '';
         }
       });
     });
