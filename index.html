@@ -103,7 +103,6 @@
 
       <input type="date" id="date" class="form-control mb-3" required />
 
-      <!-- ✅ Added Add to Cart Button -->
       <button type="button" id="addToCartBtn" class="btn btn-secondary w-100 mb-2">Add to Cart</button>
 
       <button type="submit" class="btn btn-primary w-100">Reserve</button>
@@ -116,17 +115,13 @@
       That unit is already booked on this date.
     </div>
 
-    <!-- ✅ Cart Section -->
     <div class="mt-4 text-start" id="cartSection" style="display: none;">
       <h5>Cart</h5>
       <ul class="list-group" id="cartList"></ul>
     </div>
   </div>
 
-  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script>
     (function () {
@@ -197,16 +192,17 @@
 
       await loadUnits();
 
-      // ✅ Add to Cart Functionality
       const cart = [];
       document.getElementById('addToCartBtn').addEventListener('click', () => {
         const unitName = document.getElementById('unit').value;
-        if (!unitName) {
-          alert('Please select a unit before adding to cart.');
+        const date = document.getElementById('date').value;
+
+        if (!unitName || !date) {
+          alert('Please select a unit and a date before adding to cart.');
           return;
         }
 
-        cart.push(unitName);
+        cart.push({ unitName, date });
 
         const cartSection = document.getElementById('cartSection');
         const cartList = document.getElementById('cartList');
@@ -214,7 +210,7 @@
 
         const li = document.createElement('li');
         li.className = 'list-group-item';
-        li.textContent = unitName;
+        li.textContent = `${unitName} — ${date}`;
         cartList.appendChild(li);
       });
 
