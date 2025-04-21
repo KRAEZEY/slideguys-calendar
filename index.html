@@ -202,6 +202,12 @@
           return;
         }
 
+        const isDuplicate = cart.some(item => item.unitName === unitName && item.date === date);
+        if (isDuplicate) {
+          alert('This unit and date combination is already in your cart.');
+          return;
+        }
+
         cart.push({ unitName, date });
 
         const cartSection = document.getElementById('cartSection');
