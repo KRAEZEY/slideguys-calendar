@@ -4,226 +4,254 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Slide Guys Booking</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
   <style>
-    /* Your original styles here, untouched */
     body {
-      font-family: sans-serif;
-      background: #f9f9f9;
-      padding: 20px;
+      background-color: #f8f9fa;
+      font-family: Arial, sans-serif;
     }
-    .form-container {
-      background: #fff;
-      padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+
+    .booking-form {
       max-width: 500px;
-      margin: auto;
+      margin: 50px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
-    .dropdown {
+
+    .form-control {
+      background-color: #e9f0ff;
+    }
+
+    .btn-primary {
+      background-color: #006aff;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #0051c9;
+    }
+
+    .logo {
+      max-height: 80px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+    }
+
+    .unit-dropdown {
       position: relative;
-      cursor: pointer;
-      background: #f0f0f0;
-      padding: 12px;
-      border-radius: 6px;
-      margin-bottom: 16px;
+      text-align: left;
+      margin-bottom: 1rem;
     }
-    .dropdown-options {
-      display: none;
+
+    .unit-option {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .unit-option img {
+      height: 40px;
+      width: 40px;
+      border-radius: 8px;
+      margin-right: 10px;
+    }
+
+    .unit-list {
       position: absolute;
+      width: 100%;
       background: white;
       border: 1px solid #ccc;
-      z-index: 999;
-      width: 100%;
-      max-height: 150px;
+      border-radius: 8px;
+      max-height: 200px;
       overflow-y: auto;
-      top: 100%;
-      left: 0;
+      z-index: 10;
+      display: none;
     }
-    .dropdown.open .dropdown-options {
+
+    .unit-dropdown.open .unit-list {
       display: block;
     }
-    .dropdown-options div {
+
+    #unitDisplay {
+      background-color: #e9f0ff;
       padding: 10px;
-      border-bottom: 1px solid #eee;
-    }
-    .dropdown-options div:hover {
-      background: #f2f2f2;
-    }
-    .message {
-      display: none;
-      padding: 10px;
-      margin-top: 16px;
-      border-radius: 6px;
-    }
-    .success {
-      background: #d4edda;
-      color: #155724;
-    }
-    .error {
-      background: #f8d7da;
-      color: #721c24;
-    }
-    button {
-      background: #007bff;
-      color: white;
-      border: none;
-      padding: 12px 16px;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
-    }
-    button:hover {
-      background: #0056b3;
     }
   </style>
 </head>
 <body>
-  <div class="form-container">
-    <h2>Book Your Slide</h2>
+  <div class="booking-form text-center">
+    <img src="https://lh3.googleusercontent.com/a-/ALV-UjUTAoSFAR5OUMj0ZCkgLF1RMYoE-Q85G0HPftaFEBBIjjzw9cQ=s265-w265-h265" alt="Slide Guys Logo" class="logo">
+    <h2 class="mb-3">Slide Guys Booking</h2>
+    <p>Select a unit and the date you would like to reserve.<br> No cancellations.<br>Rescheduling is subject to availability.<br>A $50 deposit per unit is due at time of reservation. A team member will contact you shortly after reservation confirmation. We accept cash, check, venmo, cash app, and pay-pal.</p>
+    
     <form id="bookingForm">
-      <label>Full Name:</label>
-      <input type="text" id="name" required><br><br>
+      <input type="text" id="name" class="form-control mb-2" placeholder="Full Name" required />
+      <input type="tel" id="phone" class="form-control mb-2" placeholder="Phone Number" required />
+      <input type="email" id="email" class="form-control mb-2" placeholder="Email Address" required />
+      <input type="text" id="address" class="form-control mb-2" placeholder="Address" required />
 
-      <label>Phone Number:</label>
-      <input type="tel" id="phone" required><br><br>
-
-      <label>Email:</label>
-      <input type="email" id="email" required><br><br>
-
-      <label>Address:</label>
-      <input type="text" id="address" required><br><br>
-
-      <label>Choose Date:</label>
-      <input type="date" id="date" required><br><br>
-
-      <label>Choose Unit(s):</label>
-      <div id="unitDropdown" class="dropdown">
+      <div class="unit-dropdown" id="unitDropdown">
         <div id="unitDisplay">Select a unit</div>
-        <div class="dropdown-options" id="unitOptions"></div>
+        <div class="unit-list" id="unitList"></div>
       </div>
-      <textarea id="unit" required style="display: none;"></textarea>
+      <input type="hidden" id="unit" required />
 
-      <button type="submit">Submit Booking</button>
-
-      <div id="successMessage" class="message success">Booking successful!</div>
-      <div id="errorMessage" class="message error"></div>
+      <input type="date" id="date" class="form-control mb-3" required />
+      <button type="submit" class="btn btn-primary w-100">Reserve</button>
     </form>
+
+    <div id="successMessage" class="mt-3 text-success" style="display:none;">
+      Booking successful!
+    </div>
+    <div id="errorMessage" class="mt-3 text-danger" style="display:none;">
+      That unit is already booked on this date.
+    </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script>
-    const supabase = supabase.createClient("https://vaobmohukgcqfvnclqyh.supabase.co", "public-anon-key");
-    emailjs.init("YOUR_EMAILJS_USER_ID"); // Replace with your actual EmailJS user ID
+    (function () {
+      emailjs.init("PXm_wNk9aIao8Hlpp");
+    })();
+  </script>
 
-    const unitDropdown = document.getElementById('unitDropdown');
-    const unitDisplay = document.getElementById('unitDisplay');
-    const unitOptions = document.getElementById('unitOptions');
-    const unitHidden = document.getElementById('unit');
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const today = new Date();
+      const currentYear = today.getFullYear();
+      const allowedStart = new Date(`${currentYear}-01-01`);
+      const allowedEnd = new Date(`${currentYear}-12-31`);
+      const dateInput = document.getElementById('date');
 
-    unitDropdown.addEventListener('click', () => {
-      unitDropdown.classList.toggle('open');
-    });
+      // Set min date to today or Jan 1st of current year, whichever is later
+      const minDate = today > allowedStart ? today : allowedStart;
+      dateInput.setAttribute('min', minDate.toISOString().split('T')[0]);
+      dateInput.setAttribute('max', allowedEnd.toISOString().split('T')[0]);
 
-    async function loadUnits() {
-      const { data: units } = await supabase.from('units').select('*');
-      unitOptions.innerHTML = '';
+      // Prevent next year selection
+      dateInput.addEventListener('change', () => {
+        const selected = new Date(dateInput.value);
+        if (selected.getFullYear() !== currentYear) {
+          alert("You may only book dates within this year. Bookings for next year open January 1st.");
+          dateInput.value = '';
+        }
+      });
 
-      const selectedUnits = [];
+      const supabaseUrl = 'https://vaobmohukgcqfvnclqyh.supabase.co';
+      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M';
+      const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-      units.forEach(unit => {
-        const div = document.createElement('div');
-        div.textContent = unit.name;
+      // Load Units into Custom Dropdown
+      async function loadUnits() {
+        const { data, error } = await supabase.from('units').select('id, name, thumbnail_url');
+        if (error) {
+          console.error('Error loading units:', error);
+          return;
+        }
 
-        div.addEventListener('click', (e) => {
-          e.stopPropagation();
+        const unitList = document.getElementById('unitList');
+        const unitDisplay = document.getElementById('unitDisplay');
+        const unitHidden = document.getElementById('unit');
 
-          const index = selectedUnits.indexOf(unit.name);
-          if (index > -1) {
-            selectedUnits.splice(index, 1);
-          } else {
-            selectedUnits.push(unit.name);
-          }
-
-          unitDisplay.textContent = selectedUnits.length > 0 ? selectedUnits.join(', ') : 'Select a unit';
-          unitHidden.value = selectedUnits.join(',');
+        data.forEach(unit => {
+          const div = document.createElement('div');
+          div.className = 'unit-option';
+          div.innerHTML = `
+            <img src="${unit.thumbnail_url}" alt="${unit.name}" />
+            <span>${unit.name}</span>
+          `;
+          div.addEventListener('click', () => {
+            unitDisplay.textContent = unit.name;
+            unitHidden.value = unit.name;
+            document.getElementById('unitDropdown').classList.remove('open');
+          });
+          unitList.appendChild(div);
         });
 
-        unitOptions.appendChild(div);
-      });
-    }
+        unitDisplay.addEventListener('click', () => {
+          document.getElementById('unitDropdown').classList.toggle('open');
+        });
 
-    loadUnits();
-
-    document.getElementById('bookingForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const name = document.getElementById('name').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const address = document.getElementById('address').value.trim();
-      const date = document.getElementById('date').value;
-      const unitNames = unitHidden.value.split(',').map(s => s.trim()).filter(Boolean);
-
-      if (unitNames.length === 0) {
-        alert("Please select at least one unit.");
-        return;
+        document.addEventListener('click', (e) => {
+          if (!document.getElementById('unitDropdown').contains(e.target)) {
+            document.getElementById('unitDropdown').classList.remove('open');
+          }
+        });
       }
 
-      const { data: unitData, error: unitError } = await supabase
-        .from('units')
-        .select('id, name')
-        .in('name', unitNames);
+      await loadUnits();
 
-      if (unitError || unitData.length !== unitNames.length) {
-        alert('Error finding one or more selected units.');
-        return;
-      }
+      // Handle Booking Form Submission
+      document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-      const unavailable = [];
-      const toBook = [];
+        const name = document.getElementById('name').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const address = document.getElementById('address').value.trim();
+        const unitName = document.getElementById('unit').value;
+        const date = document.getElementById('date').value;
 
-      for (const unit of unitData) {
-        const { data: existing } = await supabase
+        // Lookup unit ID by name
+        const { data: unitData, error: unitError } = await supabase
+          .from('units')
+          .select('id')
+          .eq('name', unitName)
+          .single();
+
+        if (unitError || !unitData) {
+          alert('Error finding unit ID for "' + unitName + '"');
+          return;
+        }
+
+        const unitId = unitData.id;
+
+        // Check for existing booking
+        const { data: existing, error: checkError } = await supabase
           .from('bookings')
           .select('*')
-          .eq('unit', unit.id)
+          .eq('unit', unitId)
           .eq('date', date);
 
-        if (existing.length > 0) {
-          unavailable.push(unit.name);
-        } else {
-          toBook.push({
-            name, phone, email, address, unit: unit.id, date
-          });
+        if (existing && existing.length > 0) {
+          document.getElementById('errorMessage').style.display = 'block';
+          document.getElementById('successMessage').style.display = 'none';
+          return;
         }
-      }
 
-      if (unavailable.length > 0) {
-        document.getElementById('errorMessage').textContent = `Already booked: ${unavailable.join(', ')}`;
-        document.getElementById('errorMessage').style.display = 'block';
-        document.getElementById('successMessage').style.display = 'none';
-        return;
-      }
+        // Insert booking
+        const { error: insertError } = await supabase.from('bookings').insert([
+          { name, phone, email, address, unit: unitId, date }
+        ]);
 
-      const { error: insertError } = await supabase.from('bookings').insert(toBook);
+        if (insertError) {
+          const isDuplicate = insertError.message.includes('unique_unit_per_day');
+          const message = isDuplicate
+            ? 'We apologize this unit has been reserved already.'
+            : 'An error occurred while booking. Please try again.';
+          alert(message);
+        } else {
+          // Send confirmation emails
+          const params = { name, phone, email, address, unit: unitName, date };
 
-      if (insertError) {
-        alert('Error submitting booking.');
-        return;
-      }
+          emailjs.send("service_1zxrd0j", "template_nqep0gt", params);
+          emailjs.send("service_1zxrd0j", "template_6z2dcsj", params);
 
-      const params = {
-        name, phone, email, address, unit: unitNames.join(', '), date
-      };
-
-      emailjs.send("service_1zxrd0j", "template_nqep0gt", params);
-      emailjs.send("service_1zxrd0j", "template_6z2dcsj", params);
-
-      document.getElementById('successMessage').style.display = 'block';
-      document.getElementById('errorMessage').style.display = 'none';
-      document.getElementById('bookingForm').reset();
-      unitDisplay.textContent = 'Select a unit';
-      unitHidden.value = '';
+          document.getElementById('successMessage').style.display = 'block';
+          document.getElementById('errorMessage').style.display = 'none';
+          document.getElementById('bookingForm').reset();
+          document.getElementById('unitDisplay').textContent = 'Select a unit';
+        }
+      });
     });
   </script>
 </body>
