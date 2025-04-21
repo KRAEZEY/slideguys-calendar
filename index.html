@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Slide Guys Booking</title>
   <style>
+    /* Your original styles here, untouched */
     body {
       font-family: sans-serif;
       background: #f9f9f9;
@@ -127,25 +128,24 @@
       const { data: units } = await supabase.from('units').select('*');
       unitOptions.innerHTML = '';
 
+      const selectedUnits = [];
+
       units.forEach(unit => {
         const div = document.createElement('div');
         div.textContent = unit.name;
 
         div.addEventListener('click', (e) => {
           e.stopPropagation();
-          const selected = unitHidden.value ? unitHidden.value.split(',') : [];
-          const isSelected = selected.includes(unit.name);
 
-          let updated = [];
-
-          if (isSelected) {
-            updated = selected.filter(u => u !== unit.name);
+          const index = selectedUnits.indexOf(unit.name);
+          if (index > -1) {
+            selectedUnits.splice(index, 1);
           } else {
-            updated = [...selected, unit.name];
+            selectedUnits.push(unit.name);
           }
 
-          unitHidden.value = updated.join(',');
-          unitDisplay.textContent = updated.length ? updated.join(', ') : 'Select a unit';
+          unitDisplay.textContent = selectedUnits.length > 0 ? selectedUnits.join(', ') : 'Select a unit';
+          unitHidden.value = selectedUnits.join(',');
         });
 
         unitOptions.appendChild(div);
@@ -223,6 +223,7 @@
       document.getElementById('errorMessage').style.display = 'none';
       document.getElementById('bookingForm').reset();
       unitDisplay.textContent = 'Select a unit';
+      unitHidden.value = '';
     });
   </script>
 </body>
