@@ -94,6 +94,7 @@
       <input type="tel" id="phone" class="form-control mb-2" placeholder="Phone Number" required />
       <input type="email" id="email" class="form-control mb-2" placeholder="Email Address" required />
       <input type="text" id="address" class="form-control mb-2" placeholder="Address" required />
+      <input type="text" id="city" class="form-control mb-2" placeholder="city" required />
 
       <div class="unit-dropdown" id="unitDropdown">
         <div id="unitDisplay">Select a unit</div>
@@ -230,6 +231,7 @@
         const phone = document.getElementById('phone').value.trim();
         const email = document.getElementById('email').value.trim();
         const address = document.getElementById('address').value.trim();
+        const address = document.getElementById('city').value.trim();
 
         if (cart.length === 0) {
           alert('Your cart is empty. Please add at least one booking.');
@@ -266,13 +268,13 @@
           }
 
           const { error: insertError } = await supabase.from('bookings').insert([
-            { name, phone, email, address, unit: unitId, date }
+            { name, phone, email, address, city, unit: unitId, date }
           ]);
 
           if (insertError) {
             allSuccessful = false;
           } else {
-            const params = { name, phone, email, address, unit: unitName, date };
+            const params = { name, phone, email, address, city, unit: unitName, date };
             emailjs.send("service_1zxrd0j", "template_nqep0gt", params);
             emailjs.send("service_1zxrd0j", "template_6z2dcsj", params);
           }
