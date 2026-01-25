@@ -136,19 +136,11 @@
       font-size: 0.95rem;
     }
 
-    .availability-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
     .availability-hint {
       font-size: 0.85rem;
       color: #444;
       text-align: left;
-      margin: 0;
+      margin: 0 0 10px 0;
     }
 
     /* Mobile: 1 column so images are bigger */
@@ -178,14 +170,12 @@
       <input type="text" id="address" class="form-control mb-2" placeholder="Address" required />
       <input type="text" id="city" class="form-control mb-2" placeholder="City" required />
 
-      <div class="availability-row">
-        <div class="selected-unit-pill m-0 w-100">
-          <strong>Selected unit:</strong> <span id="unitDisplayText">None</span>
-        </div>
+      <div class="selected-unit-pill">
+        <strong>Selected unit:</strong> <span id="unitDisplayText">None</span>
       </div>
 
       <p class="availability-hint">
-        Pick a date first to see what’s <strong>Available</strong> or <strong>Booked</strong>.
+        When you pick a date, we’ll instantly check availability for <strong>all units</strong>.
       </p>
 
       <!-- Unit buttons render here -->
@@ -197,7 +187,6 @@
       <input type="date" id="date" class="form-control mb-3" required />
 
       <button type="button" id="addToCartBtn" class="btn btn-secondary w-100 mb-2">Add to Cart</button>
-
       <button type="submit" class="btn btn-primary w-100">Reserve</button>
     </form>
 
@@ -217,9 +206,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script>
-    (function () {
-      emailjs.init("PXm_wNk9aIao8Hlpp");
-    })();
+    (function () { emailjs.init("PXm_wNk9aIao8Hlpp"); })();
   </script>
 
   <script>
@@ -234,35 +221,45 @@
       dateInput.setAttribute('min', minDate.toISOString().split('T')[0]);
       dateInput.setAttribute('max', allowedEnd.toISOString().split('T')[0]);
 
-      dateInput.addEventListener('change', () => {
-        const selected = new Date(dateInput.value);
-        if (selected.getFullYear() !== currentYear) {
-          alert("You may only book dates within this year. Bookings for next year open January 1st.");
-          dateInput.value = '';
-          updateAvailabilityUI(); // reset availability display
-          return;
-        }
-        updateAvailabilityUI(); // refresh availability on date change
-      });
-
       const supabaseUrl = 'https://vaobmohukgcqfvnclqyh.supabase.co';
       const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M';
       const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-      // Keep units in memory so we can re-render availability quickly
+      // Cache all units so we can check ALL availability at once
       let unitsCache = [];
 
-      // ====== Load Units into individual BUTTONS ======
+      // --------- Date validation + trigger availability check ---------
+      dateInput.addEventListener('change', async () => {
+        const selected = new Date(dateInput.value);
+        if (selected.getFullYear() !== currentYear) {
+          alert("You may only book dates within this year. Bookings for next year open January 1st.");
+          dateInput.value = '';
+          renderUnitButtons(null); // neutral state
+          clearSelectedUnit();
+          return;
+        }
+
+        // ✅ This is the key: on date selection, check availability for ALL units
+        await checkAvailabilityForAllUnits(dateInput.value);
+      });
+
+      function clearSelectedUnit() {
+        document.getElementById('unit').value = '';
+        document.getElementById('unitDisplayText').textContent = 'None';
+        document.querySelectorAll('.unit-card-btn').forEach(b => b.classList.remove('selected'));
+      }
+
+      // --------- Load units once ---------
       async function loadUnits() {
         const { data, error } = await supabase.from('units').select('id, name, thumbnail_url');
         if (error) return;
 
         unitsCache = data || [];
-        renderUnitButtons();
-        await updateAvailabilityUI(); // initial availability (if date is pre-filled)
+        renderUnitButtons(null); // initial neutral render
       }
 
-      function renderUnitButtons(bookedUnitIdsSet = null) {
+      // --------- Renders the unit buttons (with booked/available) ---------
+      function renderUnitButtons(bookedUnitIdsSet) {
         const unitGrid = document.getElementById('unitGrid');
         unitGrid.innerHTML = '';
 
@@ -273,16 +270,16 @@
           btn.dataset.unitId = unit.id;
           btn.dataset.unitName = unit.name;
 
-          // Determine booked state (if we have it)
+          const hasDate = !!document.getElementById('date').value;
           const isBooked = bookedUnitIdsSet ? bookedUnitIdsSet.has(unit.id) : false;
 
           btn.innerHTML = `
-            <div class="unit-badge">${isBooked ? 'Booked' : 'Available'}</div>
+            <div class="unit-badge">${!hasDate ? 'Pick a date' : (isBooked ? 'Booked' : 'Available')}</div>
             <img src="${unit.thumbnail_url}" alt="${unit.name}" />
             <div class="unit-name">${unit.name}</div>
           `;
 
-          if (bookedUnitIdsSet && isBooked) {
+          if (hasDate && bookedUnitIdsSet && isBooked) {
             btn.classList.add('booked');
             btn.setAttribute('aria-disabled', 'true');
           }
@@ -290,20 +287,18 @@
           btn.addEventListener('click', () => {
             const chosenDate = document.getElementById('date').value;
             if (!chosenDate) {
-              alert('Please select a date first so we can confirm availability.');
+              alert('Please select a date first so we can check availability for all units.');
               return;
             }
 
-            // If booked, block selection
+            // block selection if booked
             if (bookedUnitIdsSet && bookedUnitIdsSet.has(unit.id)) {
               alert('Sorry — this unit is already booked for the selected date. Please choose another unit or date.');
               return;
             }
 
-            // unselect all
-            unitGrid.querySelectorAll('.unit-card-btn').forEach(b => b.classList.remove('selected'));
-
             // select this one
+            unitGrid.querySelectorAll('.unit-card-btn').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
             document.getElementById('unit').value = unit.name;
             document.getElementById('unitDisplayText').textContent = unit.name;
@@ -313,46 +308,39 @@
         });
       }
 
-      // ====== Availability logic ======
-      async function updateAvailabilityUI() {
-        const date = document.getElementById('date').value;
-
-        // If no date, show neutral "Available" labels but allow selection only after date is chosen (handled in click)
-        if (!date) {
-          renderUnitButtons(null);
-          return;
-        }
-
-        // Pull bookings for that date (public view)
+      // --------- ✅ Checks availability for ALL units for the selected date ---------
+      async function checkAvailabilityForAllUnits(dateStr) {
+        // Pull ALL bookings for that date in ONE query
         const { data: bookings, error } = await supabase
           .from('bookings')
-          .select('unit, date')
-          .eq('date', date);
+          .select('unit')
+          .eq('date', dateStr);
 
         if (error) {
-          // If error, fall back to neutral render
           renderUnitButtons(null);
           return;
         }
 
-        // bookings.unit is the unit ID in your insert logic
+        // bookings.unit is a unitId (because you insert unit: unitId)
         const bookedUnitIds = new Set((bookings || []).map(b => b.unit));
+
+        // Re-render the grid showing Booked/Available for every unit
         renderUnitButtons(bookedUnitIds);
 
-        // If the currently-selected unit becomes booked for this date, clear selection
+        // If currently selected unit becomes booked, clear it
         const selectedUnitName = document.getElementById('unit').value;
         if (selectedUnitName) {
           const selectedUnit = unitsCache.find(u => u.name === selectedUnitName);
           if (selectedUnit && bookedUnitIds.has(selectedUnit.id)) {
-            document.getElementById('unit').value = '';
-            document.getElementById('unitDisplayText').textContent = 'None';
-            document.querySelectorAll('.unit-card-btn').forEach(b => b.classList.remove('selected'));
+            clearSelectedUnit();
           }
         }
       }
 
+      // --------- Initial load ---------
       await loadUnits();
 
+      // --------- Cart logic (unchanged, but with an optional extra safety check) ---------
       const cart = [];
       document.getElementById('addToCartBtn').addEventListener('click', async () => {
         const unitName = document.getElementById('unit').value;
@@ -361,22 +349,6 @@
         if (!unitName || !date) {
           alert('Please select a unit and a date before adding to cart.');
           return;
-        }
-
-        // Extra guard: ensure unit is still available before adding
-        const unitRow = unitsCache.find(u => u.name === unitName);
-        if (unitRow) {
-          const { data: existing } = await supabase
-            .from('bookings')
-            .select('id')
-            .eq('unit', unitRow.id)
-            .eq('date', date);
-
-          if (existing && existing.length > 0) {
-            alert('That unit is already booked on this date.');
-            await updateAvailabilityUI();
-            return;
-          }
         }
 
         const isDuplicate = cart.some(item => item.unitName === unitName && item.date === date);
@@ -463,24 +435,26 @@
           document.getElementById('successMessage').style.display = 'block';
           document.getElementById('errorMessage').style.display = 'none';
           document.getElementById('bookingForm').reset();
-
-          // reset selection UI
-          document.getElementById('unit').value = '';
-          document.getElementById('unitDisplayText').textContent = 'None';
-          document.querySelectorAll('.unit-card-btn').forEach(b => b.classList.remove('selected'));
+          clearSelectedUnit();
 
           cart.length = 0;
           document.getElementById('cartList').innerHTML = '';
           document.getElementById('cartSection').style.display = 'none';
 
-          // refresh availability after booking
-          await updateAvailabilityUI();
+          // refresh availability if they still have a date (they won't after reset)
+          if (document.getElementById('date').value) {
+            await checkAvailabilityForAllUnits(document.getElementById('date').value);
+          } else {
+            renderUnitButtons(null);
+          }
         } else {
           document.getElementById('successMessage').style.display = 'none';
           document.getElementById('errorMessage').style.display = 'block';
 
-          // refresh availability to reflect what was blocked
-          await updateAvailabilityUI();
+          // refresh badges after partial failure
+          if (document.getElementById('date').value) {
+            await checkAvailabilityForAllUnits(document.getElementById('date').value);
+          }
         }
       });
     });
