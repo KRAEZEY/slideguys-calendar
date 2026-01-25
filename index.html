@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -39,47 +39,78 @@
       border-radius: 12px;
     }
 
-    .unit-dropdown {
-      position: relative;
-      text-align: left;
+    /* ====== UNIT BUTTON GRID (replaces dropdown) ====== */
+    .unit-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
       margin-bottom: 1rem;
+      text-align: left;
     }
 
-    .unit-option {
-      display: flex;
-      align-items: center;
+    .unit-card-btn {
+      width: 100%;
+      border: 2px solid #d9e3ff;
+      background: #ffffff;
+      border-radius: 14px;
       padding: 10px;
       cursor: pointer;
+      transition: transform .06s ease, box-shadow .12s ease, border-color .12s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 170px;
     }
 
-    .unit-option img {
-      height: 40px;
-      width: 40px;
-      border-radius: 8px;
-      margin-right: 10px;
+    .unit-card-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      border-color: #b8ccff;
     }
 
-    .unit-list {
-      position: absolute;
+    .unit-card-btn.selected {
+      border-color: #006aff;
+      box-shadow: 0 0 0 3px rgba(0,106,255,0.18);
+    }
+
+    .unit-card-btn img {
       width: 100%;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      max-height: 200px;
-      overflow-y: auto;
-      z-index: 10;
-      display: none;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 12px;
+      background: #eef3ff;
     }
 
-    .unit-dropdown.open .unit-list {
-      display: block;
+    .unit-card-btn .unit-name {
+      margin-top: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-align: center;
+      line-height: 1.15;
+      color: #1b1b1b;
     }
 
-    #unitDisplay {
+    .selected-unit-pill {
       background-color: #e9f0ff;
       padding: 10px;
       border-radius: 8px;
-      cursor: pointer;
+      text-align: left;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+    }
+
+    /* Mobile: 1 column so images are bigger */
+    @media (max-width: 420px) {
+      .unit-grid {
+        grid-template-columns: 1fr;
+      }
+      .unit-card-btn {
+        min-height: 210px;
+      }
+      .unit-card-btn img {
+        height: 150px;
+      }
     }
   </style>
 </head>
@@ -96,10 +127,15 @@
       <input type="text" id="address" class="form-control mb-2" placeholder="Address" required />
       <input type="text" id="city" class="form-control mb-2" placeholder="City" required />
 
-      <div class="unit-dropdown" id="unitDropdown">
-        <div id="unitDisplay">Select a unit</div>
-        <div class="unit-list" id="unitList"></div>
+      <!-- Selected unit display (replaces #unitDisplay dropdown header) -->
+      <div class="selected-unit-pill">
+        <strong>Selected unit:</strong> <span id="unitDisplayText">None</span>
       </div>
+
+      <!-- Unit buttons render here -->
+      <div class="unit-grid" id="unitGrid"></div>
+
+      <!-- Hidden unit field used by existing cart + submit logic -->
       <input type="hidden" id="unit" required />
 
       <input type="date" id="date" class="form-control mb-3" required />
@@ -154,37 +190,39 @@
       const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M';
       const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+      // ====== Load Units into individual BUTTONS (no dropdown) ======
       async function loadUnits() {
         const { data, error } = await supabase.from('units').select('id, name, thumbnail_url');
         if (error) return;
 
-        const unitList = document.getElementById('unitList');
-        const unitDisplay = document.getElementById('unitDisplay');
+        const unitGrid = document.getElementById('unitGrid');
         const unitHidden = document.getElementById('unit');
+        const unitDisplayText = document.getElementById('unitDisplayText');
+
+        unitGrid.innerHTML = '';
 
         data.forEach(unit => {
-          const div = document.createElement('div');
-          div.className = 'unit-option';
-          div.innerHTML = `
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'unit-card-btn';
+          btn.dataset.unitName = unit.name;
+
+          btn.innerHTML = `
             <img src="${unit.thumbnail_url}" alt="${unit.name}" />
-            <span>${unit.name}</span>
+            <div class="unit-name">${unit.name}</div>
           `;
-          div.addEventListener('click', () => {
-            unitDisplay.textContent = unit.name;
+
+          btn.addEventListener('click', () => {
+            // unselect all
+            unitGrid.querySelectorAll('.unit-card-btn').forEach(b => b.classList.remove('selected'));
+
+            // select this one
+            btn.classList.add('selected');
             unitHidden.value = unit.name;
-            document.getElementById('unitDropdown').classList.remove('open');
+            unitDisplayText.textContent = unit.name;
           });
-          unitList.appendChild(div);
-        });
 
-        unitDisplay.addEventListener('click', () => {
-          document.getElementById('unitDropdown').classList.toggle('open');
-        });
-
-        document.addEventListener('click', (e) => {
-          if (!document.getElementById('unitDropdown').contains(e.target)) {
-            document.getElementById('unitDropdown').classList.remove('open');
-          }
+          unitGrid.appendChild(btn);
         });
       }
 
@@ -284,7 +322,12 @@
           document.getElementById('successMessage').style.display = 'block';
           document.getElementById('errorMessage').style.display = 'none';
           document.getElementById('bookingForm').reset();
-          document.getElementById('unitDisplay').textContent = 'Select a unit';
+
+          // reset selection UI
+          document.getElementById('unit').value = '';
+          document.getElementById('unitDisplayText').textContent = 'None';
+          document.querySelectorAll('.unit-card-btn').forEach(b => b.classList.remove('selected'));
+
           cart.length = 0;
           document.getElementById('cartList').innerHTML = '';
           document.getElementById('cartSection').style.display = 'none';
