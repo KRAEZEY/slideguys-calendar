@@ -117,10 +117,16 @@
       const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M';
       const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-      // cache units + availability map for current date
       let unitsCache = [];
-      const bookedMap = new Map(); // unitId -> true/false
-      let isChecking = false;
+      let bookedUnitIds = new Set(); // string ids
+      let checking = false;
+
+      function toNextDay(dateStr) {
+        // dateStr is "YYYY-MM-DD"
+        const d = new Date(dateStr + "T00:00:00");
+        d.setDate(d.getDate() + 1);
+        return d.toISOString().slice(0, 10); // "YYYY-MM-DD"
+      }
 
       function clearSelectedUnitUI() {
         document.getElementById('unit').value = '';
@@ -137,15 +143,17 @@
         unitGrid.innerHTML = '';
 
         unitsCache.forEach(unit => {
-          const booked = hasDate ? !!bookedMap.get(unit.id) : false;
+          const unitIdStr = String(unit.id);
+          const isBooked = hasDate ? bookedUnitIds.has(unitIdStr) : false;
 
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.className = 'unit-card-btn';
-          btn.dataset.unitId = unit.id;
+          btn.dataset.unitId = unitIdStr;
           btn.dataset.unitName = unit.name;
 
-          const badgeText = !hasDate ? 'Pick a date' : (isChecking ? 'Checking...' : (booked ? 'Booked' : 'Available'));
+          const badgeText = !hasDate ? 'Pick a date'
+            : (checking ? 'Checking...' : (isBooked ? 'Booked' : 'Available'));
 
           btn.innerHTML = `
             <div class="unit-badge">${badgeText}</div>
@@ -153,7 +161,7 @@
             <div class="unit-name">${unit.name}</div>
           `;
 
-          if (hasDate && !isChecking && booked) {
+          if (hasDate && !checking && isBooked) {
             btn.classList.add('booked');
             btn.setAttribute('aria-disabled', 'true');
           }
@@ -164,12 +172,12 @@
               alert('Please select a date first so we can check availability.');
               return;
             }
-            if (isChecking) {
-              alert('Checking availability… please try again in a second.');
+            if (checking) {
+              alert('Checking availability… try again in a second.');
               return;
             }
-            if (bookedMap.get(unit.id)) {
-              alert('Sorry — this unit is already booked on this date. Please choose another unit or date.');
+            if (bookedUnitIds.has(unitIdStr)) {
+              alert('Sorry — this unit is already booked on this date.');
               return;
             }
 
@@ -184,71 +192,67 @@
       }
 
       async function loadUnits() {
-        const { data, error } = await supabase.from('units').select('id, name, thumbnail_url');
+        const { data, error } = await supabase
+          .from('units')
+          .select('id, name, thumbnail_url');
+
         if (error) return;
 
         unitsCache = data || [];
         renderUnits();
       }
 
-      // ✅ EXACT same check as checkout, just done for each unit when date is selected.
-      async function checkAvailabilityLikeCheckout(dateStr) {
-        if (!dateStr || unitsCache.length === 0) return;
+      // ✅ Robust day-range availability check (works for date/text/timestamp)
+      async function refreshAvailabilityForDate(dateStr) {
+        if (!dateStr) return;
 
-        isChecking = true;
-
-        // show "Checking..." badges immediately
-        bookedMap.clear();
+        checking = true;
+        bookedUnitIds = new Set();
         renderUnits();
 
-        // run the same query checkout uses: bookings where unit = unitId AND date = dateStr
-        // (we do it for every unit)
-        const checks = unitsCache.map(async (unit) => {
-          const { data: existing, error } = await supabase
-            .from('bookings')
-            .select('id')
-            .eq('unit', unit.id)
-            .eq('date', dateStr)
-            .limit(1);
+        const nextDay = toNextDay(dateStr);
 
-          if (error) {
-            // if query fails, treat as unknown -> not booked (so you don't block everyone)
-            bookedMap.set(unit.id, false);
-            return;
-          }
+        // Pull ALL bookings that fall on the selected day
+        // Works whether column is date, text-date, or timestamp.
+        const { data: bookings, error } = await supabase
+          .from('bookings')
+          .select('unit')
+          .gte('date', dateStr)
+          .lt('date', nextDay);
 
-          bookedMap.set(unit.id, (existing && existing.length > 0));
-        });
+        if (!error && bookings) {
+          bookedUnitIds = new Set(bookings.map(b => String(b.unit)));
+        } else {
+          bookedUnitIds = new Set(); // fail open
+        }
 
-        await Promise.allSettled(checks);
-
-        isChecking = false;
+        checking = false;
         renderUnits();
 
-        // if selected unit is now booked, clear it
+        // If selected unit becomes booked, clear it
         const selectedUnitName = document.getElementById('unit').value;
         if (selectedUnitName) {
           const selectedUnit = unitsCache.find(u => u.name === selectedUnitName);
-          if (selectedUnit && bookedMap.get(selectedUnit.id)) {
+          if (selectedUnit && bookedUnitIds.has(String(selectedUnit.id))) {
             clearSelectedUnitUI();
           }
         }
       }
 
-      // date validation + availability check
+      // date validation + refresh badges
       dateInput.addEventListener('change', async () => {
         const selected = new Date(dateInput.value);
         if (selected.getFullYear() !== currentYear) {
           alert("You may only book dates within this year. Bookings for next year open January 1st.");
           dateInput.value = '';
-          bookedMap.clear();
-          isChecking = false;
+          bookedUnitIds = new Set();
+          checking = false;
           renderUnits();
           clearSelectedUnitUI();
           return;
         }
 
-        await checkAvailabilityLikeCheckout(dateInput.value);
+        await refreshAvailabilityForDate(dateInput.value);
       });
 
       await loadUnits();
@@ -269,10 +273,11 @@
           return;
         }
 
-        // keep UI + cart consistent with checkout source
-        await checkAvailabilityLikeCheckout(date);
+        // keep badges/cart in sync
+        await refreshAvailabilityForDate(date);
+
         const unitRow = unitsCache.find(u => u.name === unitName);
-        if (unitRow && bookedMap.get(unitRow.id)) {
+        if (unitRow && bookedUnitIds.has(String(unitRow.id))) {
           alert('That unit is already booked on this date.');
           clearSelectedUnitUI();
           return;
@@ -358,19 +363,20 @@
           document.getElementById('bookingForm').reset();
 
           clearSelectedUnitUI();
+
           cart.length = 0;
           document.getElementById('cartList').innerHTML = '';
           document.getElementById('cartSection').style.display = 'none';
 
-          bookedMap.clear();
-          isChecking = false;
+          bookedUnitIds = new Set();
+          checking = false;
           renderUnits();
         } else {
           document.getElementById('successMessage').style.display = 'none';
           document.getElementById('errorMessage').style.display = 'block';
 
           const d = document.getElementById('date').value;
-          if (d) await checkAvailabilityLikeCheckout(d);
+          if (d) await refreshAvailabilityForDate(d);
         }
       });
     });
