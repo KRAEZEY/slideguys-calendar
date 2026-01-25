@@ -110,9 +110,7 @@
       border-color: #ffd27a;
       box-shadow: 0 0 0 3px rgba(255, 210, 122, 0.28);
     }
-    .unit-card-btn.incart .unit-badge {
-      background: #fff2da;
-    }
+    .unit-card-btn.incart .unit-badge { background: #fff2da; }
 
     .selected-unit-pill {
       background-color: #e9f0ff;
@@ -197,7 +195,7 @@
       let bookedUnitIds = new Set(); // uuid strings
       let checking = false;
 
-      // cart: { unitId, unitName, date }
+      // cart: { unitId, unitName, price, date }
       const cart = [];
 
       function cartKey(unitId, dateStr) {
@@ -210,6 +208,12 @@
           if (item.date === dateStr) set.add(cartKey(item.unitId, item.date));
         });
         return set;
+      }
+
+      function formatPrice(p) {
+        const n = Number(p);
+        if (Number.isFinite(n)) return n.toFixed(2).replace(/\.00$/, '');
+        return '';
       }
 
       function clearSelectionUI() {
@@ -271,7 +275,6 @@
               return;
             }
 
-            // select this one
             unitGrid.querySelectorAll('.unit-card-btn').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
             document.getElementById('unit').value = unit.name;
@@ -283,9 +286,10 @@
       }
 
       async function loadUnits() {
+        // ✅ CHANGED: include price
         const { data, error } = await supabase
           .from('units')
-          .select('id, name, thumbnail_url');
+          .select('id, name, thumbnail_url, price');
 
         if (error) return;
 
@@ -372,15 +376,19 @@
           return;
         }
 
-        cart.push({ unitId, unitName, date });
+        // ✅ CHANGED: store price in cart
+        cart.push({ unitId, unitName, price: unitRow.price, date });
 
         const cartSection = document.getElementById('cartSection');
         const cartList = document.getElementById('cartList');
         cartSection.style.display = 'block';
 
+        const priceText = formatPrice(unitRow.price);
         const li = document.createElement('li');
         li.className = 'list-group-item d-flex justify-content-between align-items-center';
-        li.innerHTML = `${unitName} — ${date} <button class="btn btn-sm btn-danger">&times;</button>`;
+
+        // ✅ CHANGED: show unit + price in cart (no date)
+        li.innerHTML = `${unitName} — $${priceText} <button class="btn btn-sm btn-danger">&times;</button>`;
 
         li.querySelector('button').addEventListener('click', () => {
           const index = cart.findIndex(item => cartKey(item.unitId, item.date) === key);
@@ -413,7 +421,7 @@
         const reservedLines = [];
 
         for (const item of cart) {
-          const { unitName, date } = item;
+          const { unitName, date, price } = item;
 
           const { data: unitData, error: unitError } = await supabase
             .from('units')
@@ -446,7 +454,8 @@
           if (insertError) {
             allSuccessful = false;
           } else {
-            reservedLines.push(`${unitName} — ${date}`);
+            // ✅ CHANGED: unit + price (no date)
+            reservedLines.push(`${unitName} — $${formatPrice(price)}`);
           }
         }
 
