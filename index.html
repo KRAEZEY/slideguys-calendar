@@ -105,7 +105,7 @@
     .unit-card-btn.booked img { filter: grayscale(35%); }
     .unit-card-btn.booked .unit-badge { background: #ffe9ea; }
 
-    /* NEW: show "In Cart" clearly */
+    /* "In Cart" styling */
     .unit-card-btn.incart {
       border-color: #ffd27a;
       box-shadow: 0 0 0 3px rgba(255, 210, 122, 0.28);
@@ -143,7 +143,7 @@
       <input type="text" id="address" class="form-control mb-2" placeholder="Address" required />
       <input type="text" id="city" class="form-control mb-2" placeholder="City" required />
 
-      <!-- date picker above selected unit (as you wanted) -->
+      <!-- Date picker above selected unit -->
       <input type="date" id="date" class="form-control mb-3" required />
 
       <div class="selected-unit-pill">
@@ -197,7 +197,7 @@
       let bookedUnitIds = new Set(); // uuid strings
       let checking = false;
 
-      // cart now stores: { unitId, unitName, date }
+      // cart: { unitId, unitName, date }
       const cart = [];
 
       function cartKey(unitId, dateStr) {
@@ -220,8 +220,6 @@
 
       function renderUnits() {
         const unitGrid = document.getElementById('unitGrid');
-        const unitHidden = document.getElementById('unit');
-        const unitDisplayText = document.getElementById('unitDisplayText');
         const selectedDate = document.getElementById('date').value;
         const hasDate = !!selectedDate;
 
@@ -254,7 +252,6 @@
             btn.classList.add('booked');
             btn.setAttribute('aria-disabled', 'true');
           }
-
           if (hasDate && !checking && !isBooked && isInCart) {
             btn.classList.add('incart');
           }
@@ -274,10 +271,11 @@
               return;
             }
 
+            // select this one
             unitGrid.querySelectorAll('.unit-card-btn').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
-            unitHidden.value = unit.name;
-            unitDisplayText.textContent = unit.name;
+            document.getElementById('unit').value = unit.name;
+            document.getElementById('unitDisplayText').textContent = unit.name;
           });
 
           unitGrid.appendChild(btn);
@@ -336,13 +334,12 @@
           clearSelectionUI();
           return;
         }
-
         await refreshAvailability(dateInput.value);
       });
 
       await loadUnits();
 
-      // ---------- Add to Cart (now fully supports multiple items cleanly) ----------
+      // Add to Cart (multi-item)
       document.getElementById('addToCartBtn').addEventListener('click', async () => {
         const unitName = document.getElementById('unit').value;
         const date = document.getElementById('date').value;
@@ -390,15 +387,14 @@
           if (index !== -1) cart.splice(index, 1);
           li.remove();
           if (cart.length === 0) cartSection.style.display = 'none';
-          renderUnits(); // update "In Cart" badges instantly
+          renderUnits();
         });
 
         cartList.appendChild(li);
-
-        renderUnits(); // show "In Cart" badge right away
+        renderUnits();
       });
 
-      // ---------- Checkout submit (unchanged logic, just uses cart items) ----------
+      // Submit (ONE email only if ALL succeed)
       document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -414,6 +410,7 @@
         }
 
         let allSuccessful = true;
+        const reservedLines = [];
 
         for (const item of cart) {
           const { unitName, date } = item;
@@ -449,13 +446,28 @@
           if (insertError) {
             allSuccessful = false;
           } else {
-            const params = { name, phone, email, address, city, unit: unitName, date };
-            emailjs.send("service_1zxrd0j", "template_nqep0gt", params);
-            emailjs.send("service_1zxrd0j", "template_6z2dcsj", params);
+            reservedLines.push(`${unitName} — ${date}`);
           }
         }
 
+        // ✅ Send ONE email ONLY on success (NO email on fail)
         if (allSuccessful) {
+          const items_summary = reservedLines.join('\n');
+          const params = {
+            name,
+            phone,
+            email,
+            address,
+            city,
+            items_summary,
+            // backward-compatible fields (if templates still reference these)
+            unit: cart[0]?.unitName || '',
+            date: cart[0]?.date || ''
+          };
+
+          await emailjs.send("service_1zxrd0j", "template_nqep0gt", params);
+          await emailjs.send("service_1zxrd0j", "template_6z2dcsj", params);
+
           document.getElementById('successMessage').style.display = 'block';
           document.getElementById('errorMessage').style.display = 'none';
           document.getElementById('bookingForm').reset();
