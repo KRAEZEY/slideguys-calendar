@@ -121,6 +121,17 @@
       font-size: 0.95rem;
     }
 
+    /* Total row styling */
+    .cart-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+      margin: 10px 2px 0 2px;
+    }
+    .cart-total-row .label { opacity: 0.85; }
+    .cart-total-row .value { font-size: 1.05rem; }
+
     @media (max-width: 420px) {
       .unit-grid { grid-template-columns: 1fr; }
       .unit-card-btn { min-height: 210px; }
@@ -164,8 +175,14 @@
     </div>
 
     <div class="mt-4 text-start" id="cartSection" style="display: none;">
-      <h5>Cart</h5>
+      <h5 class="mb-2">Cart</h5>
       <ul class="list-group" id="cartList"></ul>
+
+      <!-- ✅ NEW: total display -->
+      <div class="cart-total-row">
+        <div class="label">Total</div>
+        <div class="value">$<span id="cartTotal">0</span></div>
+      </div>
     </div>
   </div>
 
@@ -192,7 +209,7 @@
       const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
       let unitsCache = [];
-      let bookedUnitIds = new Set(); // uuid strings
+      let bookedUnitIds = new Set();
       let checking = false;
 
       // cart: { unitId, unitName, price, date }
@@ -210,10 +227,25 @@
         return set;
       }
 
-      function formatPrice(p) {
+      function priceNumber(p) {
         const n = Number(p);
-        if (Number.isFinite(n)) return n.toFixed(2).replace(/\.00$/, '');
-        return '';
+        return Number.isFinite(n) ? n : 0;
+      }
+
+      function formatMoney(n) {
+        const v = Number(n);
+        if (!Number.isFinite(v)) return '0';
+        return v.toFixed(2).replace(/\.00$/, '');
+      }
+
+      function getCartTotal() {
+        return cart.reduce((sum, item) => sum + priceNumber(item.price), 0);
+      }
+
+      function updateCartTotalUI() {
+        const el = document.getElementById('cartTotal');
+        if (!el) return;
+        el.textContent = formatMoney(getCartTotal());
       }
 
       function clearSelectionUI() {
@@ -286,7 +318,6 @@
       }
 
       async function loadUnits() {
-        // ✅ CHANGED: include price
         const { data, error } = await supabase
           .from('units')
           .select('id, name, thumbnail_url, price');
@@ -343,7 +374,7 @@
 
       await loadUnits();
 
-      // Add to Cart (multi-item)
+      // Add to Cart
       document.getElementById('addToCartBtn').addEventListener('click', async () => {
         const unitName = document.getElementById('unit').value;
         const date = document.getElementById('date').value;
@@ -376,19 +407,15 @@
           return;
         }
 
-        // ✅ CHANGED: store price in cart
         cart.push({ unitId, unitName, price: unitRow.price, date });
 
         const cartSection = document.getElementById('cartSection');
         const cartList = document.getElementById('cartList');
         cartSection.style.display = 'block';
 
-        const priceText = formatPrice(unitRow.price);
         const li = document.createElement('li');
         li.className = 'list-group-item d-flex justify-content-between align-items-center';
-
-        // ✅ CHANGED: show unit + price in cart (no date)
-        li.innerHTML = `${unitName} — $${priceText} <button class="btn btn-sm btn-danger">&times;</button>`;
+        li.innerHTML = `${unitName} — $${formatMoney(unitRow.price)} <button class="btn btn-sm btn-danger">&times;</button>`;
 
         li.querySelector('button').addEventListener('click', () => {
           const index = cart.findIndex(item => cartKey(item.unitId, item.date) === key);
@@ -396,13 +423,15 @@
           li.remove();
           if (cart.length === 0) cartSection.style.display = 'none';
           renderUnits();
+          updateCartTotalUI();
         });
 
         cartList.appendChild(li);
         renderUnits();
+        updateCartTotalUI();
       });
 
-      // Submit (ONE email only if ALL succeed)
+      // Submit (ONE email only if ALL succeed) + include total
       document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -454,14 +483,15 @@
           if (insertError) {
             allSuccessful = false;
           } else {
-            // ✅ CHANGED: unit + price (no date)
-            reservedLines.push(`${unitName} — $${formatPrice(price)}`);
+            reservedLines.push(`${unitName} — $${formatMoney(price)}`);
           }
         }
 
-        // ✅ Send ONE email ONLY on success (NO email on fail)
+        // ✅ Email only on full success + include total
         if (allSuccessful) {
           const items_summary = reservedLines.join('\n');
+          const total_price = `$${formatMoney(getCartTotal())}`;
+
           const params = {
             name,
             phone,
@@ -469,7 +499,8 @@
             address,
             city,
             items_summary,
-            // backward-compatible fields (if templates still reference these)
+            total_price,
+            // backward compatibility
             unit: cart[0]?.unitName || '',
             date: cart[0]?.date || ''
           };
@@ -486,6 +517,7 @@
           cart.length = 0;
           document.getElementById('cartList').innerHTML = '';
           document.getElementById('cartSection').style.display = 'none';
+          updateCartTotalUI();
 
           bookedUnitIds = new Set();
           checking = false;
