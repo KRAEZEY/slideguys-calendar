@@ -105,6 +105,15 @@
     .unit-card-btn.booked img { filter: grayscale(35%); }
     .unit-card-btn.booked .unit-badge { background: #ffe9ea; }
 
+    /* NEW: show "In Cart" clearly */
+    .unit-card-btn.incart {
+      border-color: #ffd27a;
+      box-shadow: 0 0 0 3px rgba(255, 210, 122, 0.28);
+    }
+    .unit-card-btn.incart .unit-badge {
+      background: #fff2da;
+    }
+
     .selected-unit-pill {
       background-color: #e9f0ff;
       padding: 10px;
@@ -134,7 +143,7 @@
       <input type="text" id="address" class="form-control mb-2" placeholder="Address" required />
       <input type="text" id="city" class="form-control mb-2" placeholder="City" required />
 
-      <!-- ✅ MOVED: Date picker now ABOVE Selected Unit -->
+      <!-- date picker above selected unit (as you wanted) -->
       <input type="date" id="date" class="form-control mb-3" required />
 
       <div class="selected-unit-pill">
@@ -188,6 +197,21 @@
       let bookedUnitIds = new Set(); // uuid strings
       let checking = false;
 
+      // cart now stores: { unitId, unitName, date }
+      const cart = [];
+
+      function cartKey(unitId, dateStr) {
+        return `${String(unitId)}|${dateStr}`;
+      }
+
+      function cartKeysForDate(dateStr) {
+        const set = new Set();
+        cart.forEach(item => {
+          if (item.date === dateStr) set.add(cartKey(item.unitId, item.date));
+        });
+        return set;
+      }
+
       function clearSelectionUI() {
         document.getElementById('unit').value = '';
         document.getElementById('unitDisplayText').textContent = 'None';
@@ -198,13 +222,17 @@
         const unitGrid = document.getElementById('unitGrid');
         const unitHidden = document.getElementById('unit');
         const unitDisplayText = document.getElementById('unitDisplayText');
-        const hasDate = !!document.getElementById('date').value;
+        const selectedDate = document.getElementById('date').value;
+        const hasDate = !!selectedDate;
+
+        const inCartForThisDate = hasDate ? cartKeysForDate(selectedDate) : new Set();
 
         unitGrid.innerHTML = '';
 
         unitsCache.forEach(unit => {
           const unitId = String(unit.id);
           const isBooked = hasDate ? bookedUnitIds.has(unitId) : false;
+          const isInCart = hasDate ? inCartForThisDate.has(cartKey(unitId, selectedDate)) : false;
 
           const btn = document.createElement('button');
           btn.type = 'button';
@@ -214,7 +242,7 @@
 
           const badgeText = !hasDate
             ? 'Pick a date'
-            : (checking ? 'Checking...' : (isBooked ? 'Booked' : 'Available'));
+            : (checking ? 'Checking...' : (isBooked ? 'Booked' : (isInCart ? 'In Cart' : 'Available')));
 
           btn.innerHTML = `
             <div class="unit-badge">${badgeText}</div>
@@ -225,6 +253,10 @@
           if (hasDate && !checking && isBooked) {
             btn.classList.add('booked');
             btn.setAttribute('aria-disabled', 'true');
+          }
+
+          if (hasDate && !checking && !isBooked && isInCart) {
+            btn.classList.add('incart');
           }
 
           btn.addEventListener('click', () => {
@@ -278,7 +310,7 @@
         if (!error && bookings) {
           bookedUnitIds = new Set(bookings.map(b => String(b.unit)));
         } else {
-          bookedUnitIds = new Set(); // fail open
+          bookedUnitIds = new Set();
         }
 
         checking = false;
@@ -310,7 +342,7 @@
 
       await loadUnits();
 
-      const cart = [];
+      // ---------- Add to Cart (now fully supports multiple items cleanly) ----------
       document.getElementById('addToCartBtn').addEventListener('click', async () => {
         const unitName = document.getElementById('unit').value;
         const date = document.getElementById('date').value;
@@ -323,19 +355,27 @@
         await refreshAvailability(date);
 
         const unitRow = unitsCache.find(u => u.name === unitName);
-        if (unitRow && bookedUnitIds.has(String(unitRow.id))) {
+        if (!unitRow) {
+          alert('Could not find that unit. Please try again.');
+          return;
+        }
+
+        const unitId = String(unitRow.id);
+
+        if (bookedUnitIds.has(unitId)) {
           alert('That unit is already booked on this date.');
           clearSelectionUI();
           return;
         }
 
-        const isDuplicate = cart.some(item => item.unitName === unitName && item.date === date);
-        if (isDuplicate) {
-          alert('This unit and date combination is already in your cart.');
+        const key = cartKey(unitId, date);
+        const alreadyInCart = cart.some(item => cartKey(item.unitId, item.date) === key);
+        if (alreadyInCart) {
+          alert('That unit is already in your cart for this date.');
           return;
         }
 
-        cart.push({ unitName, date });
+        cart.push({ unitId, unitName, date });
 
         const cartSection = document.getElementById('cartSection');
         const cartList = document.getElementById('cartList');
@@ -344,15 +384,21 @@
         const li = document.createElement('li');
         li.className = 'list-group-item d-flex justify-content-between align-items-center';
         li.innerHTML = `${unitName} — ${date} <button class="btn btn-sm btn-danger">&times;</button>`;
+
         li.querySelector('button').addEventListener('click', () => {
-          const index = cart.findIndex(item => item.unitName === unitName && item.date === date);
+          const index = cart.findIndex(item => cartKey(item.unitId, item.date) === key);
           if (index !== -1) cart.splice(index, 1);
           li.remove();
           if (cart.length === 0) cartSection.style.display = 'none';
+          renderUnits(); // update "In Cart" badges instantly
         });
+
         cartList.appendChild(li);
+
+        renderUnits(); // show "In Cart" badge right away
       });
 
+      // ---------- Checkout submit (unchanged logic, just uses cart items) ----------
       document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
