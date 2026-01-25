@@ -6,53 +6,147 @@
   <title>Slide Guys Booking</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
   <style>
-    body { background-color: #f8f9fa; font-family: Arial, sans-serif; }
-
-    .booking-form{
-      max-width:500px;margin:50px auto;background:white;padding:30px;border-radius:10px;
-      box-shadow:0 4px 20px rgba(0,0,0,0.1);
-    }
-    .form-control{ background-color:#e9f0ff; }
-    .btn-primary{ background-color:#006aff;border:none; }
-    .btn-primary:hover{ background-color:#0051c9; }
-    .logo{ max-height:80px;margin-bottom:20px;border-radius:12px; }
-
-    .unit-grid{
-      display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:1rem;text-align:left;
-    }
-    .unit-card-btn{
-      width:100%;border:2px solid #d9e3ff;background:#fff;border-radius:14px;padding:10px;cursor:pointer;
-      transition:transform .06s ease, box-shadow .12s ease, border-color .12s ease, opacity .12s ease;
-      display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:170px;position:relative;
-    }
-    .unit-card-btn:hover{ transform:translateY(-1px); box-shadow:0 6px 18px rgba(0,0,0,0.08); border-color:#b8ccff; }
-    .unit-card-btn.selected{ border-color:#006aff; box-shadow:0 0 0 3px rgba(0,106,255,0.18); }
-
-    .unit-card-btn img{
-      width:100%;height:120px;object-fit:cover;border-radius:12px;background:#eef3ff;
-    }
-    .unit-card-btn .unit-name{
-      margin-top:8px;font-weight:700;font-size:.95rem;text-align:center;line-height:1.15;color:#1b1b1b;
+    body {
+      background-color: #f8f9fa;
+      font-family: Arial, sans-serif;
     }
 
-    .unit-badge{
-      position:absolute;top:10px;left:10px;font-size:.8rem;font-weight:700;padding:6px 10px;border-radius:999px;
-      background:#e9f0ff;color:#1b1b1b;box-shadow:0 4px 10px rgba(0,0,0,0.08);
-      border:1px solid rgba(0,0,0,0.06);
-    }
-    .unit-card-btn.booked{ opacity:.55; border-color:#e1e1e1; }
-    .unit-card-btn.booked:hover{ transform:none; box-shadow:none; border-color:#e1e1e1; cursor:not-allowed; }
-    .unit-card-btn.booked img{ filter:grayscale(35%); }
-    .unit-card-btn.booked .unit-badge{ background:#ffe9ea; }
-
-    .selected-unit-pill{
-      background-color:#e9f0ff;padding:10px;border-radius:8px;text-align:left;margin-bottom:10px;font-size:.95rem;
+    .booking-form {
+      max-width: 500px;
+      margin: 50px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
 
-    @media (max-width:420px){
-      .unit-grid{ grid-template-columns:1fr; }
-      .unit-card-btn{ min-height:210px; }
-      .unit-card-btn img{ height:150px; }
+    .form-control {
+      background-color: #e9f0ff;
+    }
+
+    .btn-primary {
+      background-color: #006aff;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #0051c9;
+    }
+
+    .logo {
+      max-height: 80px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+    }
+
+    /* ====== UNIT BUTTON GRID (replaces dropdown) ====== */
+    .unit-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+
+    .unit-card-btn {
+      width: 100%;
+      border: 2px solid #d9e3ff;
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 10px;
+      cursor: pointer;
+      transition: transform .06s ease, box-shadow .12s ease, border-color .12s ease, opacity .12s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 170px;
+      position: relative;
+    }
+
+    .unit-card-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      border-color: #b8ccff;
+    }
+
+    .unit-card-btn.selected {
+      border-color: #006aff;
+      box-shadow: 0 0 0 3px rgba(0,106,255,0.18);
+    }
+
+    .unit-card-btn img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 12px;
+      background: #eef3ff;
+    }
+
+    .unit-card-btn .unit-name {
+      margin-top: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-align: center;
+      line-height: 1.15;
+      color: #1b1b1b;
+    }
+
+    /* ===== Availability badge ===== */
+    .unit-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #e9f0ff;
+      color: #1b1b1b;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .unit-card-btn.booked {
+      opacity: 0.55;
+      border-color: #e1e1e1;
+    }
+
+    .unit-card-btn.booked:hover {
+      transform: none;
+      box-shadow: none;
+      border-color: #e1e1e1;
+      cursor: not-allowed;
+    }
+
+    .unit-card-btn.booked img {
+      filter: grayscale(35%);
+    }
+
+    .unit-card-btn.booked .unit-badge {
+      background: #ffe9ea;
+    }
+
+    .selected-unit-pill {
+      background-color: #e9f0ff;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: left;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+    }
+
+    /* Mobile: 1 column so images are bigger */
+    @media (max-width: 420px) {
+      .unit-grid {
+        grid-template-columns: 1fr;
+      }
+      .unit-card-btn {
+        min-height: 210px;
+      }
+      .unit-card-btn img {
+        height: 150px;
+      }
     }
   </style>
 </head>
@@ -74,6 +168,8 @@
       </div>
 
       <div class="unit-grid" id="unitGrid"></div>
+
+      <!-- Hidden unit field used by existing cart + submit logic -->
       <input type="hidden" id="unit" required />
 
       <input type="date" id="date" class="form-control mb-3" required />
@@ -98,7 +194,9 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script>
-    (function () { emailjs.init("PXm_wNk9aIao8Hlpp"); })();
+    (function () {
+      emailjs.init("PXm_wNk9aIao8Hlpp");
+    })();
   </script>
 
   <script>
@@ -117,18 +215,12 @@
       const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M';
       const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+      // Cache units and booked-unit set for the selected date
       let unitsCache = [];
-      let bookedUnitIds = new Set(); // string ids
-      let checking = false;
+      let bookedUnitIds = new Set(); // string(uuid)
+      let isChecking = false;
 
-      function toNextDay(dateStr) {
-        // dateStr is "YYYY-MM-DD"
-        const d = new Date(dateStr + "T00:00:00");
-        d.setDate(d.getDate() + 1);
-        return d.toISOString().slice(0, 10); // "YYYY-MM-DD"
-      }
-
-      function clearSelectedUnitUI() {
+      function clearSelectionUI() {
         document.getElementById('unit').value = '';
         document.getElementById('unitDisplayText').textContent = 'None';
         document.querySelectorAll('.unit-card-btn').forEach(b => b.classList.remove('selected'));
@@ -143,17 +235,18 @@
         unitGrid.innerHTML = '';
 
         unitsCache.forEach(unit => {
-          const unitIdStr = String(unit.id);
-          const isBooked = hasDate ? bookedUnitIds.has(unitIdStr) : false;
+          const unitId = String(unit.id); // uuid -> string
+          const isBooked = hasDate ? bookedUnitIds.has(unitId) : false;
 
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.className = 'unit-card-btn';
-          btn.dataset.unitId = unitIdStr;
+          btn.dataset.unitId = unitId;
           btn.dataset.unitName = unit.name;
 
-          const badgeText = !hasDate ? 'Pick a date'
-            : (checking ? 'Checking...' : (isBooked ? 'Booked' : 'Available'));
+          const badgeText = !hasDate
+            ? 'Pick a date'
+            : (isChecking ? 'Checking...' : (isBooked ? 'Booked' : 'Available'));
 
           btn.innerHTML = `
             <div class="unit-badge">${badgeText}</div>
@@ -161,7 +254,7 @@
             <div class="unit-name">${unit.name}</div>
           `;
 
-          if (hasDate && !checking && isBooked) {
+          if (hasDate && !isChecking && isBooked) {
             btn.classList.add('booked');
             btn.setAttribute('aria-disabled', 'true');
           }
@@ -169,19 +262,22 @@
           btn.addEventListener('click', () => {
             const chosenDate = document.getElementById('date').value;
             if (!chosenDate) {
-              alert('Please select a date first so we can check availability.');
+              alert('Please select a date first.');
               return;
             }
-            if (checking) {
+            if (isChecking) {
               alert('Checking availability… try again in a second.');
               return;
             }
-            if (bookedUnitIds.has(unitIdStr)) {
+            if (bookedUnitIds.has(unitId)) {
               alert('Sorry — this unit is already booked on this date.');
               return;
             }
 
+            // unselect all
             unitGrid.querySelectorAll('.unit-card-btn').forEach(b => b.classList.remove('selected'));
+
+            // select this one
             btn.classList.add('selected');
             unitHidden.value = unit.name;
             unitDisplayText.textContent = unit.name;
@@ -192,71 +288,71 @@
       }
 
       async function loadUnits() {
-        const { data, error } = await supabase
-          .from('units')
-          .select('id, name, thumbnail_url');
-
+        const { data, error } = await supabase.from('units').select('id, name, thumbnail_url');
         if (error) return;
-
         unitsCache = data || [];
         renderUnits();
       }
 
-      // ✅ Robust day-range availability check (works for date/text/timestamp)
-      async function refreshAvailabilityForDate(dateStr) {
+      // ✅ EXACT same logic as checkout, but for ALL units when date is selected:
+      // bookings where unit = unitId AND date = selectedDate
+      async function checkAvailabilityAllUnitsLikeCheckout(dateStr) {
         if (!dateStr) return;
 
-        checking = true;
+        isChecking = true;
         bookedUnitIds = new Set();
         renderUnits();
 
-        const nextDay = toNextDay(dateStr);
+        // Run the same query checkout uses, but for each unit
+        const checks = unitsCache.map(async (unit) => {
+          const unitId = String(unit.id);
 
-        // Pull ALL bookings that fall on the selected day
-        // Works whether column is date, text-date, or timestamp.
-        const { data: bookings, error } = await supabase
-          .from('bookings')
-          .select('unit')
-          .gte('date', dateStr)
-          .lt('date', nextDay);
+          const { data: existing, error } = await supabase
+            .from('bookings')
+            .select('id')
+            .eq('unit', unitId)   // same as checkout
+            .eq('date', dateStr)  // same as checkout
+            .limit(1);
 
-        if (!error && bookings) {
-          bookedUnitIds = new Set(bookings.map(b => String(b.unit)));
-        } else {
-          bookedUnitIds = new Set(); // fail open
-        }
+          if (!error && existing && existing.length > 0) {
+            bookedUnitIds.add(unitId);
+          }
+        });
 
-        checking = false;
+        await Promise.allSettled(checks);
+
+        isChecking = false;
         renderUnits();
 
-        // If selected unit becomes booked, clear it
+        // If the currently selected unit is now booked, clear it
         const selectedUnitName = document.getElementById('unit').value;
         if (selectedUnitName) {
           const selectedUnit = unitsCache.find(u => u.name === selectedUnitName);
           if (selectedUnit && bookedUnitIds.has(String(selectedUnit.id))) {
-            clearSelectedUnitUI();
+            clearSelectionUI();
           }
         }
       }
 
-      // date validation + refresh badges
+      // Date validation + availability check
       dateInput.addEventListener('change', async () => {
         const selected = new Date(dateInput.value);
         if (selected.getFullYear() !== currentYear) {
           alert("You may only book dates within this year. Bookings for next year open January 1st.");
           dateInput.value = '';
           bookedUnitIds = new Set();
-          checking = false;
+          isChecking = false;
           renderUnits();
-          clearSelectedUnitUI();
+          clearSelectionUI();
           return;
         }
 
-        await refreshAvailabilityForDate(dateInput.value);
+        await checkAvailabilityAllUnitsLikeCheckout(dateInput.value);
       });
 
       await loadUnits();
 
+      // ---------------- Cart logic (kept) ----------------
       const cart = [];
       document.getElementById('addToCartBtn').addEventListener('click', async () => {
         const unitName = document.getElementById('unit').value;
@@ -267,19 +363,19 @@
           return;
         }
 
-        const isDuplicate = cart.some(item => item.unitName === unitName && item.date === date);
-        if (isDuplicate) {
-          alert('This unit and date combination is already in your cart.');
-          return;
-        }
-
-        // keep badges/cart in sync
-        await refreshAvailabilityForDate(date);
+        // refresh availability so it matches checkout right before adding
+        await checkAvailabilityAllUnitsLikeCheckout(date);
 
         const unitRow = unitsCache.find(u => u.name === unitName);
         if (unitRow && bookedUnitIds.has(String(unitRow.id))) {
           alert('That unit is already booked on this date.');
-          clearSelectedUnitUI();
+          clearSelectionUI();
+          return;
+        }
+
+        const isDuplicate = cart.some(item => item.unitName === unitName && item.date === date);
+        if (isDuplicate) {
+          alert('This unit and date combination is already in your cart.');
           return;
         }
 
@@ -301,6 +397,7 @@
         cartList.appendChild(li);
       });
 
+      // ---------------- Checkout submit (your original logic) ----------------
       document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -362,21 +459,21 @@
           document.getElementById('errorMessage').style.display = 'none';
           document.getElementById('bookingForm').reset();
 
-          clearSelectedUnitUI();
+          clearSelectionUI();
 
           cart.length = 0;
           document.getElementById('cartList').innerHTML = '';
           document.getElementById('cartSection').style.display = 'none';
 
           bookedUnitIds = new Set();
-          checking = false;
+          isChecking = false;
           renderUnits();
         } else {
           document.getElementById('successMessage').style.display = 'none';
           document.getElementById('errorMessage').style.display = 'block';
 
           const d = document.getElementById('date').value;
-          if (d) await refreshAvailabilityForDate(d);
+          if (d) await checkAvailabilityAllUnitsLikeCheckout(d);
         }
       });
     });
