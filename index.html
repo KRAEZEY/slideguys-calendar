@@ -6,141 +6,53 @@
   <title>Slide Guys Booking</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
   <style>
-    body {
-      background-color: #f8f9fa;
-      font-family: Arial, sans-serif;
+    body { background-color: #f8f9fa; font-family: Arial, sans-serif; }
+
+    .booking-form{
+      max-width:500px;margin:50px auto;background:white;padding:30px;border-radius:10px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.1);
+    }
+    .form-control{ background-color:#e9f0ff; }
+    .btn-primary{ background-color:#006aff;border:none; }
+    .btn-primary:hover{ background-color:#0051c9; }
+    .logo{ max-height:80px;margin-bottom:20px;border-radius:12px; }
+
+    .unit-grid{
+      display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:1rem;text-align:left;
+    }
+    .unit-card-btn{
+      width:100%;border:2px solid #d9e3ff;background:#fff;border-radius:14px;padding:10px;cursor:pointer;
+      transition:transform .06s ease, box-shadow .12s ease, border-color .12s ease, opacity .12s ease;
+      display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:170px;position:relative;
+    }
+    .unit-card-btn:hover{ transform:translateY(-1px); box-shadow:0 6px 18px rgba(0,0,0,0.08); border-color:#b8ccff; }
+    .unit-card-btn.selected{ border-color:#006aff; box-shadow:0 0 0 3px rgba(0,106,255,0.18); }
+
+    .unit-card-btn img{
+      width:100%;height:120px;object-fit:cover;border-radius:12px;background:#eef3ff;
+    }
+    .unit-card-btn .unit-name{
+      margin-top:8px;font-weight:700;font-size:.95rem;text-align:center;line-height:1.15;color:#1b1b1b;
     }
 
-    .booking-form {
-      max-width: 500px;
-      margin: 50px auto;
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    .unit-badge{
+      position:absolute;top:10px;left:10px;font-size:.8rem;font-weight:700;padding:6px 10px;border-radius:999px;
+      background:#e9f0ff;color:#1b1b1b;box-shadow:0 4px 10px rgba(0,0,0,0.08);
+      border:1px solid rgba(0,0,0,0.06);
+    }
+    .unit-card-btn.booked{ opacity:.55; border-color:#e1e1e1; }
+    .unit-card-btn.booked:hover{ transform:none; box-shadow:none; border-color:#e1e1e1; cursor:not-allowed; }
+    .unit-card-btn.booked img{ filter:grayscale(35%); }
+    .unit-card-btn.booked .unit-badge{ background:#ffe9ea; }
+
+    .selected-unit-pill{
+      background-color:#e9f0ff;padding:10px;border-radius:8px;text-align:left;margin-bottom:10px;font-size:.95rem;
     }
 
-    .form-control {
-      background-color: #e9f0ff;
-    }
-
-    .btn-primary {
-      background-color: #006aff;
-      border: none;
-    }
-
-    .btn-primary:hover {
-      background-color: #0051c9;
-    }
-
-    .logo {
-      max-height: 80px;
-      margin-bottom: 20px;
-      border-radius: 12px;
-    }
-
-    /* ====== UNIT BUTTON GRID (replaces dropdown) ====== */
-    .unit-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 1rem;
-      text-align: left;
-    }
-
-    .unit-card-btn {
-      width: 100%;
-      border: 2px solid #d9e3ff;
-      background: #ffffff;
-      border-radius: 14px;
-      padding: 10px;
-      cursor: pointer;
-      transition: transform .06s ease, box-shadow .12s ease, border-color .12s ease, opacity .12s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 170px;
-      position: relative;
-    }
-
-    .unit-card-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-      border-color: #b8ccff;
-    }
-
-    .unit-card-btn.selected {
-      border-color: #006aff;
-      box-shadow: 0 0 0 3px rgba(0,106,255,0.18);
-    }
-
-    .unit-card-btn img {
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 12px;
-      background: #eef3ff;
-    }
-
-    .unit-card-btn .unit-name {
-      margin-top: 8px;
-      font-weight: 700;
-      font-size: 0.95rem;
-      text-align: center;
-      line-height: 1.15;
-      color: #1b1b1b;
-    }
-
-    /* Availability badge */
-    .unit-badge {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: #e9f0ff;
-      color: #1b1b1b;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-      border: 1px solid rgba(0,0,0,0.06);
-    }
-
-    .unit-card-btn.booked {
-      opacity: 0.55;
-      border-color: #e1e1e1;
-    }
-
-    .unit-card-btn.booked:hover {
-      transform: none;
-      box-shadow: none;
-      border-color: #e1e1e1;
-      cursor: not-allowed;
-    }
-
-    .unit-card-btn.booked img {
-      filter: grayscale(35%);
-    }
-
-    .unit-card-btn.booked .unit-badge {
-      background: #ffe9ea;
-    }
-
-    .selected-unit-pill {
-      background-color: #e9f0ff;
-      padding: 10px;
-      border-radius: 8px;
-      text-align: left;
-      margin-bottom: 10px;
-      font-size: 0.95rem;
-    }
-
-    /* Mobile: 1 column so images are bigger */
-    @media (max-width: 420px) {
-      .unit-grid { grid-template-columns: 1fr; }
-      .unit-card-btn { min-height: 210px; }
-      .unit-card-btn img { height: 150px; }
+    @media (max-width:420px){
+      .unit-grid{ grid-template-columns:1fr; }
+      .unit-card-btn{ min-height:210px; }
+      .unit-card-btn img{ height:150px; }
     }
   </style>
 </head>
@@ -205,40 +117,15 @@
       const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M';
       const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-      // Cache units + live "booked set" for the currently selected date
+      // cache units + availability map for current date
       let unitsCache = [];
-      let bookedUnitIdsForSelectedDate = new Set();
+      const bookedMap = new Map(); // unitId -> true/false
+      let isChecking = false;
 
       function clearSelectedUnitUI() {
         document.getElementById('unit').value = '';
         document.getElementById('unitDisplayText').textContent = 'None';
         document.querySelectorAll('.unit-card-btn').forEach(b => b.classList.remove('selected'));
-      }
-
-      // ✅ When date is selected, check availability using the SAME "locations" as checkout:
-      // - Look up unitId from units table
-      // - Check bookings table by .eq('unit', unitId) and .eq('date', date)
-      // We do it efficiently by batching: bookings where date = selectedDate AND unit IN (all unitIds)
-      dateInput.addEventListener('change', async () => {
-        const selected = new Date(dateInput.value);
-        if (selected.getFullYear() !== currentYear) {
-          alert("You may only book dates within this year. Bookings for next year open January 1st.");
-          dateInput.value = '';
-          bookedUnitIdsForSelectedDate = new Set();
-          renderUnits(); // reset badges
-          clearSelectedUnitUI();
-          return;
-        }
-
-        await refreshAvailabilityForDate(dateInput.value);
-      });
-
-      async function loadUnits() {
-        const { data, error } = await supabase.from('units').select('id, name, thumbnail_url');
-        if (error) return;
-
-        unitsCache = data || [];
-        renderUnits(); // initial render (no date yet)
       }
 
       function renderUnits() {
@@ -250,7 +137,7 @@
         unitGrid.innerHTML = '';
 
         unitsCache.forEach(unit => {
-          const isBooked = hasDate ? bookedUnitIdsForSelectedDate.has(unit.id) : false;
+          const booked = hasDate ? !!bookedMap.get(unit.id) : false;
 
           const btn = document.createElement('button');
           btn.type = 'button';
@@ -258,13 +145,15 @@
           btn.dataset.unitId = unit.id;
           btn.dataset.unitName = unit.name;
 
+          const badgeText = !hasDate ? 'Pick a date' : (isChecking ? 'Checking...' : (booked ? 'Booked' : 'Available'));
+
           btn.innerHTML = `
-            <div class="unit-badge">${!hasDate ? 'Pick a date' : (isBooked ? 'Booked' : 'Available')}</div>
+            <div class="unit-badge">${badgeText}</div>
             <img src="${unit.thumbnail_url}" alt="${unit.name}" />
             <div class="unit-name">${unit.name}</div>
           `;
 
-          if (hasDate && isBooked) {
+          if (hasDate && !isChecking && booked) {
             btn.classList.add('booked');
             btn.setAttribute('aria-disabled', 'true');
           }
@@ -275,8 +164,11 @@
               alert('Please select a date first so we can check availability.');
               return;
             }
-
-            if (bookedUnitIdsForSelectedDate.has(unit.id)) {
+            if (isChecking) {
+              alert('Checking availability… please try again in a second.');
+              return;
+            }
+            if (bookedMap.get(unit.id)) {
               alert('Sorry — this unit is already booked on this date. Please choose another unit or date.');
               return;
             }
@@ -291,42 +183,73 @@
         });
       }
 
-      // ✅ Availability check that matches checkout’s source + method:
-      // checkout does: units -> get unitId -> bookings where unit=unitId AND date=date
-      // Here we do the same, but in one batch query for all unitIds:
-      async function refreshAvailabilityForDate(dateStr) {
-        if (!dateStr || unitsCache.length === 0) {
-          bookedUnitIdsForSelectedDate = new Set();
-          renderUnits();
-          return;
-        }
+      async function loadUnits() {
+        const { data, error } = await supabase.from('units').select('id, name, thumbnail_url');
+        if (error) return;
 
-        const unitIds = unitsCache.map(u => u.id);
+        unitsCache = data || [];
+        renderUnits();
+      }
 
-        const { data: bookings, error } = await supabase
-          .from('bookings')
-          .select('unit')
-          .eq('date', dateStr)
-          .in('unit', unitIds);
+      // ✅ EXACT same check as checkout, just done for each unit when date is selected.
+      async function checkAvailabilityLikeCheckout(dateStr) {
+        if (!dateStr || unitsCache.length === 0) return;
 
-        if (error) {
-          bookedUnitIdsForSelectedDate = new Set();
-          renderUnits();
-          return;
-        }
+        isChecking = true;
 
-        bookedUnitIdsForSelectedDate = new Set((bookings || []).map(b => b.unit));
+        // show "Checking..." badges immediately
+        bookedMap.clear();
         renderUnits();
 
-        // If user already selected a unit and it becomes booked for this date, clear selection
+        // run the same query checkout uses: bookings where unit = unitId AND date = dateStr
+        // (we do it for every unit)
+        const checks = unitsCache.map(async (unit) => {
+          const { data: existing, error } = await supabase
+            .from('bookings')
+            .select('id')
+            .eq('unit', unit.id)
+            .eq('date', dateStr)
+            .limit(1);
+
+          if (error) {
+            // if query fails, treat as unknown -> not booked (so you don't block everyone)
+            bookedMap.set(unit.id, false);
+            return;
+          }
+
+          bookedMap.set(unit.id, (existing && existing.length > 0));
+        });
+
+        await Promise.allSettled(checks);
+
+        isChecking = false;
+        renderUnits();
+
+        // if selected unit is now booked, clear it
         const selectedUnitName = document.getElementById('unit').value;
         if (selectedUnitName) {
           const selectedUnit = unitsCache.find(u => u.name === selectedUnitName);
-          if (selectedUnit && bookedUnitIdsForSelectedDate.has(selectedUnit.id)) {
+          if (selectedUnit && bookedMap.get(selectedUnit.id)) {
             clearSelectedUnitUI();
           }
         }
       }
+
+      // date validation + availability check
+      dateInput.addEventListener('change', async () => {
+        const selected = new Date(dateInput.value);
+        if (selected.getFullYear() !== currentYear) {
+          alert("You may only book dates within this year. Bookings for next year open January 1st.");
+          dateInput.value = '';
+          bookedMap.clear();
+          isChecking = false;
+          renderUnits();
+          clearSelectedUnitUI();
+          return;
+        }
+
+        await checkAvailabilityLikeCheckout(dateInput.value);
+      });
 
       await loadUnits();
 
@@ -346,11 +269,10 @@
           return;
         }
 
-        // Optional: refresh availability using the same checkout logic so cart can't get stale
-        await refreshAvailabilityForDate(date);
-
+        // keep UI + cart consistent with checkout source
+        await checkAvailabilityLikeCheckout(date);
         const unitRow = unitsCache.find(u => u.name === unitName);
-        if (unitRow && bookedUnitIdsForSelectedDate.has(unitRow.id)) {
+        if (unitRow && bookedMap.get(unitRow.id)) {
           alert('That unit is already booked on this date.');
           clearSelectedUnitUI();
           return;
@@ -436,21 +358,19 @@
           document.getElementById('bookingForm').reset();
 
           clearSelectedUnitUI();
-
           cart.length = 0;
           document.getElementById('cartList').innerHTML = '';
           document.getElementById('cartSection').style.display = 'none';
 
-          // reset badges
-          bookedUnitIdsForSelectedDate = new Set();
+          bookedMap.clear();
+          isChecking = false;
           renderUnits();
         } else {
           document.getElementById('successMessage').style.display = 'none';
           document.getElementById('errorMessage').style.display = 'block';
 
-          // Refresh badges for current date (if any)
           const d = document.getElementById('date').value;
-          if (d) await refreshAvailabilityForDate(d);
+          if (d) await checkAvailabilityLikeCheckout(d);
         }
       });
     });
