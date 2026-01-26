@@ -10,40 +10,21 @@
       background-color: #f8f9fa;
       font-family: Arial, sans-serif;
 
-      /* ✅ Background image */
+      /* ✅ Background image inserted (only change) */
       background-image: url("https://thumbs.dreamstime.com/b/colorful-birthday-party-celebration-rainbow-border-fun-balloons-streamers-confetti-adding-festive-touch-exciting-348859905.jpg");
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       background-attachment: fixed;
-      min-height: 100vh;
-    }
-
-    /* ✅ Soft overlay so text stays readable */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: rgba(255, 255, 255, 0.35);
-      pointer-events: none;
-      z-index: 0;
     }
 
     .booking-form {
       max-width: 500px;
       margin: 50px auto;
+      background: white;
       padding: 30px;
       border-radius: 10px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-
-      /* ✅ form sits above overlay */
-      position: relative;
-      z-index: 1;
-
-      /* ✅ "glass" look */
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
     }
 
     .form-control { background-color: #e9f0ff; }
@@ -151,7 +132,9 @@
     }
 
     /* Total rows */
-    .cart-totals { margin-top: 10px; }
+    .cart-totals {
+      margin-top: 10px;
+    }
     .cart-total-row {
       display: flex;
       justify-content: space-between;
@@ -169,19 +152,11 @@
     }
   </style>
 </head>
-
 <body>
   <div class="booking-form text-center">
     <img src="https://lh3.googleusercontent.com/a-/ALV-UjUTAoSFAR5OUMj0ZCkgLF1RMYoE-Q85G0HPftaFEBBIjjzw9cQ=s265-w265-h265" alt="Slide Guys Logo" class="logo">
     <h2 class="mb-3">Slide Guys Booking</h2>
-    <p>
-      Select a unit and the date you would like to reserve. Deliveries within 10 miles of Richfield are free.
-      All other outlying areas are available with a Travel Fee.(To be discussed at time of Booking).
-      No cancellations. Rescheduling is subject to availability.
-      A $50 deposit per unit is due at time of reservation.
-      A team member will contact you shortly after confirmation.
-      We accept cash, check, venmo, cash app, and pay-pal.
-    </p>
+    <p>Select a unit and the date you would like to reserve. Deliveries within 10 miles of Richfield are free. All other outlying areas are available with a Travel Fee.(To be discussed at time of Booking). No cancellations. Rescheduling is subject to availability. A $50 deposit per unit is due at time of reservation. A team member will contact you shortly after confirmation. We accept cash, check, venmo, cash app, and pay-pal.</p>
 
     <form id="bookingForm">
       <input type="text" id="name" class="form-control mb-2" placeholder="Full Name" required />
