@@ -11,60 +11,64 @@
       margin: 0;
       min-height: 100vh;
 
-      /* ✅ Party background (CSS-only): streamers + confetti + balloons */
+      /* ✅ Party background (stronger) */
       background:
-        /* confetti dots */
-        radial-gradient(circle at 12% 18%, rgba(255, 77, 79, .18) 0 3px, transparent 4px),
-        radial-gradient(circle at 28% 42%, rgba(255, 193, 7, .18) 0 3px, transparent 4px),
-        radial-gradient(circle at 62% 26%, rgba(0, 106, 255, .16) 0 3px, transparent 4px),
-        radial-gradient(circle at 78% 52%, rgba(45, 212, 191, .16) 0 3px, transparent 4px),
-        radial-gradient(circle at 44% 70%, rgba(168, 85, 247, .14) 0 3px, transparent 4px),
-        radial-gradient(circle at 86% 80%, rgba(34, 197, 94, .14) 0 3px, transparent 4px),
-        radial-gradient(circle at 10% 78%, rgba(255, 77, 79, .14) 0 3px, transparent 4px),
-        radial-gradient(circle at 50% 88%, rgba(255, 193, 7, .14) 0 3px, transparent 4px),
+        /* confetti dots (more visible) */
+        radial-gradient(circle at 12% 18%, rgba(255, 77, 79, .34) 0 3px, transparent 4px),
+        radial-gradient(circle at 28% 42%, rgba(255, 193, 7, .32) 0 3px, transparent 4px),
+        radial-gradient(circle at 62% 26%, rgba(0, 106, 255, .28) 0 3px, transparent 4px),
+        radial-gradient(circle at 78% 52%, rgba(45, 212, 191, .28) 0 3px, transparent 4px),
+        radial-gradient(circle at 44% 70%, rgba(168, 85, 247, .26) 0 3px, transparent 4px),
+        radial-gradient(circle at 86% 80%, rgba(34, 197, 94, .26) 0 3px, transparent 4px),
+        radial-gradient(circle at 10% 78%, rgba(255, 77, 79, .26) 0 3px, transparent 4px),
+        radial-gradient(circle at 50% 88%, rgba(255, 193, 7, .26) 0 3px, transparent 4px),
 
-        /* streamers (diagonal ribbons) */
+        /* streamers (stronger ribbons) */
         repeating-linear-gradient(135deg,
-          rgba(0, 106, 255, .08) 0 10px,
+          rgba(0, 106, 255, .14) 0 10px,
           transparent 10px 28px
         ),
         repeating-linear-gradient(45deg,
-          rgba(255, 193, 7, .07) 0 12px,
+          rgba(255, 193, 7, .13) 0 12px,
           transparent 12px 30px
         ),
+        repeating-linear-gradient(120deg,
+          rgba(255, 77, 79, .10) 0 9px,
+          transparent 9px 26px
+        ),
 
-        /* balloons (soft circles near edges) */
-        radial-gradient(circle at 6% 20%, rgba(255, 77, 79, .18) 0 70px, transparent 71px),
-        radial-gradient(circle at 12% 32%, rgba(255, 193, 7, .16) 0 60px, transparent 61px),
-        radial-gradient(circle at 92% 22%, rgba(0, 106, 255, .14) 0 75px, transparent 76px),
-        radial-gradient(circle at 86% 36%, rgba(168, 85, 247, .12) 0 62px, transparent 63px),
-        radial-gradient(circle at 92% 78%, rgba(45, 212, 191, .12) 0 70px, transparent 71px),
-        radial-gradient(circle at 8% 82%, rgba(34, 197, 94, .12) 0 68px, transparent 69px),
+        /* balloons (more visible) */
+        radial-gradient(circle at 6% 20%, rgba(255, 77, 79, .28) 0 70px, transparent 71px),
+        radial-gradient(circle at 12% 32%, rgba(255, 193, 7, .24) 0 60px, transparent 61px),
+        radial-gradient(circle at 92% 22%, rgba(0, 106, 255, .22) 0 75px, transparent 76px),
+        radial-gradient(circle at 86% 36%, rgba(168, 85, 247, .18) 0 62px, transparent 63px),
+        radial-gradient(circle at 92% 78%, rgba(45, 212, 191, .18) 0 70px, transparent 71px),
+        radial-gradient(circle at 8% 82%, rgba(34, 197, 94, .18) 0 68px, transparent 69px),
 
         /* base */
-        linear-gradient(180deg, #f7fbff 0%, #f8f9fa 50%, #f7fbff 100%);
+        linear-gradient(180deg, #eef6ff 0%, #f3f4f6 45%, #eef6ff 100%);
       background-attachment: fixed;
     }
 
-    /* ✅ Readability overlay */
+    /* ✅ Less wash-out: lower opacity overlay */
     body::before{
       content:"";
       position: fixed;
       inset: 0;
-      background: rgba(255,255,255,0.65);
+      background: rgba(255,255,255,0.35); /* was 0.65 */
       pointer-events: none;
     }
 
     .booking-form {
-      position: relative; /* above overlay */
+      position: relative;
       max-width: 500px;
       margin: 50px auto;
-      background: rgba(255,255,255,0.92);
+      background: rgba(255,255,255,0.90);
       padding: 30px;
       border-radius: 14px;
-      box-shadow: 0 8px 28px rgba(0,0,0,0.12);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
+      box-shadow: 0 10px 34px rgba(0,0,0,0.16);
+      backdrop-filter: blur(4px); /* slightly less blur so bg shows */
+      -webkit-backdrop-filter: blur(4px);
     }
 
     .form-control { background-color: #e9f0ff; }
