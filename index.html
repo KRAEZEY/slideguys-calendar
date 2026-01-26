@@ -121,13 +121,16 @@
       font-size: 0.95rem;
     }
 
-    /* Total row styling */
+    /* Total rows */
+    .cart-totals {
+      margin-top: 10px;
+    }
     .cart-total-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-weight: 800;
-      margin: 10px 2px 0 2px;
+      margin: 6px 2px 0 2px;
     }
     .cart-total-row .label { opacity: 0.85; }
     .cart-total-row .value { font-size: 1.05rem; }
@@ -178,10 +181,16 @@
       <h5 class="mb-2">Cart</h5>
       <ul class="list-group" id="cartList"></ul>
 
-      <!-- ✅ NEW: total display -->
-      <div class="cart-total-row">
-        <div class="label">Total</div>
-        <div class="value">$<span id="cartTotal">0</span></div>
+      <!-- ✅ Totals -->
+      <div class="cart-totals">
+        <div class="cart-total-row">
+          <div class="label">Total</div>
+          <div class="value">$<span id="cartTotal">0</span></div>
+        </div>
+        <div class="cart-total-row">
+          <div class="label">Deposit due now</div>
+          <div class="value">$<span id="cartDeposit">0</span></div>
+        </div>
       </div>
     </div>
   </div>
@@ -207,6 +216,8 @@
       const supabaseUrl = 'https://vaobmohukgcqfvnclqyh.supabase.co';
       const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M';
       const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+      const DEPOSIT_PER_UNIT = 50;
 
       let unitsCache = [];
       let bookedUnitIds = new Set();
@@ -242,10 +253,15 @@
         return cart.reduce((sum, item) => sum + priceNumber(item.price), 0);
       }
 
-      function updateCartTotalUI() {
-        const el = document.getElementById('cartTotal');
-        if (!el) return;
-        el.textContent = formatMoney(getCartTotal());
+      function getDepositTotal() {
+        return cart.length * DEPOSIT_PER_UNIT;
+      }
+
+      function updateCartTotalsUI() {
+        const totalEl = document.getElementById('cartTotal');
+        const depEl = document.getElementById('cartDeposit');
+        if (totalEl) totalEl.textContent = formatMoney(getCartTotal());
+        if (depEl) depEl.textContent = formatMoney(getDepositTotal());
       }
 
       function clearSelectionUI() {
@@ -423,15 +439,15 @@
           li.remove();
           if (cart.length === 0) cartSection.style.display = 'none';
           renderUnits();
-          updateCartTotalUI();
+          updateCartTotalsUI();
         });
 
         cartList.appendChild(li);
         renderUnits();
-        updateCartTotalUI();
+        updateCartTotalsUI();
       });
 
-      // Submit (ONE email only if ALL succeed) + include total
+      // Submit (ONE email only if ALL succeed) + total + deposit
       document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -487,10 +503,11 @@
           }
         }
 
-        // ✅ Email only on full success + include total
+        // ✅ Email only on full success + include total + deposit
         if (allSuccessful) {
           const items_summary = reservedLines.join('\n');
           const total_price = `$${formatMoney(getCartTotal())}`;
+          const deposit_total = `$${formatMoney(getDepositTotal())}`;
 
           const params = {
             name,
@@ -500,6 +517,7 @@
             city,
             items_summary,
             total_price,
+            deposit_total,
             // backward compatibility
             unit: cart[0]?.unitName || '',
             date: cart[0]?.date || ''
@@ -517,7 +535,7 @@
           cart.length = 0;
           document.getElementById('cartList').innerHTML = '';
           document.getElementById('cartSection').style.display = 'none';
-          updateCartTotalUI();
+          updateCartTotalsUI();
 
           bookedUnitIds = new Set();
           checking = false;
