@@ -145,6 +145,14 @@
     .cart-total-row .label { opacity: 0.85; }
     .cart-total-row .value { font-size: 1.05rem; }
 
+    /* ✅ Pay choice buttons */
+    .pay-choice-wrap { margin-top: 14px; }
+    .pay-choice-wrap .btn { font-weight: 800; }
+    .pay-choice-wrap .btn.active-choice {
+      outline: 3px solid rgba(0,106,255,0.18);
+      border-color: #006aff !important;
+    }
+
     @media (max-width: 420px) {
       .unit-grid { grid-template-columns: 1fr; }
       .unit-card-btn { min-height: 210px; }
@@ -177,6 +185,8 @@
       <input type="hidden" id="unit" required />
 
       <button type="button" id="addToCartBtn" class="btn btn-secondary w-100 mb-2">Add to Cart</button>
+
+      <!-- ✅ Reserve button kept, but payment triggers reservation + emails -->
       <button type="submit" class="btn btn-primary w-100">Reserve</button>
     </form>
 
@@ -202,6 +212,25 @@
           <div class="value">$<span id="cartDeposit">0</span></div>
         </div>
       </div>
+
+      <!-- ✅ Payment amount choice -->
+      <div class="pay-choice-wrap">
+        <div class="d-flex gap-2 mt-3">
+          <button type="button" id="payFullBtn" class="btn btn-outline-primary w-50">
+            Full Amount ($0)
+          </button>
+          <button type="button" id="payDepositBtn" class="btn btn-outline-primary w-50">
+            Deposit Amount ($0)
+          </button>
+        </div>
+
+        <!-- ✅ PayPal appears after choosing amount -->
+        <div id="paymentOptions" class="mt-3" style="display:none;">
+          <div class="fw-bold mb-2">Pay with PayPal</div>
+          <div id="paypalButtons"></div>
+          <div id="paypalStatus" class="small mt-2" style="display:none;"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -210,6 +239,9 @@
   <script>
     (function () { emailjs.init("PXm_wNk9aIao8Hlpp"); })();
   </script>
+
+  <!-- ✅ PayPal JS SDK (PUT YOUR CLIENT ID) -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AYYBW3PCNYS6A&currency=USD&intent=capture"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
@@ -236,6 +268,12 @@
       // cart: { unitId, unitName, price, date }
       const cart = [];
 
+      // ✅ PayPal state
+      let chosenPayType = null; // 'full' | 'deposit'
+      let chosenPayAmount = 0;
+      let paypalRenderedFor = null; // amount string
+      let finalized = false; // prevents double finalize
+
       function cartKey(unitId, dateStr) {
         return `${String(unitId)}|${dateStr}`;
       }
@@ -256,7 +294,7 @@
       function formatMoney(n) {
         const v = Number(n);
         if (!Number.isFinite(v)) return '0';
-        return v.toFixed(2).replace(/\.00$/, '');
+        return v.toFixed(2); // keep 2 decimals for PayPal + UI
       }
 
       function getCartTotal() {
@@ -272,6 +310,22 @@
         const depEl = document.getElementById('cartDeposit');
         if (totalEl) totalEl.textContent = formatMoney(getCartTotal());
         if (depEl) depEl.textContent = formatMoney(getDepositTotal());
+
+        // ✅ Update button labels
+        const fullBtn = document.getElementById('payFullBtn');
+        const depBtn = document.getElementById('payDepositBtn');
+        if (fullBtn) fullBtn.textContent = `Full Amount ($${formatMoney(getCartTotal())})`;
+        if (depBtn) depBtn.textContent = `Deposit Amount ($${formatMoney(getDepositTotal())})`;
+
+        // Hide payment options if cart empty
+        if (cart.length === 0) {
+          chosenPayType = null;
+          chosenPayAmount = 0;
+          paypalRenderedFor = null;
+          finalized = false;
+          setPaymentUI(false);
+          clearPayChoiceStyles();
+        }
       }
 
       function clearSelectionUI() {
@@ -457,9 +511,137 @@
         updateCartTotalsUI();
       });
 
-      // Submit (ONE email only if ALL succeed) + total + deposit
-      document.getElementById('bookingForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
+      // ✅ Payment UI helpers
+      function setPaymentUI(show) {
+        const paymentOptions = document.getElementById('paymentOptions');
+        if (paymentOptions) paymentOptions.style.display = show ? 'block' : 'none';
+        const status = document.getElementById('paypalStatus');
+        if (status) status.style.display = 'none';
+      }
+
+      function clearPayChoiceStyles() {
+        document.getElementById('payFullBtn')?.classList.remove('active-choice');
+        document.getElementById('payDepositBtn')?.classList.remove('active-choice');
+      }
+
+      function showPayStatus(msg, ok = true) {
+        const el = document.getElementById('paypalStatus');
+        if (!el) return;
+        el.style.display = 'block';
+        el.style.color = ok ? '#198754' : '#dc3545';
+        el.textContent = msg;
+      }
+
+      async function ensureCartStillAvailable() {
+        // lightweight re-check (best effort). Real “holds” require a server.
+        for (const item of cart) {
+          const { unitId, date } = item;
+          const { data: existing } = await supabase
+            .from('bookings')
+            .select('id')
+            .eq('unit', Number(unitId))
+            .eq('date', date)
+            .limit(1);
+
+          if (existing && existing.length > 0) return false;
+        }
+        return true;
+      }
+
+      function renderPayPalButtons(amountStr) {
+        const container = document.getElementById('paypalButtons');
+        if (!container) return;
+
+        // prevent re-render if same amount already rendered
+        if (paypalRenderedFor === amountStr) return;
+
+        container.innerHTML = '';
+        paypalRenderedFor = amountStr;
+
+        if (!window.paypal) {
+          showPayStatus('PayPal SDK not loaded. Check your client-id in the PayPal script tag.', false);
+          return;
+        }
+
+        window.paypal.Buttons({
+          style: { layout: 'vertical' },
+
+          // Create order with predetermined amount
+          createOrder: async (data, actions) => {
+            if (cart.length === 0) {
+              alert('Your cart is empty.');
+              throw new Error('Cart empty');
+            }
+
+            // Best-effort availability re-check before taking money
+            const stillAvailable = await ensureCartStillAvailable();
+            if (!stillAvailable) {
+              alert('One or more items were just booked by someone else. Please refresh and try again.');
+              throw new Error('Not available');
+            }
+
+            return actions.order.create({
+              purchase_units: [{
+                amount: {
+                  currency_code: 'USD',
+                  value: amountStr
+                }
+              }]
+            });
+          },
+
+          // Capture funds
+          onApprove: async (data, actions) => {
+            showPayStatus('Processing payment…', true);
+
+            const details = await actions.order.capture();
+
+            // ✅ Success: finalize reservation + emails
+            try {
+              await finalizeReservationAfterPayment(details);
+              showPayStatus('Payment successful. Booking confirmed & emails sent!', true);
+            } catch (err) {
+              console.error(err);
+              showPayStatus('Payment succeeded, but booking failed. Please contact us with your PayPal receipt for help.', false);
+            }
+          },
+
+          onError: (err) => {
+            console.error(err);
+            showPayStatus('Payment error. Please try again.', false);
+          },
+
+          onCancel: () => {
+            showPayStatus('Payment canceled.', false);
+          }
+        }).render('#paypalButtons');
+      }
+
+      // ✅ Choose full/deposit, then show PayPal
+      document.getElementById('payFullBtn').addEventListener('click', () => {
+        if (cart.length === 0) return alert('Add at least one unit to your cart first.');
+        chosenPayType = 'full';
+        chosenPayAmount = getCartTotal();
+        clearPayChoiceStyles();
+        document.getElementById('payFullBtn').classList.add('active-choice');
+        setPaymentUI(true);
+        renderPayPalButtons(formatMoney(chosenPayAmount));
+      });
+
+      document.getElementById('payDepositBtn').addEventListener('click', () => {
+        if (cart.length === 0) return alert('Add at least one unit to your cart first.');
+        chosenPayType = 'deposit';
+        chosenPayAmount = getDepositTotal();
+        clearPayChoiceStyles();
+        document.getElementById('payDepositBtn').classList.add('active-choice');
+        setPaymentUI(true);
+        renderPayPalButtons(formatMoney(chosenPayAmount));
+      });
+
+      // ✅ After payment: run your existing insert + email logic
+      async function finalizeReservationAfterPayment(paypalDetails) {
+        if (finalized) return;
+        finalized = true;
 
         const name = document.getElementById('name').value.trim();
         const phone = document.getElementById('phone').value.trim();
@@ -467,9 +649,13 @@
         const address = document.getElementById('address').value.trim();
         const city = document.getElementById('city').value.trim();
 
+        if (!name || !phone || !email || !address || !city) {
+          finalized = false;
+          throw new Error('Missing required customer fields.');
+        }
         if (cart.length === 0) {
-          alert('Your cart is empty. Please add at least one booking.');
-          return;
+          finalized = false;
+          throw new Error('Cart empty.');
         }
 
         let allSuccessful = true;
@@ -513,50 +699,76 @@
           }
         }
 
-        // ✅ Email only on full success + include total + deposit
-        if (allSuccessful) {
-          const items_summary = reservedLines.join('\n');
-          const total_price = `$${formatMoney(getCartTotal())}`;
-          const deposit_total = `$${formatMoney(getDepositTotal())}`;
-
-          const params = {
-            name,
-            phone,
-            email,
-            address,
-            city,
-            items_summary,
-            total_price,
-            deposit_total,
-            // backward compatibility
-            unit: cart[0]?.unitName || '',
-            date: cart[0]?.date || ''
-          };
-
-          await emailjs.send("service_1zxrd0j", "template_nqep0gt", params);
-          await emailjs.send("service_1zxrd0j", "template_6z2dcsj", params);
-
-          document.getElementById('successMessage').style.display = 'block';
-          document.getElementById('errorMessage').style.display = 'none';
-          document.getElementById('bookingForm').reset();
-
-          clearSelectionUI();
-
-          cart.length = 0;
-          document.getElementById('cartList').innerHTML = '';
-          document.getElementById('cartSection').style.display = 'none';
-          updateCartTotalsUI();
-
-          bookedUnitIds = new Set();
-          checking = false;
-          renderUnits();
-        } else {
+        if (!allSuccessful) {
+          finalized = false;
           document.getElementById('successMessage').style.display = 'none';
           document.getElementById('errorMessage').style.display = 'block';
-
-          const d = document.getElementById('date').value;
-          if (d) await refreshAvailability(d);
+          throw new Error('Insert failed for one or more items.');
         }
+
+        // ✅ Email only on full success + include totals + payment info
+        const items_summary = reservedLines.join('\n');
+        const total_price = `$${formatMoney(getCartTotal())}`;
+        const deposit_total = `$${formatMoney(getDepositTotal())}`;
+
+        const paid_amount = `$${formatMoney(chosenPayAmount)}`;
+        const payment_type = chosenPayType === 'full' ? 'Full Amount' : 'Deposit Amount';
+        const paypal_order_id = paypalDetails?.id || '';
+        const paypal_payer_email = paypalDetails?.payer?.email_address || '';
+
+        const params = {
+          name,
+          phone,
+          email,
+          address,
+          city,
+          items_summary,
+          total_price,
+          deposit_total,
+
+          // ✅ payment info (add these vars in EmailJS templates if you want)
+          payment_type,
+          paid_amount,
+          paypal_order_id,
+          paypal_payer_email,
+
+          // backward compatibility
+          unit: cart[0]?.unitName || '',
+          date: cart[0]?.date || ''
+        };
+
+        await emailjs.send("service_1zxrd0j", "template_nqep0gt", params);
+        await emailjs.send("service_1zxrd0j", "template_6z2dcsj", params);
+
+        document.getElementById('successMessage').style.display = 'block';
+        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('bookingForm').reset();
+
+        clearSelectionUI();
+
+        cart.length = 0;
+        document.getElementById('cartList').innerHTML = '';
+        document.getElementById('cartSection').style.display = 'none';
+        updateCartTotalsUI();
+
+        bookedUnitIds = new Set();
+        checking = false;
+        renderUnits();
+
+        // reset payment UI
+        chosenPayType = null;
+        chosenPayAmount = 0;
+        paypalRenderedFor = null;
+        finalized = false;
+        setPaymentUI(false);
+        clearPayChoiceStyles();
+      }
+
+      // Submit button (kept) – direct submit no longer processes booking.
+      // Payment is what triggers the booking + emails.
+      document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        alert('Please choose Full Amount or Deposit Amount under your cart, then complete PayPal payment to finalize the reservation.');
       });
     });
   </script>
