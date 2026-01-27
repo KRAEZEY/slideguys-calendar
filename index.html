@@ -9,7 +9,6 @@
     body {
       background-color: #ffffff;
       font-family: Arial, sans-serif;
-
       background-image: url("https://thumbs.dreamstime.com/b/colorful-birthday-party-celebration-rainbow-border-fun-balloons-streamers-confetti-adding-festive-touch-exciting-348859905.jpg");
       background-size: cover;
       background-position: center;
@@ -147,38 +146,9 @@
       border-color: #006aff !important;
     }
 
-    /* ✅ 4-button wallet layout */
-    .wallet-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .wallet-btn {
-      border: 2px solid #d9e3ff;
-      background: #fff;
-      border-radius: 12px;
-      padding: 10px 8px;
-      font-weight: 900;
-      cursor: pointer;
-      transition: transform .06s ease, box-shadow .12s ease, border-color .12s ease;
-      text-align: center;
-      user-select: none;
-    }
-    .wallet-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-      border-color: #b8ccff;
-    }
-    .wallet-btn.active-wallet {
-      border-color: #006aff;
-      box-shadow: 0 0 0 3px rgba(0,106,255,0.18);
-    }
-    .wallet-hint {
-      font-size: 0.85rem;
-      opacity: 0.85;
-      margin-top: 8px;
-      line-height: 1.25;
-    }
+    /* ✅ stacked PayPal button spacing like your screenshot */
+    .pp-stack > .pp-row { margin-top: 12px; }
+    .pp-stack > .pp-row:first-child { margin-top: 0; }
 
     @media (max-width: 420px) {
       .unit-grid { grid-template-columns: 1fr; }
@@ -213,7 +183,6 @@
       </div>
 
       <div class="unit-grid" id="unitGrid"></div>
-
       <input type="hidden" id="unit" required />
 
       <button type="button" id="addToCartBtn" class="btn btn-secondary w-100 mb-2">Add to Cart</button>
@@ -251,20 +220,14 @@
         <div id="paymentOptions" class="mt-3" style="display:none;">
           <div class="fw-bold mb-2">Choose a payment method</div>
 
-          <!-- ✅ 4 button layout (visual selector) -->
-          <div class="wallet-grid mb-2">
-            <button type="button" id="walletPaypal" class="wallet-btn">PayPal</button>
-            <button type="button" id="walletVenmo" class="wallet-btn">Venmo</button>
-            <button type="button" id="walletPayLater" class="wallet-btn">Pay Later</button>
-            <button type="button" id="walletCard" class="wallet-btn">Credit Card</button>
+          <!-- ✅ four stacked PayPal renders like your other site -->
+          <div class="pp-stack">
+            <div class="pp-row" id="btnPaypalWrap"></div>
+            <div class="pp-row" id="btnVenmoWrap"></div>
+            <div class="pp-row" id="btnPayLaterWrap"></div>
+            <div class="pp-row" id="btnCardWrap"></div>
           </div>
 
-          <div class="wallet-hint">
-            Venmo, Pay Later, and Card are only available when PayPal Checkout says the customer/device is eligible.
-            If an option isn’t available, PayPal will hide/ignore it.
-          </div>
-
-          <div class="mt-3" id="paypalButtons"></div>
           <div id="paypalStatus" class="small mt-2" style="display:none;"></div>
         </div>
       </div>
@@ -277,8 +240,8 @@
     (function () { emailjs.init("PXm_wNk9aIao8Hlpp"); })();
   </script>
 
-  <!-- ✅ PayPal JS SDK (CLIENT ID FROM YOUR ORIGINAL CODE) -->
-  <script src="https://www.paypal.com/sdk/js?client-id=ARPujaExbPU50Hj0kqNpn9j0yx-oPf96whc5YgreLWcPrkWzlVzOwDxO3teVJjBG2-WCsgzSh45Xpbi2&currency=USD&intent=capture"></script>
+  <!-- ✅ IMPORTANT: enable-funding for Venmo + Pay Later -->
+  <script src="https://www.paypal.com/sdk/js?client-id=ARPujaExbPU50Hj0kqNpn9j0yx-oPf96whc5YgreLWcPrkWzlVzOwDxO3teVJjBG2-WCsgzSh45Xpbi2&currency=USD&intent=capture&enable-funding=venmo,paylater"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
@@ -307,11 +270,8 @@
       // ✅ payment state
       let chosenPayType = null; // 'full' | 'deposit'
       let chosenPayAmount = 0;
-      let paypalRenderedFor = null;
+      let renderedKey = null; // amount string
       let finalized = false;
-
-      // ✅ wallet selection (preferred funding)
-      let selectedWallet = 'paypal'; // 'paypal' | 'venmo' | 'paylater' | 'card'
 
       function cartKey(unitId, dateStr) { return `${String(unitId)}|${dateStr}`; }
 
@@ -355,22 +315,6 @@
         el.textContent = msg;
       }
 
-      function setActiveWalletUI(which) {
-        selectedWallet = which;
-        document.querySelectorAll('.wallet-btn').forEach(b => b.classList.remove('active-wallet'));
-
-        const map = {
-          paypal: document.getElementById('walletPaypal'),
-          venmo: document.getElementById('walletVenmo'),
-          paylater: document.getElementById('walletPayLater'),
-          card: document.getElementById('walletCard')
-        };
-        map[which]?.classList.add('active-wallet');
-
-        // If amount already chosen, re-render to apply preference
-        if (chosenPayAmount > 0) renderPayPalButtons(formatMoney(chosenPayAmount));
-      }
-
       function updateCartTotalsUI() {
         document.getElementById('cartTotal').textContent = formatMoney(getCartTotal());
         document.getElementById('cartDeposit').textContent = formatMoney(getDepositTotal());
@@ -381,10 +325,11 @@
         if (cart.length === 0) {
           chosenPayType = null;
           chosenPayAmount = 0;
-          paypalRenderedFor = null;
+          renderedKey = null;
           finalized = false;
           setPaymentUI(false);
           clearPayChoiceStyles();
+          clearPayButtons();
         }
       }
 
@@ -507,6 +452,7 @@
         if (!unitRow) return alert('Could not find that unit. Please try again.');
 
         const unitId = String(unitRow.id);
+
         if (bookedUnitIds.has(unitId)) {
           alert('That unit is already booked on this date.');
           clearSelectionUI();
@@ -540,13 +486,6 @@
         updateCartTotalsUI();
       });
 
-      // Wallet button clicks
-      document.getElementById('walletPaypal').addEventListener('click', () => setActiveWalletUI('paypal'));
-      document.getElementById('walletVenmo').addEventListener('click', () => setActiveWalletUI('venmo'));
-      document.getElementById('walletPayLater').addEventListener('click', () => setActiveWalletUI('paylater'));
-      document.getElementById('walletCard').addEventListener('click', () => setActiveWalletUI('card'));
-      setActiveWalletUI('paypal');
-
       async function ensureCartStillAvailable() {
         for (const item of cart) {
           const { unitId, date } = item;
@@ -562,35 +501,20 @@
         return true;
       }
 
-      function resolveFundingSource() {
-        if (!window.paypal || !window.paypal.FUNDING) return null;
-        const f = window.paypal.FUNDING;
-
-        if (selectedWallet === 'venmo') return f.VENMO;
-        if (selectedWallet === 'paylater') return f.PAYLATER;
-        if (selectedWallet === 'card') return f.CARD;
-        return f.PAYPAL;
+      function clearPayButtons() {
+        document.getElementById('btnPaypalWrap').innerHTML = '';
+        document.getElementById('btnVenmoWrap').innerHTML = '';
+        document.getElementById('btnPayLaterWrap').innerHTML = '';
+        document.getElementById('btnCardWrap').innerHTML = '';
       }
 
-      function renderPayPalButtons(amountStr) {
-        const container = document.getElementById('paypalButtons');
-        if (!container) return;
-
-        const cacheKey = `${amountStr}|${selectedWallet}`;
-        if (paypalRenderedFor === cacheKey) return;
-
-        container.innerHTML = '';
-        paypalRenderedFor = cacheKey;
-
-        if (!window.paypal) {
-          showPayStatus('PayPal SDK not loaded. Check your client-id in the PayPal script tag.', false);
-          return;
-        }
-
-        const fundingSource = resolveFundingSource();
-
-        const config = {
-          style: { layout: 'vertical' },
+      function buildButtonConfig(amountStr) {
+        return {
+          style: {
+            layout: 'vertical',
+            shape: 'rect',
+            height: 45
+          },
 
           createOrder: async (data, actions) => {
             if (cart.length === 0) throw new Error('Cart empty');
@@ -611,7 +535,6 @@
           onApprove: async (data, actions) => {
             showPayStatus('Processing payment…', true);
             const details = await actions.order.capture();
-
             try {
               await finalizeReservationAfterPayment(details);
               showPayStatus('Payment successful. Booking confirmed & emails sent!', true);
@@ -628,19 +551,57 @@
 
           onCancel: () => showPayStatus('Payment canceled.', false)
         };
-
-        let btns;
-        try {
-          btns = fundingSource
-            ? window.paypal.Buttons({ fundingSource, ...config })
-            : window.paypal.Buttons(config);
-        } catch (e) {
-          btns = window.paypal.Buttons(config);
-        }
-
-        btns.render('#paypalButtons');
       }
 
+      function renderOneFundingButton(wrapId, fundingSource, styleOverrides, amountStr) {
+        const wrap = document.getElementById(wrapId);
+        if (!wrap) return;
+
+        wrap.innerHTML = '';
+        wrap.style.display = 'block';
+
+        const cfg = buildButtonConfig(amountStr);
+        cfg.style = { ...cfg.style, ...(styleOverrides || {}) };
+
+        let instance;
+        try {
+          instance = window.paypal.Buttons({ fundingSource, ...cfg });
+        } catch (e) {
+          // if fundingSource not supported, hide
+          wrap.style.display = 'none';
+          return;
+        }
+
+        if (instance && typeof instance.isEligible === 'function' && !instance.isEligible()) {
+          wrap.style.display = 'none';
+          return;
+        }
+
+        instance.render(`#${wrapId}`);
+      }
+
+      function renderAllPaymentButtons(amountStr) {
+        if (!window.paypal || !window.paypal.FUNDING) {
+          showPayStatus('PayPal SDK not loaded. Check your client-id in the PayPal script tag.', false);
+          return;
+        }
+
+        // avoid re-render spam
+        if (renderedKey === amountStr) return;
+        renderedKey = amountStr;
+
+        clearPayButtons();
+
+        const F = window.paypal.FUNDING;
+
+        // Match your other site’s look (PayPal handles the branding)
+        renderOneFundingButton('btnPaypalWrap', F.PAYPAL,   { color: 'gold', label: 'paypal' }, amountStr);
+        renderOneFundingButton('btnVenmoWrap',  F.VENMO,    { color: 'blue', label: 'venmo' }, amountStr);
+        renderOneFundingButton('btnPayLaterWrap', F.PAYLATER,{ color: 'gold', label: 'paylater' }, amountStr);
+        renderOneFundingButton('btnCardWrap',   F.CARD,     { color: 'black', label: 'pay' }, amountStr);
+      }
+
+      // Choose full/deposit, then show the 4-button layout
       document.getElementById('payFullBtn').addEventListener('click', () => {
         if (cart.length === 0) return alert('Add at least one unit to your cart first.');
         chosenPayType = 'full';
@@ -648,7 +609,7 @@
         clearPayChoiceStyles();
         document.getElementById('payFullBtn').classList.add('active-choice');
         setPaymentUI(true);
-        renderPayPalButtons(formatMoney(chosenPayAmount));
+        renderAllPaymentButtons(formatMoney(chosenPayAmount));
       });
 
       document.getElementById('payDepositBtn').addEventListener('click', () => {
@@ -658,9 +619,10 @@
         clearPayChoiceStyles();
         document.getElementById('payDepositBtn').classList.add('active-choice');
         setPaymentUI(true);
-        renderPayPalButtons(formatMoney(chosenPayAmount));
+        renderAllPaymentButtons(formatMoney(chosenPayAmount));
       });
 
+      // After payment: insert + emails
       async function finalizeReservationAfterPayment(paypalDetails) {
         if (finalized) return;
         finalized = true;
@@ -725,21 +687,13 @@
 
         const paid_amount = `$${formatMoney(chosenPayAmount)}`;
         const payment_type = chosenPayType === 'full' ? 'Full Amount' : 'Deposit Amount';
-
-        const wallet_label =
-          selectedWallet === 'venmo' ? 'Venmo (via PayPal)' :
-          selectedWallet === 'paylater' ? 'Pay Later (via PayPal)' :
-          selectedWallet === 'card' ? 'Credit Card (via PayPal)' :
-          'PayPal';
-
         const paypal_order_id = paypalDetails?.id || '';
         const paypal_payer_email = paypalDetails?.payer?.email_address || '';
 
         const params = {
           name, phone, email, address, city,
           items_summary, total_price, deposit_total,
-          payment_type, paid_amount, wallet_label,
-          paypal_order_id, paypal_payer_email,
+          payment_type, paid_amount, paypal_order_id, paypal_payer_email,
           unit: cart[0]?.unitName || '',
           date: cart[0]?.date || ''
         };
@@ -752,6 +706,7 @@
         document.getElementById('bookingForm').reset();
 
         clearSelectionUI();
+
         cart.length = 0;
         document.getElementById('cartList').innerHTML = '';
         document.getElementById('cartSection').style.display = 'none';
@@ -761,18 +716,19 @@
         checking = false;
         renderUnits();
 
+        // reset payment ui
         chosenPayType = null;
         chosenPayAmount = 0;
-        paypalRenderedFor = null;
+        renderedKey = null;
         finalized = false;
         setPaymentUI(false);
         clearPayChoiceStyles();
-        setActiveWalletUI('paypal');
+        clearPayButtons();
       }
 
       document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        alert('Please choose Full Amount or Deposit Amount under your cart, then choose a payment method and complete checkout to finalize the reservation.');
+        alert('Please choose Full Amount or Deposit Amount under your cart, then complete payment to finalize the reservation.');
       });
     });
   </script>
