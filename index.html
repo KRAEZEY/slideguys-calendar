@@ -10,7 +10,7 @@
       background-color: #ffffff;
       font-family: Arial, sans-serif;
 
-      /* ✅ Background image inserted (only change) */
+      /* ✅ Background image */
       background-image: url("https://thumbs.dreamstime.com/b/colorful-birthday-party-celebration-rainbow-border-fun-balloons-streamers-confetti-adding-festive-touch-exciting-348859905.jpg");
       background-size: cover;
       background-position: center;
@@ -151,8 +151,8 @@
       border-color: #006aff !important;
     }
 
-    /* ✅ PayPal stack spacing like your other site */
-    .paypal-stack { margin-top: 18px; position: relative; z-index: 1; }
+    /* Space the PayPal stack further down the page (like your other site) */
+    .paypal-stack { margin-top: 28px; position: relative; z-index: 1; }
 
     @media (max-width: 420px) {
       .unit-grid { grid-template-columns: 1fr; }
@@ -166,11 +166,13 @@
     <img src="https://lh3.googleusercontent.com/a-/ALV-UjUTAoSFAR5OUMj0ZCkgLF1RMYoE-Q85G0HPftaFEBBIjjzw9cQ=s265-w265-h265" alt="Slide Guys Logo" class="logo">
     <h2 class="mb-3">Slide Guys Booking</h2>
     <p>
-      Select a date and available units will be shown. Add items to cart, and check out. Payment link will be provided in email.
+      Select a date and available units will be shown. Add items to cart. Payment link will appear when you choose "full payment" or "deposit".
       <br/>Deliveries within 10 miles of Richfield are free.
-      <br/>All other outlying areas are available with a Travel Fee ($35 for 10-20 miles, $52 for 20-30 miles, $96 for 30-40 miles).
-      <br/>No cancellations. Rescheduling is subject to availability.
-      <br/>A $50 deposit per unit is due at time of reservation (per unit). We accept cash, check, venmo, cash app, and pay-pal.
+      <br/>All other outlying areas are available with a Travel Fee. $35 for 10-20 miles, $52 for 20-30 miles, $96 for 30-40 miles.<br/> (not included in total price)
+      <br/>No cancellations.<br/>
+      Rescheduling is subject to availability.
+      <br/>A non-refundable $50 deposit is due at time of reservation (per unit). We accept venmo, credit card, and pay-pal for the deposit.<br/>
+      We can collect cash, check, cash app, venmo, or paypal the day of.
     </p>
 
     <form id="bookingForm">
@@ -180,7 +182,7 @@
       <input type="text" id="address" class="form-control mb-2" placeholder="Address" required />
       <input type="text" id="city" class="form-control mb-2" placeholder="City" required />
 
-      <!-- Date picker -->
+      <!-- Date picker above selected unit -->
       <input type="date" id="date" class="form-control mb-3" required />
 
       <div class="selected-unit-pill">
@@ -188,12 +190,11 @@
       </div>
 
       <div class="unit-grid" id="unitGrid"></div>
-
       <input type="hidden" id="unit" required />
 
       <button type="button" id="addToCartBtn" class="btn btn-secondary w-100 mb-2">Add to Cart</button>
 
-      <!-- ✅ Reserve button removed (payment finalizes booking) -->
+      <!-- ✅ Reserve button REMOVED -->
     </form>
 
     <div id="successMessage" class="mt-3 text-success" style="display:none;">
@@ -203,7 +204,7 @@
       That unit is already booked on this date.
     </div>
 
-    <div class="mt-4 text-start" id="cartSection" style="display: none;">
+    <div class="mt-4 text-start" id="cartSection" style="display:none;">
       <h5 class="mb-2">Cart</h5>
       <ul class="list-group" id="cartList"></ul>
 
@@ -219,7 +220,7 @@
         </div>
       </div>
 
-      <!-- Payment amount choice -->
+      <!-- Payment amount choice (hidden PayPal stack until picked) -->
       <div class="pay-choice-wrap">
         <div class="d-flex gap-2 mt-3">
           <button type="button" id="payFullBtn" class="btn btn-outline-primary w-50">
@@ -230,9 +231,10 @@
           </button>
         </div>
 
-        <!-- ✅ Hidden until they pick Full/Deposit -->
-        <div id="paymentWrap" class="paypal-stack" style="display:none;">
-          <div id="paypal-buttons"></div>
+        <!-- ✅ PayPal/Venmo/Card stack appears after choosing amount -->
+        <div id="paymentOptions" class="paypal-stack mt-3" style="display:none;">
+          <div class="fw-bold mb-2">Checkout</div>
+          <div id="paypalButtons"></div>
           <div id="paypalStatus" class="small mt-2" style="display:none;"></div>
         </div>
       </div>
@@ -245,8 +247,8 @@
     (function () { emailjs.init("PXm_wNk9aIao8Hlpp"); })();
   </script>
 
-  <!-- ✅ PayPal SDK (stacked funding like your other site: PayPal, Venmo, Pay Later, Card) -->
-  <script src="https://www.paypal.com/sdk/js?client-id=ARPujaExbPU50Hj0kqNpn9j0yx-oPf96whc5YgreLWcPrkWzlVzOwDxO3teVJjBG2-WCsgzSh45Xpbi2&components=buttons&enable-funding=card,venmo,paylater&currency=USD&intent=capture"></script>
+  <!-- ✅ PayPal SDK with Venmo + Card enabled (same “stack” behavior as your other site) -->
+  <script src="https://www.paypal.com/sdk/js?client-id=ARPujaExbPU50Hj0kqNpn9j0yx-oPf96whc5YgreLWcPrkWzlVzOwDxO3teVJjBG2-WCsgzSh45Xpbi2&components=buttons&enable-funding=card,venmo&currency=USD&intent=capture"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
@@ -273,8 +275,8 @@
       // cart: { unitId, unitName, price, date }
       const cart = [];
 
-      // payment state
-      let chosenPayType = null; // 'full' | 'deposit'
+      // Payment state
+      let chosenPayType = null;   // 'full' | 'deposit'
       let chosenPayAmount = 0;
       let finalized = false;
 
@@ -309,6 +311,18 @@
         return cart.length * DEPOSIT_PER_UNIT;
       }
 
+      function setPaymentVisible(show) {
+        const paymentOptions = document.getElementById('paymentOptions');
+        if (paymentOptions) paymentOptions.style.display = show ? 'block' : 'none';
+        const status = document.getElementById('paypalStatus');
+        if (status) status.style.display = 'none';
+      }
+
+      function clearPayChoiceStyles() {
+        document.getElementById('payFullBtn')?.classList.remove('active-choice');
+        document.getElementById('payDepositBtn')?.classList.remove('active-choice');
+      }
+
       function showPayStatus(msg, ok = true) {
         const el = document.getElementById('paypalStatus');
         if (!el) return;
@@ -317,19 +331,69 @@
         el.textContent = msg;
       }
 
-      function setPaymentVisible(show) {
-        const wrap = document.getElementById('paymentWrap');
-        if (wrap) wrap.style.display = show ? 'block' : 'none';
+      // ✅ Same checks as "Reserve" (customer info + date + cart)
+      function requireCustomerInfoAndCart() {
+        const fields = [
+          { id: 'name', label: 'Full Name' },
+          { id: 'phone', label: 'Phone Number' },
+          { id: 'email', label: 'Email Address' },
+          { id: 'address', label: 'Address' },
+          { id: 'city', label: 'City' },
+        ];
+
+        const missing = [];
+
+        fields.forEach(f => {
+          const el = document.getElementById(f.id);
+          const val = (el?.value || '').trim();
+
+          el.classList.remove('is-invalid');
+          el.style.borderColor = '';
+
+          const badEmail = f.id === 'email' && val && !el.checkValidity();
+
+          if (!val || badEmail) {
+            missing.push(f.label);
+            el.classList.add('is-invalid');
+            el.style.borderColor = '#dc3545';
+          }
+        });
+
+        if (missing.length) {
+          alert('Please complete: ' + missing.join(', ') + ' before choosing payment.');
+          const firstBad = document.getElementById(fields.find(f => missing.includes(f.label))?.id || 'name');
+          if (firstBad) firstBad.focus();
+          return false;
+        }
+
+        const dateVal = (document.getElementById('date')?.value || '').trim();
+        if (!dateVal) {
+          alert('Please select a date before choosing payment.');
+          document.getElementById('date')?.focus();
+          return false;
+        }
+
+        if (cart.length === 0) {
+          alert('Add at least one unit to your cart first.');
+          return false;
+        }
+
+        return true;
       }
 
-      function clearPayChoiceStyles() {
-        document.getElementById('payFullBtn')?.classList.remove('active-choice');
-        document.getElementById('payDepositBtn')?.classList.remove('active-choice');
-      }
+      // Clear invalid state as they type
+      ['name','phone','email','address','city'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', () => {
+          el.classList.remove('is-invalid');
+          el.style.borderColor = '';
+        });
+      });
 
       function updateCartTotalsUI() {
         const totalEl = document.getElementById('cartTotal');
         const depEl = document.getElementById('cartDeposit');
+
         if (totalEl) totalEl.textContent = formatMoney(getCartTotal());
         if (depEl) depEl.textContent = formatMoney(getDepositTotal());
 
@@ -338,15 +402,13 @@
         if (fullBtn) fullBtn.textContent = `Full Amount ($${formatMoney(getCartTotal())})`;
         if (depBtn) depBtn.textContent = `Deposit Amount ($${formatMoney(getDepositTotal())})`;
 
-        // If cart empties, hide payment + reset choices
+        // If cart empty, reset payment UI
         if (cart.length === 0) {
           chosenPayType = null;
           chosenPayAmount = 0;
           finalized = false;
-          clearPayChoiceStyles();
           setPaymentVisible(false);
-          const st = document.getElementById('paypalStatus');
-          if (st) st.style.display = 'none';
+          clearPayChoiceStyles();
         }
       }
 
@@ -362,6 +424,7 @@
         const hasDate = !!selectedDate;
 
         const inCartForThisDate = hasDate ? cartKeysForDate(selectedDate) : new Set();
+
         unitGrid.innerHTML = '';
 
         unitsCache.forEach(unit => {
@@ -531,27 +594,6 @@
         updateCartTotalsUI();
       });
 
-      // ✅ Choose full/deposit, THEN show stacked PayPal buttons
-      document.getElementById('payFullBtn').addEventListener('click', () => {
-        if (cart.length === 0) return alert('Add at least one unit to your cart first.');
-        chosenPayType = 'full';
-        chosenPayAmount = getCartTotal();
-        clearPayChoiceStyles();
-        document.getElementById('payFullBtn').classList.add('active-choice');
-        setPaymentVisible(true);
-        showPayStatus(`Selected: Full Amount ($${formatMoney(chosenPayAmount)})`, true);
-      });
-
-      document.getElementById('payDepositBtn').addEventListener('click', () => {
-        if (cart.length === 0) return alert('Add at least one unit to your cart first.');
-        chosenPayType = 'deposit';
-        chosenPayAmount = getDepositTotal();
-        clearPayChoiceStyles();
-        document.getElementById('payDepositBtn').classList.add('active-choice');
-        setPaymentVisible(true);
-        showPayStatus(`Selected: Deposit Amount ($${formatMoney(chosenPayAmount)})`, true);
-      });
-
       async function ensureCartStillAvailable() {
         for (const item of cart) {
           const { unitId, date } = item;
@@ -567,7 +609,101 @@
         return true;
       }
 
-      // ✅ Finalize reservation after PayPal capture
+      // ✅ PayPal stack: render once; createOrder uses chosenPayAmount
+      function renderPayPalStackOnce() {
+        const container = document.getElementById('paypalButtons');
+        if (!container) return;
+
+        if (!window.paypal) {
+          showPayStatus('PayPal SDK not loaded. Check your client-id in the PayPal script tag.', false);
+          return;
+        }
+
+        // prevent double-render
+        if (container.dataset.rendered === '1') return;
+        container.dataset.rendered = '1';
+
+        window.paypal.Buttons({
+          style: { layout: 'vertical', shape: 'rect', label: 'pay' },
+
+          createOrder: async (data, actions) => {
+            // ✅ Keep same checks even if someone tries to pay without clicking Full/Deposit properly
+            if (!requireCustomerInfoAndCart()) throw new Error('Missing required fields/cart/date');
+
+            if (!chosenPayType || !chosenPayAmount) {
+              alert('Please choose Full Amount or Deposit Amount first.');
+              throw new Error('No pay choice');
+            }
+
+            const stillAvailable = await ensureCartStillAvailable();
+            if (!stillAvailable) {
+              alert('One or more items were just booked by someone else. Please refresh and try again.');
+              throw new Error('Not available');
+            }
+
+            const amountStr = formatMoney(chosenPayAmount);
+
+            return actions.order.create({
+              purchase_units: [{
+                amount: {
+                  currency_code: 'USD',
+                  value: amountStr
+                },
+                description: `Slide Guys Booking (${cart.length} unit${cart.length > 1 ? 's' : ''}) — ${chosenPayType === 'full' ? 'Full' : 'Deposit'}`
+              }]
+            });
+          },
+
+          onApprove: async (data, actions) => {
+            try {
+              showPayStatus('Processing payment…', true);
+              const details = await actions.order.capture();
+              await finalizeReservationAfterPayment(details);
+              showPayStatus('Payment successful. Booking confirmed & emails sent!', true);
+            } catch (e) {
+              console.error(e);
+              showPayStatus('Payment succeeded, but booking failed. Please contact us with your PayPal receipt for help.', false);
+            }
+          },
+
+          onError: (err) => {
+            console.error(err);
+            showPayStatus('Payment error. Please try again.', false);
+          },
+
+          onCancel: () => {
+            showPayStatus('Payment canceled.', false);
+          }
+        }).render('#paypalButtons');
+      }
+
+      // ✅ Choose full/deposit -> SAME checks as Reserve -> show payment stack
+      document.getElementById('payFullBtn').addEventListener('click', () => {
+        if (!requireCustomerInfoAndCart()) return;
+
+        chosenPayType = 'full';
+        chosenPayAmount = getCartTotal();
+        clearPayChoiceStyles();
+        document.getElementById('payFullBtn').classList.add('active-choice');
+
+        setPaymentVisible(true);
+        renderPayPalStackOnce();
+        showPayStatus(`Selected: Full Amount ($${formatMoney(chosenPayAmount)})`, true);
+      });
+
+      document.getElementById('payDepositBtn').addEventListener('click', () => {
+        if (!requireCustomerInfoAndCart()) return;
+
+        chosenPayType = 'deposit';
+        chosenPayAmount = getDepositTotal();
+        clearPayChoiceStyles();
+        document.getElementById('payDepositBtn').classList.add('active-choice');
+
+        setPaymentVisible(true);
+        renderPayPalStackOnce();
+        showPayStatus(`Selected: Deposit Amount ($${formatMoney(chosenPayAmount)})`, true);
+      });
+
       async function finalizeReservationAfterPayment(paypalDetails) {
         if (finalized) return;
         finalized = true;
@@ -653,12 +789,12 @@
           items_summary,
           total_price,
           deposit_total,
-
           payment_type,
           paid_amount,
           paypal_order_id,
           paypal_payer_email,
 
+          // backward compatibility
           unit: cart[0]?.unitName || '',
           date: cart[0]?.date || ''
         };
@@ -681,72 +817,15 @@
         checking = false;
         renderUnits();
 
-        // reset payment UI
+        // reset payment state/UI (keep PayPal rendered, just hide stack)
         chosenPayType = null;
         chosenPayAmount = 0;
         finalized = false;
         setPaymentVisible(false);
         clearPayChoiceStyles();
-
-        const st = document.getElementById('paypalStatus');
-        if (st) st.style.display = 'none';
       }
 
-      // ✅ Stacked PayPal Buttons (PayPal + Venmo + Pay Later + Card) — hidden until Full/Deposit picked
-      if (window.paypal && document.getElementById('paypal-buttons')) {
-        paypal.Buttons({
-          style: { layout: 'vertical', shape: 'rect', label: 'pay' },
-
-          createOrder: async (data, actions) => {
-            if (cart.length === 0) {
-              alert('Your cart is empty.');
-              throw new Error('Empty cart');
-            }
-            if (!chosenPayType) {
-              alert('Please choose Full Amount or Deposit Amount first.');
-              throw new Error('No payment type');
-            }
-
-            const stillAvailable = await ensureCartStillAvailable();
-            if (!stillAvailable) {
-              alert('One or more items were just booked by someone else. Please refresh and try again.');
-              throw new Error('Not available');
-            }
-
-            const total = formatMoney(chosenPayAmount);
-
-            return actions.order.create({
-              purchase_units: [{
-                amount: { currency_code: 'USD', value: total },
-                description: `Slide Guys Booking (${cart.length} unit${cart.length > 1 ? 's' : ''}) - ${chosenPayType === 'full' ? 'Full' : 'Deposit'}`
-              }]
-            });
-          },
-
-          onApprove: async (data, actions) => {
-            try {
-              showPayStatus('Processing payment…', true);
-              const capture = await actions.order.capture();
-              await finalizeReservationAfterPayment(capture);
-              showPayStatus('Payment successful. Booking confirmed & emails sent!', true);
-            } catch (e) {
-              console.error(e);
-              showPayStatus('Payment succeeded, but booking failed. Please contact us with your PayPal receipt for help.', false);
-            }
-          },
-
-          onError: (err) => {
-            console.error(err);
-            showPayStatus('Payment error. Please try again.', false);
-          },
-
-          onCancel: () => {
-            showPayStatus('Payment canceled.', false);
-          }
-        }).render('#paypal-buttons');
-      }
-
-      // ✅ Removed Reserve/submit handler (no redundant button)
+      // ✅ Reserve/submit handler removed (no Reserve button)
       // document.getElementById('bookingForm').addEventListener('submit', ...)  <-- deleted
     });
   </script>
