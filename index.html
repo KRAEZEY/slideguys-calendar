@@ -224,10 +224,10 @@
       <div class="pay-choice-wrap">
         <div class="d-flex gap-2 mt-3">
           <button type="button" id="payFullBtn" class="btn btn-outline-primary w-50">
-            Full Amount ($0)
+            Pay Full Amount ($0)
           </button>
           <button type="button" id="payDepositBtn" class="btn btn-outline-primary w-50">
-            Deposit Amount ($0)
+            Pay Deposit Amount ($0)
           </button>
         </div>
 
@@ -247,7 +247,7 @@
     (function () { emailjs.init("PXm_wNk9aIao8Hlpp"); })();
   </script>
 
-  <!-- ✅ PayPal SDK with Venmo + Card enabled (same “stack” behavior as your other site) -->
+  <!-- ✅ PayPal SDK with Venmo + Card enabled -->
   <script src="https://www.paypal.com/sdk/js?client-id=ARPujaExbPU50Hj0kqNpn9j0yx-oPf96whc5YgreLWcPrkWzlVzOwDxO3teVJjBG2-WCsgzSh45Xpbi2&components=buttons&enable-funding=card,venmo&currency=USD&intent=capture"></script>
 
   <script>
@@ -399,8 +399,8 @@
 
         const fullBtn = document.getElementById('payFullBtn');
         const depBtn = document.getElementById('payDepositBtn');
-        if (fullBtn) fullBtn.textContent = `Full Amount ($${formatMoney(getCartTotal())})`;
-        if (depBtn) depBtn.textContent = `Deposit Amount ($${formatMoney(getDepositTotal())})`;
+        if (fullBtn) fullBtn.textContent = `Pay Full Amount ($${formatMoney(getCartTotal())})`;
+        if (depBtn) depBtn.textContent = `Pay Deposit Amount ($${formatMoney(getDepositTotal())})`;
 
         // If cart empty, reset payment UI
         if (cart.length === 0) {
@@ -627,11 +627,10 @@
           style: { layout: 'vertical', shape: 'rect', label: 'pay' },
 
           createOrder: async (data, actions) => {
-            // ✅ Keep same checks even if someone tries to pay without clicking Full/Deposit properly
             if (!requireCustomerInfoAndCart()) throw new Error('Missing required fields/cart/date');
 
             if (!chosenPayType || !chosenPayAmount) {
-              alert('Please choose Full Amount or Deposit Amount first.');
+              alert('Please choose Pay Full Amount or Pay Deposit Amount first.');
               throw new Error('No pay choice');
             }
 
@@ -645,10 +644,7 @@
 
             return actions.order.create({
               purchase_units: [{
-                amount: {
-                  currency_code: 'USD',
-                  value: amountStr
-                },
+                amount: { currency_code: 'USD', value: amountStr },
                 description: `Slide Guys Booking (${cart.length} unit${cart.length > 1 ? 's' : ''}) — ${chosenPayType === 'full' ? 'Full' : 'Deposit'}`
               }]
             });
@@ -688,7 +684,7 @@
 
         setPaymentVisible(true);
         renderPayPalStackOnce();
-        showPayStatus(`Selected: Full Amount ($${formatMoney(chosenPayAmount)})`, true);
+        showPayStatus(`Selected: Pay Full Amount ($${formatMoney(chosenPayAmount)})`, true);
       });
 
       document.getElementById('payDepositBtn').addEventListener('click', () => {
@@ -701,7 +697,7 @@
 
         setPaymentVisible(true);
         renderPayPalStackOnce();
-        showPayStatus(`Selected: Deposit Amount ($${formatMoney(chosenPayAmount)})`, true);
+        showPayStatus(`Selected: Pay Deposit Amount ($${formatMoney(chosenPayAmount)})`, true);
       });
 
       async function finalizeReservationAfterPayment(paypalDetails) {
@@ -825,8 +821,7 @@
         clearPayChoiceStyles();
       }
 
-      // ✅ Reserve/submit handler removed (no Reserve button)
-      // document.getElementById('bookingForm').addEventListener('submit', ...)  <-- deleted
+      // ✅ Reserve/submit handler removed
     });
   </script>
 </body>
