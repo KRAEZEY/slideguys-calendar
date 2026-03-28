@@ -560,9 +560,10 @@
       }
 
       async function loadUnits() {
-        const { data, error } = await supabase
-          .from('units')
-          .select('id, name, thumbnail_url, price');
+       const { data, error } = await supabase
+  .from('units')
+  .select('id, name, thumbnail_url, price, order')
+  .order('order', { ascending: true });
 
         if (error) return;
         unitsCache = data || [];
