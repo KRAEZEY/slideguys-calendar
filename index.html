@@ -308,7 +308,7 @@
   </script>
 
   <!-- ✅ PayPal SDK with Venmo + Card enabled -->
-  <script src="https://www.paypal.com/sdk/js?client-id=ARPujaExbPU50Hj0kqNpn9j0yx-oPf96whc5YgreLWcPrkWzlVzOwDxO3teVJjBG2-WCsgzSh45Xpbi2&components=buttons,funding-eligibility&enable-funding=venmo,card&currency=USD&intent=capture"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=ARPujaExbPU50Hj0kqNpn9j0yx-oPf96whc5YgreLWcPrkWzlVzOwDxO3teVJjBG2-WCsgzSh45Xpbi2&components=buttons&enable-funding=card,venmo&currency=USD&intent=capture"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
@@ -694,11 +694,8 @@
 
         if (container.dataset.rendered === '1') return;
         container.dataset.rendered = '1';
-        container.innerHTML = '';
 
-        const baseConfig = (fundingSource) => ({
-          fundingSource,
-
+        window.paypal.Buttons({
           style: { layout: 'vertical', shape: 'rect', label: 'pay' },
 
           createOrder: async (data, actions) => {
@@ -725,37 +722,14 @@
           },
 
           onApprove: async (data, actions) => {
-            let details = null;
-
             try {
-              showPayStatus('Capturing payment…', true);
-
-              details = await actions.order.capture();
-
-              console.log('PAYPAL / VENMO CAPTURE DETAILS:', details);
-
-              showPayStatus('Payment captured. Saving booking…', true);
-
+              showPayStatus('Processing payment…', true);
+              const details = await actions.order.capture();
               await finalizeReservationAfterPayment(details);
-
               showPayStatus('Payment successful. Booking confirmed & emails sent!', true);
-
             } catch (e) {
-              console.error('PAYPAL / VENMO ERROR:', e);
-              console.error('PAYPAL / VENMO DETAILS:', details);
-
-              if (!details) {
-                showPayStatus(
-                  'Venmo was approved, but PayPal did NOT capture the payment. No booking was saved. Check your PayPal live account/client ID setup.',
-                  false
-                );
-                return;
-              }
-
-              showPayStatus(
-                'Payment was captured, but saving the booking or sending email failed. Check Supabase/EmailJS.',
-                false
-              );
+              console.error(e);
+              showPayStatus('Payment succeeded, but booking failed. Please contact us with your PayPal receipt for help.', false);
             }
           },
 
@@ -767,43 +741,7 @@
           onCancel: () => {
             showPayStatus('Payment canceled.', false);
           }
-        });
-
-        const fundingSources = [
-          paypal.FUNDING.PAYPAL,
-          paypal.FUNDING.VENMO,
-          paypal.FUNDING.CARD
-        ];
-
-        let renderedAny = false;
-        let venmoEligible = false;
-
-        fundingSources.forEach((fundingSource) => {
-          const button = paypal.Buttons(baseConfig(fundingSource));
-
-          if (button.isEligible()) {
-            if (fundingSource === paypal.FUNDING.VENMO) venmoEligible = true;
-
-            const buttonWrap = document.createElement('div');
-            buttonWrap.className = 'mb-2';
-            container.appendChild(buttonWrap);
-
-            button.render(buttonWrap);
-            renderedAny = true;
-          }
-        });
-
-        if (!renderedAny) {
-          showPayStatus('No eligible PayPal payment buttons are available on this device/browser.', false);
-          return;
-        }
-
-        if (!venmoEligible) {
-          const note = document.createElement('div');
-          note.className = 'small text-muted mt-2';
-          note.textContent = 'Venmo may only appear for eligible US buyers/devices. If it does not show, PayPal or card checkout is still available.';
-          container.appendChild(note);
-        }
+        }).render('#paypalButtons');
       }
 
       document.getElementById('payFullBtn').addEventListener('click', () => {
