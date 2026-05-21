@@ -725,14 +725,37 @@
           },
 
           onApprove: async (data, actions) => {
+            let details = null;
+
             try {
-              showPayStatus('Processing payment…', true);
-              const details = await actions.order.capture();
+              showPayStatus('Capturing payment…', true);
+
+              details = await actions.order.capture();
+
+              console.log('PAYPAL / VENMO CAPTURE DETAILS:', details);
+
+              showPayStatus('Payment captured. Saving booking…', true);
+
               await finalizeReservationAfterPayment(details);
+
               showPayStatus('Payment successful. Booking confirmed & emails sent!', true);
+
             } catch (e) {
-              console.error(e);
-              showPayStatus('Payment succeeded, but booking failed. Please contact us with your PayPal receipt for help.', false);
+              console.error('PAYPAL / VENMO ERROR:', e);
+              console.error('PAYPAL / VENMO DETAILS:', details);
+
+              if (!details) {
+                showPayStatus(
+                  'Venmo was approved, but PayPal did NOT capture the payment. No booking was saved. Check your PayPal live account/client ID setup.',
+                  false
+                );
+                return;
+              }
+
+              showPayStatus(
+                'Payment was captured, but saving the booking or sending email failed. Check Supabase/EmailJS.',
+                false
+              );
             }
           },
 
