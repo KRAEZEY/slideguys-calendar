@@ -308,7 +308,7 @@
   </script>
 
   <!-- ✅ PayPal SDK with Venmo + Card enabled -->
-  <script src="https://www.paypal.com/sdk/js?client-id=ARPujaExbPU50Hj0kqNpn9j0yx-oPf96whc5YgreLWcPrkWzlVzOwDxO3teVJjBG2-WCsgzSh45Xpbi2&components=buttons&enable-funding=card,venmo&currency=USD&intent=capture"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=ARPujaExbPU50Hj0kqNpn9j0yx-oPf96whc5YgreLWcPrkWzlVzOwDxO3teVJjBG2-WCsgzSh45Xpbi2&components=buttons,funding-eligibility&enable-funding=venmo,card&currency=USD&intent=capture"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
@@ -344,7 +344,7 @@
       dateInput.setAttribute('max', allowedEnd.toISOString().split('T')[0]);
 
       const supabaseUrl = 'https://vaobmohukgcqfvnclqyh.supabase.co';
-      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M';
+      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXAiOiJ2YW9ibW9odWtnY3Fmdm5jbHF5aCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzQ0NzU3Mjc5LCJleHAiOjIwNjAzMzMyNzl9.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M';
       const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
       const DEPOSIT_PER_UNIT = 50;
@@ -694,8 +694,10 @@
 
         if (container.dataset.rendered === '1') return;
         container.dataset.rendered = '1';
+        container.innerHTML = '';
 
-        window.paypal.Buttons({
+        const baseConfig = (fundingSource) => ({
+          fundingSource,
           style: { layout: 'vertical', shape: 'rect', label: 'pay' },
 
           createOrder: async (data, actions) => {
@@ -741,7 +743,43 @@
           onCancel: () => {
             showPayStatus('Payment canceled.', false);
           }
-        }).render('#paypalButtons');
+        });
+
+        const fundingSources = [
+          paypal.FUNDING.PAYPAL,
+          paypal.FUNDING.VENMO,
+          paypal.FUNDING.CARD
+        ];
+
+        let renderedAny = false;
+        let venmoEligible = false;
+
+        fundingSources.forEach((fundingSource) => {
+          const button = paypal.Buttons(baseConfig(fundingSource));
+
+          if (button.isEligible()) {
+            if (fundingSource === paypal.FUNDING.VENMO) venmoEligible = true;
+
+            const buttonWrap = document.createElement('div');
+            buttonWrap.className = 'mb-2';
+            container.appendChild(buttonWrap);
+
+            button.render(buttonWrap);
+            renderedAny = true;
+          }
+        });
+
+        if (!renderedAny) {
+          showPayStatus('No eligible PayPal payment buttons are available on this device/browser.', false);
+          return;
+        }
+
+        if (!venmoEligible) {
+          const note = document.createElement('div');
+          note.className = 'small text-muted mt-2';
+          note.textContent = 'Venmo may only appear for eligible US buyers/devices. If it does not show, PayPal or card checkout is still available.';
+          container.appendChild(note);
+        }
       }
 
       document.getElementById('payFullBtn').addEventListener('click', () => {
