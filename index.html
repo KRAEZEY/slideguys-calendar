@@ -101,6 +101,7 @@ footer span{float:right;font-weight:400;color:var(--muted)}
 [hidden]{display:none!important}
 .hero .policies{margin:18px 0 0;padding:14px 0 0;border-top:1px solid #bad9df;border-bottom:0}
 .hero .policy-content p:last-child{margin-bottom:0}
+
 @media(max-width:1000px){
   .hero{padding:32px;gap:24px}
   .layout{grid-template-columns:minmax(0,1fr) 300px;gap:22px}
@@ -146,13 +147,22 @@ footer span{float:right;font-weight:400;color:var(--muted)}
 }
 </style>
 </head>
+
 <body>
 <header>
   <a class="brand" href="#">
-    <img src="https://lh3.googleusercontent.com/a-/ALV-UjUTAoSFAR5OUMj0ZCkgLF1RMYoE-Q85G0HPftaFEBBIjjzw9cQ=s265-w265-h265" alt="Slide Guys">
-    <span>SLIDE GUYS<small>Big slides. Bigger smiles.</small></span>
+    <img
+      src="https://lh3.googleusercontent.com/a-/ALV-UjUTAoSFAR5OUMj0ZCkgLF1RMYoE-Q85G0HPftaFEBBIjjzw9cQ=s265-w265-h265"
+      alt="Slide Guys"
+    >
+    <span>
+      SLIDE GUYS
+      <small>Big slides. Bigger smiles.</small>
+    </span>
   </a>
-  <a class="cart-link" href="#cartSection">Your reservation <span id="cartCount">0</span></a>
+  <a class="cart-link" href="#cartSection">
+    Your reservation <span id="cartCount">0</span>
+  </a>
 </header>
 
 <main>
@@ -171,15 +181,26 @@ footer span{float:right;font-weight:400;color:var(--muted)}
         <summary>Delivery, deposits & reservation policies</summary>
         <div class="policy-content">
           <p>Deliveries within 10 miles of Richfield are free.</p>
-          <p>All other outlying areas are available with a Travel Fee. $35 for 10–20 miles, $52 for 20–30 miles, $96 for 30–40 miles. <strong>Travel fees are not included in the total price.</strong></p>
+          <p>
+            All other outlying areas are available with a Travel Fee.
+            $35 for 10–20 miles, $52 for 20–30 miles, $96 for 30–40 miles.
+            <strong>Travel fees are not included in the total price.</strong>
+          </p>
           <p>No cancellations. Rescheduling is subject to availability.</p>
-          <p>A non-refundable $50 deposit is due at time of reservation (per unit). We accept Venmo, credit card, and PayPal for the deposit. We can collect cash, check, Cash App, Venmo, or PayPal the day of.</p>
+          <p>
+            A non-refundable $50 deposit is due at time of reservation
+            (per unit). We accept Venmo, credit card, and PayPal for the
+            deposit. We can collect cash, check, Cash App, Venmo, or
+            PayPal the day of.
+          </p>
         </div>
       </details>
     </div>
 
     <div class="date-panel">
-      <label for="date"><span class="step">1</span> Choose your rental date</label>
+      <label for="date">
+        <span class="step">1</span> Choose your rental date
+      </label>
       <input type="date" id="date" required aria-describedby="dateHelp">
       <p id="dateHelp">Booking dates available through December 31 of this year.</p>
       <div id="dateStatus" role="status">Choose a date to check availability.</div>
@@ -203,7 +224,10 @@ footer span{float:right;font-weight:400;color:var(--muted)}
         </div>
         <span id="browseDate">Choose a date above</span>
       </div>
-      <p class="muted">Add multiple units to your reservation. Each unit can be reserved once per date.</p>
+      <p class="muted">
+        Add multiple units to your reservation.
+        Each unit can be reserved once per date.
+      </p>
       <div id="unitGrid" class="unit-grid" aria-live="polite">
         <p>Loading slides…</p>
       </div>
@@ -213,19 +237,42 @@ footer span{float:right;font-weight:400;color:var(--muted)}
     <aside id="cartSection" class="cart panel">
       <p class="eyebrow">YOUR GOOD DAY, PLANNED</p>
       <h2>Your reservation</h2>
-      <p id="emptyCart" class="empty">Your next great day starts with a slide. Choose a date and add your favorites.</p>
+      <p id="emptyCart" class="empty">
+        Your next great day starts with a slide.
+        Choose a date and add your favorites.
+      </p>
       <ul id="cartList"></ul>
+
       <div class="totals">
-        <div><span>Rental total</span><strong id="cartTotal">$0.00</strong></div>
-        <div><span>Deposit due now</span><strong id="cartDeposit">$0.00</strong></div>
+        <div>
+          <span>Rental total</span>
+          <strong id="cartTotal">$0.00</strong>
+        </div>
+        <div>
+          <span>Deposit due now</span>
+          <strong id="cartDeposit">$0.00</strong>
+        </div>
       </div>
-      <p class="fine">$50 non-refundable deposit per unit. Travel fees, if applicable, are additional and not included in these totals.</p>
-      <button id="checkoutBtn" class="primary" disabled>Continue to checkout</button>
-      <p class="fine center">Your reservation is confirmed after payment and successful booking.</p>
+
+      <p class="fine">
+        $50 non-refundable deposit per unit.
+        Travel fees, if applicable, are additional and not included in these totals.
+      </p>
+      <button id="checkoutBtn" class="primary" disabled>
+        Continue to checkout
+      </button>
+      <p class="fine center">
+        Your reservation is confirmed after payment and successful booking.
+      </p>
     </aside>
   </div>
 
-  <section id="checkout" class="panel checkout" hidden aria-labelledby="checkoutTitle">
+  <section
+    id="checkout"
+    class="panel checkout"
+    hidden
+    aria-labelledby="checkoutTitle"
+  >
     <p class="eyebrow">LET’S MAKE IT OFFICIAL</p>
     <h2 id="checkoutTitle" tabindex="-1">Checkout</h2>
     <p class="muted">Tell us where the fun is happening.</p>
@@ -233,29 +280,71 @@ footer span{float:right;font-weight:400;color:var(--muted)}
     <form id="bookingForm">
       <fieldset id="customerFields">
         <div class="fields">
-          <label>Full name<input id="name" autocomplete="name" required></label>
-          <label>Phone number<input id="phone" type="tel" autocomplete="tel" required></label>
-          <label class="wide">Email address<input id="email" type="email" autocomplete="email" required></label>
-          <label>Delivery address<input id="address" autocomplete="street-address" required></label>
-          <label>City<input id="city" autocomplete="address-level2" required></label>
+          <label>
+            Full name
+            <input id="name" autocomplete="name" required>
+          </label>
+          <label>
+            Phone number
+            <input id="phone" type="tel" autocomplete="tel" required>
+          </label>
+          <label class="wide">
+            Email address
+            <input id="email" type="email" autocomplete="email" required>
+          </label>
+          <label>
+            Delivery address
+            <input id="address" autocomplete="street-address" required>
+          </label>
+          <label>
+            City
+            <input id="city" autocomplete="address-level2" required>
+          </label>
         </div>
 
         <div class="agreement">
           <h3>One last thing before the fun</h3>
-          <p>No cancellations. Rescheduling is subject to availability. The $50 deposit per unit is non-refundable.</p>
-          <p>Please review our <a href="https://www.canva.com/design/DAGvLXmYrCQ/urL0oPQKv3g2IDZnXb7URw/view?utm_content=DAGvLXmYrCQ&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hcf7d7df185" target="_blank" rel="noopener noreferrer">liability release form ↗</a>. By making a reservation and payment, you are agreeing to the terms and conditions.</p>
+          <p>
+            No cancellations. Rescheduling is subject to availability.
+            The $50 deposit per unit is non-refundable.
+          </p>
+          <p>
+            Please review our
+            <a
+              href="https://www.canva.com/design/DAGvLXmYrCQ/urL0oPQKv3g2IDZnXb7URw/view?utm_content=DAGvLXmYrCQ&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hcf7d7df185"
+              target="_blank"
+              rel="noopener noreferrer"
+            >liability release form ↗</a>.
+            By making a reservation and payment, you are agreeing to the
+            terms and conditions.
+          </p>
           <label class="checkbox">
             <input type="checkbox" id="agreeTerms" required>
-            <span>I have read and agree to the terms, conditions, and liability release.</span>
+            <span>
+              I have read and agree to the terms, conditions, and liability release.
+            </span>
           </label>
         </div>
 
         <h3>Choose how much to pay today</h3>
         <div class="pay-choices">
-          <button type="button" id="payDepositBtn" class="secondary" aria-pressed="false">Pay deposit</button>
-          <button type="button" id="payFullBtn" class="secondary" aria-pressed="false">Pay full amount</button>
+          <button
+            type="button"
+            id="payDepositBtn"
+            class="secondary"
+            aria-pressed="false"
+          >Pay deposit</button>
+          <button
+            type="button"
+            id="payFullBtn"
+            class="secondary"
+            aria-pressed="false"
+          >Pay full amount</button>
         </div>
-        <p class="fine">Pay securely with PayPal, Venmo, or card. Available payment methods are shown below.</p>
+        <p class="fine">
+          Pay securely with PayPal, Venmo, or card.
+          Available payment methods are shown below.
+        </p>
       </fieldset>
     </form>
 
@@ -265,19 +354,31 @@ footer span{float:right;font-weight:400;color:var(--muted)}
     <p id="paypalStatus" role="status" tabindex="-1"></p>
   </section>
 
-  <section id="confirmation" class="panel confirmation" hidden tabindex="-1" aria-labelledby="confirmedTitle">
+  <section
+    id="confirmation"
+    class="panel confirmation"
+    hidden
+    tabindex="-1"
+    aria-labelledby="confirmedTitle"
+  >
     <div class="checkmark">✓</div>
     <p class="eyebrow">GET READY FOR A GREAT DAY</p>
     <h1 id="confirmedTitle">You’re booked!</h1>
     <p id="confirmationGreeting"></p>
     <div id="confirmationDetails"></div>
     <p id="emailStatus" role="status"></p>
-    <p>Travel fees are additional and are not included above. No cancellations. Rescheduling is subject to availability.</p>
+    <p>
+      Travel fees are additional and are not included above.
+      No cancellations. Rescheduling is subject to availability.
+    </p>
     <button class="secondary" id="printBtn">Print confirmation</button>
   </section>
 </main>
 
-<footer>SLIDE GUYS <span>Big slides. Bigger smiles.</span></footer>
+<footer>
+  SLIDE GUYS <span>Big slides. Bigger smiles.</span>
+</footer>
+
 <div id="toast" role="status" hidden></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -289,9 +390,9 @@ footer span{float:right;font-weight:400;color:var(--muted)}
 
 document.addEventListener('DOMContentLoaded', async () => {
   const config = {
-    url: "https://vaobmohukgcqfvnclqyh.supabase.co",
-    key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M",
-    liability: "https://www.canva.com/design/DAGvLXmYrCQ/urL0oPQKv3g2IDZnXb7URw/view?utm_content=DAGvLXmYrCQ&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hcf7d7df185"
+    url: 'https://vaobmohukgcqfvnclqyh.supabase.co',
+    key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M',
+    liability: 'https://www.canva.com/design/DAGvLXmYrCQ/urL0oPQKv3g2IDZnXb7URw/view?utm_content=DAGvLXmYrCQ&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hcf7d7df185'
   };
 
   const $ = id => document.getElementById(id);
@@ -313,6 +414,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   $('date').min = localDate(today);
   $('date').max = `${year}-12-31`;
+
   $('dateHelp').textContent =
     `Choose a date from today through December 31, ${year}. Bookings for next year open January 1st.`;
 
@@ -355,7 +457,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     clearTimeout(toastTimer);
     $('toast').textContent = message;
     $('toast').hidden = false;
-    toastTimer = setTimeout(() => $('toast').hidden = true, 3200);
+    toastTimer = setTimeout(() => {
+      $('toast').hidden = true;
+    }, 3200);
   }
 
   function element(tag, text, className) {
@@ -368,10 +472,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   function resetPayment() {
     payType = null;
     $('paymentOptions').hidden = true;
+
     for (const id of ['payFullBtn', 'payDepositBtn']) {
       $(id).classList.remove('active');
       $(id).setAttribute('aria-pressed', 'false');
     }
+
     status('');
   }
 
@@ -390,7 +496,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     db = window.supabase.createClient(config.url, config.key);
     window.emailjs?.init('PXm_wNk9aIao8Hlpp');
   } catch (error) {
-    notice('The booking service could not load. Please reload this page before continuing.');
+    notice(
+      'The booking service could not load. Please reload this page before continuing.'
+    );
     return;
   }
 
@@ -399,7 +507,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     grid.replaceChildren();
 
     if (!units.length) {
-      grid.append(element('p', 'No slides are available to display right now.'));
+      grid.append(
+        element('p', 'No slides are available to display right now.')
+      );
       return;
     }
 
@@ -407,6 +517,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const inCart = cart.some(
         item => key(item) === `${unit.id}|${$('date').value}`
       );
+
       const isBooked = booked.has(String(unit.id));
 
       const label = !$('date').value
@@ -431,16 +542,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       img.addEventListener('error', () => {
         img.hidden = true;
-        media.append(element('p', 'Slide photo unavailable', 'fine center'));
+        media.append(
+          element('p', 'Slide photo unavailable', 'fine center')
+        );
       }, { once: true });
 
       media.append(
         img,
-        element('span', label, 'badge' + (label === 'Available' ? ' available' : ''))
+        element(
+          'span',
+          label,
+          'badge' + (label === 'Available' ? ' available' : '')
+        )
       );
 
       const body = element('div', undefined, 'card-body');
       const price = element('div', money(unit.price) + ' ', 'price');
+
       price.append(element('small', '/ rental'));
 
       const button = element(
@@ -456,8 +574,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       );
 
       button.type = 'button';
-      button.disabled = locked || checking || !availabilityReady || isBooked || inCart;
-      button.setAttribute('aria-label', `${button.textContent}: ${unit.name}`);
+      button.disabled =
+        locked ||
+        checking ||
+        !availabilityReady ||
+        isBooked ||
+        inCart;
+
+      button.setAttribute(
+        'aria-label',
+        `${button.textContent}: ${unit.name}`
+      );
+
       button.addEventListener('click', () => addUnit(unit));
 
       body.append(element('h3', unit.name), price, button);
@@ -483,6 +611,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const remove = element('button', 'Remove', 'remove');
       remove.type = 'button';
       remove.disabled = locked;
+
       remove.setAttribute(
         'aria-label',
         `Remove ${item.unitName} for ${dateText(item.date)}`
@@ -490,10 +619,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       remove.addEventListener('click', () => {
         if (locked) return;
+
         cart = cart.filter(other => key(other) !== key(item));
         resetPayment();
         renderCart();
         renderUnits();
+
         if (!cart.length) $('checkout').hidden = true;
       });
 
@@ -503,10 +634,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     $('cartTotal').textContent = money(total(cart));
-    $('cartDeposit').textContent = money(cart.length * DEPOSIT_PER_UNIT);
-    $('payFullBtn').textContent = `Pay full amount · ${money(total(cart))}`;
+    $('cartDeposit').textContent =
+      money(cart.length * DEPOSIT_PER_UNIT);
+
+    $('payFullBtn').textContent =
+      `Pay full amount · ${money(total(cart))}`;
+
     $('payDepositBtn').textContent =
       `Pay deposit · ${money(cart.length * DEPOSIT_PER_UNIT)}`;
+
     $('checkoutBtn').disabled = locked || !cart.length;
   }
 
@@ -524,7 +660,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       units = data || [];
 
       if (units.some(unit =>
-        !Number.isFinite(Number(unit.price)) || Number(unit.price) < 0
+        !Number.isFinite(Number(unit.price)) ||
+        Number(unit.price) < 0
       )) {
         throw new Error('Invalid unit price');
       }
@@ -544,9 +681,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function refreshAvailability(value) {
     const token = ++request;
+
     checking = true;
     availabilityReady = false;
     booked = new Set();
+
     renderUnits();
     $('dateStatus').textContent = 'Checking your date…';
 
@@ -557,10 +696,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         .eq('date', value);
 
       if (error) throw error;
-      if (token !== request || $('date').value !== value) return false;
+
+      if (token !== request || $('date').value !== value) {
+        return false;
+      }
 
       booked = new Set((data || []).map(row => String(row.unit)));
       availabilityReady = true;
+
       $('dateStatus').textContent =
         `Availability for ${dateText(value)} is ready.`;
 
@@ -570,6 +713,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         $('dateStatus').textContent =
           'Unable to check availability. Choose your date again to retry.';
       }
+
       return false;
     } finally {
       if (token === request) {
@@ -582,6 +726,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   $('date').addEventListener('change', async () => {
     resetPayment();
     notice('');
+
     const value = $('date').value;
 
     if (!validDate(value)) {
@@ -589,8 +734,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       availabilityReady = false;
       checking = false;
       $('date').value = '';
+
       $('dateStatus').textContent =
         'Choose a date from today through December 31 of this year.';
+
       $('browseDate').textContent = 'Choose a date above';
       renderUnits();
       return;
@@ -606,10 +753,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     const date = $('date').value;
 
     if (!validDate(date)) {
-      return notice('Please choose a date within the current booking year.');
+      return notice(
+        'Please choose a date within the current booking year.'
+      );
     }
 
-    if (!await refreshAvailability(date) || date !== $('date').value) return;
+    if (
+      !await refreshAvailability(date) ||
+      date !== $('date').value
+    ) {
+      return;
+    }
 
     const item = {
       unitId: String(unit.id),
@@ -631,21 +785,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     notice('');
     renderCart();
     renderUnits();
+
     toast(`${unit.name} added to your reservation`);
   }
 
   $('retry').addEventListener('click', loadUnits);
 
-  $('bookingForm').addEventListener('submit', event => event.preventDefault());
+  $('bookingForm').addEventListener('submit', event => {
+    event.preventDefault();
+  });
 
   $('checkoutBtn').addEventListener('click', () => {
     if (!cart.length || locked) return;
+
     $('checkout').hidden = false;
     $('checkoutTitle').focus();
     $('checkout').scrollIntoView({ behavior: 'smooth' });
   });
 
-  for (const id of ['name', 'phone', 'email', 'address', 'city', 'agreeTerms']) {
+  for (const id of [
+    'name',
+    'phone',
+    'email',
+    'address',
+    'city',
+    'agreeTerms'
+  ]) {
     $(id).addEventListener('input', () => {
       if (!locked) resetPayment();
     });
@@ -674,15 +839,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function ensureAvailable(items) {
     for (const item of items) {
+      // Unit IDs are UUIDs. Preserve them as strings.
       const { data, error } = await db
         .from('bookings')
         .select('id')
-        .eq('unit', Number(item.unitId))
+        .eq('unit', item.unitId)
         .eq('date', item.date)
         .limit(1);
 
       if (error) {
-        throw new Error('We could not verify availability. Please try again.');
+        throw new Error(
+          'We could not verify availability. Please try again.'
+        );
       }
 
       if (data?.length) {
@@ -715,8 +883,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderPayPal();
   }
 
-  $('payFullBtn').addEventListener('click', () => choosePayment('full'));
-  $('payDepositBtn').addEventListener('click', () => choosePayment('deposit'));
+  $('payFullBtn').addEventListener('click', () => {
+    choosePayment('full');
+  });
+
+  $('payDepositBtn').addEventListener('click', () => {
+    choosePayment('deposit');
+  });
 
   function renderPayPal() {
     if (paypalRendered) return;
@@ -832,6 +1005,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             `Payment succeeded, but one or more bookings could not be saved. Some units may already be reserved. Do not pay again. Contact Slide Guys with your PayPal receipt (order ${details.id || snapshot.orderId}) to complete your reservation.`,
             true
           );
+
           $('paypalStatus').focus();
         }
       },
@@ -858,6 +1032,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }).render('#paypalButtons').catch(() => {
       paypalRendered = false;
+
       status(
         'Payment options could not load. Choose your payment amount again to retry.',
         true
@@ -870,16 +1045,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const { items, customer, type, amount } = snapshot;
 
-    // Keep the existing table fields and per-unit insert behavior;
-    // no schema changes.
+    // Preserve the existing table fields and per-unit inserts.
+    // No database schema changes.
     let allSuccessful = true;
     const reservedLines = [];
 
     for (const item of items) {
+      // Keep the original UUID in the final availability check.
       const { data: existing, error: checkError } = await db
         .from('bookings')
         .select('*')
-        .eq('unit', Number(item.unitId))
+        .eq('unit', item.unitId)
         .eq('date', item.date);
 
       if (checkError || existing?.length) {
@@ -887,16 +1063,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         continue;
       }
 
+      // Keep the original UUID when saving the booking.
       const { error } = await db.from('bookings').insert([{
         ...customer,
-        unit: Number(item.unitId),
+        unit: item.unitId,
         date: item.date
       }]);
 
       if (error) {
         allSuccessful = false;
       } else {
-        reservedLines.push(`${item.unitName} — ${money(item.price)}`);
+        reservedLines.push(
+          `${item.unitName} — ${money(item.price)}`
+        );
       }
     }
 
@@ -906,8 +1085,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     finalized = true;
 
-    // Preserve both templates and every existing parameter.
-    // No email before all inserts succeed.
+    // Preserve both email templates and all existing parameters.
+    // Send emails only after every booking insert succeeds.
     const params = {
       ...customer,
       items_summary: reservedLines.join('\n'),
@@ -959,10 +1138,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const list = element('ul');
 
     for (const item of items) {
-      list.append(element(
-        'li',
-        `${item.unitName} · ${dateText(item.date)} · ${money(item.price)}`
-      ));
+      list.append(
+        element(
+          'li',
+          `${item.unitName} · ${dateText(item.date)} · ${money(item.price)}`
+        )
+      );
     }
 
     const totals = element('div', undefined, 'totals');
@@ -976,15 +1157,27 @@ document.addEventListener('DOMContentLoaded', async () => {
       ['Remaining rental balance', money(total(items) - amount)]
     ]) {
       const row = element('div');
-      row.append(element('span', label), element('strong', value));
+
+      row.append(
+        element('span', label),
+        element('strong', value)
+      );
+
       totals.append(row);
     }
 
     container.replaceChildren(
       list,
       totals,
-      element('p', `Delivery: ${customer.address}, ${customer.city}`),
-      element('p', `PayPal order: ${details.id || snapshot.orderId}`, 'fine')
+      element(
+        'p',
+        `Delivery: ${customer.address}, ${customer.city}`
+      ),
+      element(
+        'p',
+        `PayPal order: ${details.id || snapshot.orderId}`,
+        'fine'
+      )
     );
 
     $('emailStatus').textContent =
@@ -995,6 +1188,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   $('printBtn').addEventListener('click', () => window.print());
+
   renderCart();
   await loadUnits();
 });
