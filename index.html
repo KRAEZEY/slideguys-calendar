@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   async function loadUnits(){
     $('retry').hidden=true;
-    try{const {data,error}=await db.from('units').select('id, name, thumbnail_url, price, deposit_amount, order').order('order',{ascending:true});if(error)throw error;
+    try{const {data,error}=await db.from('units').select('id, name, thumbnail_url, price, deposit_amount, order').eq('is_hidden',false).order('order',{ascending:true});if(error)throw error;
       units=data||[];if(units.some(unit=>!Number.isFinite(Number(unit.price))||Number(unit.price)<0))throw new Error('Invalid unit price');
       renderUnits();if($('date').value)await refreshAvailability($('date').value);
     }catch(error){units=[];renderUnits();notice('We could not load the slide catalog. Please try again.');$('retry').hidden=false;}
