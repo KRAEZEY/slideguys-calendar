@@ -1,1197 +1,280 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Reserve your next great day | Slide Guys</title>
-<style>
-:root{--ink:#162c3b;--muted:#5d7180;--blue:#0067c6;--line:#dce6ea;--green:#187447;--paper:#f5f8f8}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:24px}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.5}
-header,main,footer{max-width:1280px;margin:auto}
-header{display:flex;justify-content:space-between;align-items:center;padding:22px 32px;gap:16px}
-.brand{display:flex;align-items:center;gap:12px;color:var(--ink);text-decoration:none;font-weight:900;letter-spacing:1px}
-.brand img{width:62px;height:62px;border-radius:50%}
-.brand small{display:block;font-size:11px;font-weight:400;letter-spacing:0}
-.cart-link{color:var(--ink);text-decoration:none;font-size:14px;font-weight:700}
-.cart-link span{display:inline-grid;place-items:center;background:var(--ink);color:white;border-radius:50%;width:27px;height:27px;margin-left:8px}
-main{padding:0 32px}
-.hero{background:#dff2f5;border-radius:28px;padding:48px;display:grid;grid-template-columns:1.3fr 1fr;gap:48px;align-items:center;background-image:radial-gradient(circle at 4% 100%,#c3eaee 0,transparent 55%)}
-h1{font-size:clamp(36px,4.5vw,60px);letter-spacing:-2px;line-height:1.07;margin:10px 0 18px}
-h2{font-size:27px;letter-spacing:-.7px;margin:0 0 12px}
-h3{font-size:19px;margin:0 0 12px}
-p{margin:0 0 16px}
-.eyebrow{font-size:11px;font-weight:800;letter-spacing:1.8px;margin-bottom:12px}
-.hero-tags{display:flex;gap:8px;flex-wrap:wrap;font-size:11px}
-.hero-tags span{background:#ffffffaa;border-radius:20px;padding:7px 10px}
-.date-panel{background:white;padding:26px;border-radius:18px;box-shadow:0 12px 32px #18485b0c}
-.date-panel label{display:block;font-weight:700;margin-bottom:18px}
-.step{display:inline-grid;place-items:center;background:var(--blue);color:white;border-radius:50%;width:26px;height:26px;margin-right:8px}
-input{font:inherit;color:var(--ink);background:white;border:1px solid #b9cbd4;border-radius:9px;padding:13px;width:100%;min-width:0;margin-top:7px}
-input:focus-visible,button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #00a1d9;outline-offset:3px}
-.date-panel input{font-size:18px;margin:0 0 12px}
-.date-panel p,#dateStatus{font-size:12px;color:var(--muted)}
-#dateStatus{color:var(--blue)}
-.steps{display:flex;gap:32px;border-bottom:1px solid var(--line);padding:22px 0;font-size:12px;font-weight:700;color:var(--muted)}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:32px;margin:35px 0}
-.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.section-head>span{font-size:12px;color:var(--muted)}
-.muted,.fine{color:var(--muted)}
-.muted{font-size:14px}
-.fine{font-size:12px;margin:15px 0}
-.center{text-align:center}
-.unit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
-.unit-card{background:white;border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:box-shadow .2s,transform .2s}
-.unit-card:hover{box-shadow:0 10px 25px #162c3b12;transform:translateY(-2px)}
-.unit-image{position:relative;background:#edf3f5;min-height:210px}
-.unit-image img{width:100%;height:230px;object-fit:contain;display:block}
-.badge{position:absolute;top:12px;left:12px;padding:5px 10px;background:white;border-radius:20px;font-size:11px;font-weight:700;box-shadow:0 2px 8px #0001}
-.badge.available{color:var(--green)}
-.card-body{padding:20px}
-.card-body h3{font-size:20px;margin-bottom:8px}
-.price{font-size:23px;font-weight:800;margin-bottom:16px}
-.price small{font-size:12px;font-weight:400;color:var(--muted)}
-button{font:inherit;cursor:pointer;transition:background .15s,transform .15s}
-button:active{transform:scale(.98)}
-.primary,.secondary{border-radius:9px;padding:13px 18px;font-size:14px;font-weight:700;width:100%;border:1px solid var(--blue)}
-.primary{background:var(--blue);color:white}
-.primary:hover{background:#0057a8}
-.secondary{background:white;color:var(--blue)}
-.secondary:hover,.secondary.active{background:#e7f2ff}
-.secondary.active{outline:2px solid var(--blue)}
-button:disabled{cursor:default;opacity:.55;transform:none}
-.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:26px}
-.cart{position:sticky;top:24px;align-self:start}
-.cart h2{font-size:23px}
-.empty{font-size:14px;color:var(--muted);padding:20px 0}
-#cartList{list-style:none;padding:0;margin:0}
-#cartList li{padding:16px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;font-size:14px}
-#cartList small{display:block;color:var(--muted);margin:4px 0}
-.remove{border:0;background:none;color:var(--muted);font-size:12px;text-decoration:underline;padding:4px 0}
-.totals{padding-top:15px}
-.totals>div{display:flex;justify-content:space-between;gap:16px;margin:8px 0;font-size:14px}
-.totals>div:first-child{font-size:17px}
-.policies{margin:28px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:18px 0;font-size:14px}
-summary{cursor:pointer;font-weight:700}
-.policy-content{padding-top:18px;color:var(--muted)}
-.checkout{max-width:760px;margin:32px auto}
-.fields{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.fields label{font-size:13px;font-weight:700}
-.wide{grid-column:1/-1}
-fieldset{border:0;padding:0;margin:0;min-width:0}
-.agreement{background:var(--paper);border-radius:12px;padding:22px;margin:26px 0;font-size:14px}
-.agreement a{color:var(--blue)}
-.checkbox{display:flex;align-items:flex-start;gap:12px;font-weight:700}
-.checkbox input{width:20px;height:20px;flex-shrink:0;margin:2px 0}
-.pay-choices{display:flex;gap:12px}
-#paypalButtons{max-width:480px;margin:24px auto}
-#paypalStatus{margin:16px 0 0;font-size:14px}
-.error{color:#a52d30!important}
-#notice{padding:16px;background:#fff0ed;border-radius:12px;margin-top:18px;color:#8c3026}
-.confirmation{max-width:720px;margin:40px auto;text-align:center}
-.confirmation h1{font-size:48px}
-.checkmark{display:grid;place-items:center;background:#e3f5e9;color:var(--green);font-size:38px;width:78px;height:78px;border-radius:50%;margin:0 auto 25px}
-.confirmation .totals{border-top:1px solid var(--line);margin:20px 0;text-align:left}
-.confirmation ul{text-align:left;padding-left:20px}
-.confirmation .secondary{width:auto}
-footer{padding:40px 32px;font-weight:800;font-size:12px}
-footer span{float:right;font-weight:400;color:var(--muted)}
-#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:14px 22px;border-radius:30px;background:var(--ink);color:white;box-shadow:0 5px 25px #0002;z-index:10;font-size:14px;max-width:90vw}
-[hidden]{display:none!important}
-.hero .policies{margin:18px 0 0;padding:14px 0 0;border-top:1px solid #bad9df;border-bottom:0}
-.hero .policy-content p:last-child{margin-bottom:0}
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reserve your next great day | Slide Guys</title><meta name="robots" content="noindex,nofollow"><style>:root{--ink:#162c3b;--muted:#5d7180;--blue:#0067c6;--line:#dce6ea;--green:#187447;--paper:#f5f8f8}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:24px}body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.5}header,main,footer{max-width:1280px;margin:auto}header{display:flex;justify-content:space-between;align-items:center;padding:22px 32px;gap:16px}.brand{display:flex;align-items:center;gap:12px;color:var(--ink);text-decoration:none;font-weight:900;letter-spacing:1px}.brand img{width:62px;height:62px;border-radius:50%}.brand small{display:block;font-size:11px;font-weight:400;letter-spacing:0}.cart-link{color:var(--ink);text-decoration:none;font-size:14px;font-weight:700}.cart-link span{display:inline-grid;place-items:center;background:var(--ink);color:white;border-radius:50%;width:27px;height:27px;margin-left:8px}main{padding:0 32px}.hero{background:#dff2f5;border-radius:28px;padding:48px;display:grid;grid-template-columns:1.3fr 1fr;gap:48px;align-items:center;background-image:radial-gradient(circle at 4% 100%,#c3eaee 0,transparent 55%)}h1{font-size:clamp(36px,4.5vw,60px);letter-spacing:-2px;line-height:1.07;margin:10px 0 18px}h2{font-size:27px;letter-spacing:-.7px;margin:0 0 12px}h3{font-size:19px;margin:0 0 12px}p{margin:0 0 16px}.eyebrow{font-size:11px;font-weight:800;letter-spacing:1.8px;margin-bottom:12px}.hero-tags{display:flex;gap:8px;flex-wrap:wrap;font-size:11px}.hero-tags span{background:#ffffffaa;border-radius:20px;padding:7px 10px}.date-panel{background:white;padding:26px;border-radius:18px;box-shadow:0 12px 32px #18485b0c}.date-panel label{display:block;font-weight:700;margin-bottom:18px}.step{display:inline-grid;place-items:center;background:var(--blue);color:white;border-radius:50%;width:26px;height:26px;margin-right:8px}input{font:inherit;color:var(--ink);background:white;border:1px solid #b9cbd4;border-radius:9px;padding:13px;width:100%;min-width:0;margin-top:7px}input:focus-visible,button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #00a1d9;outline-offset:3px}.date-panel input{font-size:18px;margin:0 0 12px}.date-panel p,#dateStatus{font-size:12px;color:var(--muted)}#dateStatus{color:var(--blue)}.steps{display:flex;gap:32px;border-bottom:1px solid var(--line);padding:22px 0;font-size:12px;font-weight:700;color:var(--muted)}.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:32px;margin:35px 0}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.section-head>span{font-size:12px;color:var(--muted)}.muted,.fine{color:var(--muted)}.muted{font-size:14px}.fine{font-size:12px;margin:15px 0}.center{text-align:center}.unit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.unit-card{background:white;border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:box-shadow .2s,transform .2s}.unit-card:hover{box-shadow:0 10px 25px #162c3b12;transform:translateY(-2px)}.unit-image{position:relative;background:#edf3f5;min-height:210px}.unit-image img{width:100%;height:230px;object-fit:contain;display:block}.badge{position:absolute;top:12px;left:12px;padding:5px 10px;background:white;border-radius:20px;font-size:11px;font-weight:700;box-shadow:0 2px 8px #0001}.badge.available{color:var(--green)}.card-body{padding:20px}.card-body h3{font-size:20px;margin-bottom:8px}.price{font-size:23px;font-weight:800;margin-bottom:16px}.price small{font-size:12px;font-weight:400;color:var(--muted)}button{font:inherit;cursor:pointer;transition:background .15s,transform .15s}button:active{transform:scale(.98)}.primary,.secondary{border-radius:9px;padding:13px 18px;font-size:14px;font-weight:700;width:100%;border:1px solid var(--blue)}.primary{background:var(--blue);color:white}.primary:hover{background:#0057a8}.secondary{background:white;color:var(--blue)}.secondary:hover,.secondary.active{background:#e7f2ff}.secondary.active{outline:2px solid var(--blue)}button:disabled{cursor:default;opacity:.55;transform:none}.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:26px}.cart{position:sticky;top:24px;align-self:start}.cart h2{font-size:23px}.empty{font-size:14px;color:var(--muted);padding:20px 0}#cartList{list-style:none;padding:0;margin:0}#cartList li{padding:16px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;font-size:14px}#cartList small{display:block;color:var(--muted);margin:4px 0}.remove{border:0;background:none;color:var(--muted);font-size:12px;text-decoration:underline;padding:4px 0}.totals{padding-top:15px}.totals>div{display:flex;justify-content:space-between;gap:16px;margin:8px 0;font-size:14px}.totals>div:first-child{font-size:17px}.policies{margin:28px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:18px 0;font-size:14px}summary{cursor:pointer;font-weight:700}.policy-content{padding-top:18px;color:var(--muted)}.checkout{max-width:760px;margin:32px auto}.fields{display:grid;grid-template-columns:1fr 1fr;gap:18px}.fields label{font-size:13px;font-weight:700}.wide{grid-column:1/-1}fieldset{border:0;padding:0;margin:0;min-width:0}.agreement{background:var(--paper);border-radius:12px;padding:22px;margin:26px 0;font-size:14px}.agreement a{color:var(--blue)}.checkbox{display:flex;align-items:flex-start;gap:12px;font-weight:700}.checkbox input{width:20px;height:20px;flex-shrink:0;margin:2px 0}.pay-choices{display:flex;gap:12px}#paypalButtons{max-width:480px;margin:24px auto}#paypalStatus{margin:16px 0 0;font-size:14px}.error{color:#a52d30!important}#notice{padding:16px;background:#fff0ed;border-radius:12px;margin-top:18px;color:#8c3026}.confirmation{max-width:720px;margin:40px auto;text-align:center}.confirmation h1{font-size:48px}.checkmark{display:grid;place-items:center;background:#e3f5e9;color:var(--green);font-size:38px;width:78px;height:78px;border-radius:50%;margin:0 auto 25px}.confirmation .totals{border-top:1px solid var(--line);margin:20px 0;text-align:left}.confirmation ul{text-align:left;padding-left:20px}.confirmation .secondary{width:auto}footer{padding:40px 32px;font-weight:800;font-size:12px}footer span{float:right;font-weight:400;color:var(--muted)}#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:14px 22px;border-radius:30px;background:var(--ink);color:white;box-shadow:0 5px 25px #0002;z-index:10;font-size:14px;max-width:90vw}[hidden]{display:none!important}@media(max-width:1000px){.hero{padding:32px;gap:24px}.layout{grid-template-columns:minmax(0,1fr) 300px;gap:22px}.unit-grid{grid-template-columns:1fr}}@media(max-width:700px){header{padding:16px}.brand img{width:44px;height:44px}.brand{font-size:13px}.cart-link{font-size:12px}main{padding:0 16px}.hero{grid-template-columns:1fr;padding:26px;gap:24px;border-radius:20px}.steps{gap:14px;font-size:10px;justify-content:space-between}.layout{grid-template-columns:1fr}.unit-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.unit-image{min-height:155px}.unit-image img{height:165px}.card-body{padding:14px}.card-body h3{font-size:17px}.price{font-size:20px}.card-body button{padding:12px 6px;font-size:12px}.cart{position:static}.fields{grid-template-columns:1fr}.wide{grid-column:auto}.pay-choices{flex-direction:column}.section-head{align-items:flex-start}.section-head>span{max-width:120px}.panel{padding:22px}.confirmation h1{font-size:38px}footer{padding:30px 16px}}@media(max-width:380px){.unit-grid{grid-template-columns:1fr}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}@media print{header,.hero,.steps,.layout,.checkout,footer,#notice,#toast,#printBtn{display:none!important}.confirmation{border:0;margin:0;max-width:none}body{background:white}}
 
-@media(max-width:1000px){
-  .hero{padding:32px;gap:24px}
-  .layout{grid-template-columns:minmax(0,1fr) 300px;gap:22px}
-  .unit-grid{grid-template-columns:1fr}
-}
-@media(max-width:700px){
-  header{padding:16px}
-  .brand img{width:44px;height:44px}
-  .brand{font-size:13px}
-  .cart-link{font-size:12px}
-  main{padding:0 16px}
-  .hero{grid-template-columns:1fr;padding:26px;gap:24px;border-radius:20px}
-  .steps{gap:14px;font-size:10px;justify-content:space-between}
-  .layout{grid-template-columns:1fr}
-  .unit-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-  .unit-image{min-height:155px}
-  .unit-image img{height:165px}
-  .card-body{padding:14px}
-  .card-body h3{font-size:17px}
-  .price{font-size:20px}
-  .card-body button{padding:12px 6px;font-size:12px}
-  .cart{position:static}
-  .fields{grid-template-columns:1fr}
-  .wide{grid-column:auto}
-  .pay-choices{flex-direction:column}
-  .section-head{align-items:flex-start}
-  .section-head>span{max-width:120px}
-  .panel{padding:22px}
-  .confirmation h1{font-size:38px}
-  footer{padding:30px 16px}
-}
-@media(max-width:380px){
-  .unit-grid{grid-template-columns:1fr}
-}
-@media(prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  *{transition:none!important}
-}
-@media print{
-  header,.hero,.steps,.layout,.checkout,footer,#notice,#toast,#printBtn{display:none!important}
-  .confirmation{border:0;margin:0;max-width:none}
-  body{background:white}
-}
-</style>
-</head>
-
-<body>
-<header>
-  <a class="brand" href="#">
-    <img
-      src="https://lh3.googleusercontent.com/a-/ALV-UjUTAoSFAR5OUMj0ZCkgLF1RMYoE-Q85G0HPftaFEBBIjjzw9cQ=s265-w265-h265"
-      alt="Slide Guys"
-    >
-    <span>
-      SLIDE GUYS
-      <small>Big slides. Bigger smiles.</small>
-    </span>
-  </a>
-  <a class="cart-link" href="#cartSection">
-    Your reservation <span id="cartCount">0</span>
-  </a>
-</header>
-
-<main>
-  <section class="hero">
-    <div>
-      <p class="eyebrow">GOOD TIMES START HERE</p>
-      <h1>A big splash.<br>A day to remember.</h1>
-      <p>Pick your date, find your favorite slide, and make it official.</p>
-
-      <div class="hero-tags">
-        <span>$50 deposit per unit</span>
-        <span>Free delivery within 10 miles of Richfield</span>
-      </div>
-
-      <details class="policies">
-        <summary>Delivery, deposits & reservation policies</summary>
-        <div class="policy-content">
-          <p>Deliveries within 10 miles of Richfield are free.</p>
-          <p>
-            All other outlying areas are available with a Travel Fee.
-            $35 for 10–20 miles, $52 for 20–30 miles, $96 for 30–40 miles.
-            <strong>Travel fees are not included in the total price.</strong>
-          </p>
-          <p>No cancellations. Rescheduling is subject to availability.</p>
-          <p>
-            A non-refundable $50 deposit is due at time of reservation
-            (per unit). We accept Venmo, credit card, and PayPal for the
-            deposit. We can collect cash, check, Cash App, Venmo, or
-            PayPal the day of.
-          </p>
-        </div>
-      </details>
-    </div>
-
-    <div class="date-panel">
-      <label for="date">
-        <span class="step">1</span> Choose your rental date
-      </label>
-      <input type="date" id="date" required aria-describedby="dateHelp">
-      <p id="dateHelp">Booking dates available through December 31 of this year.</p>
-      <div id="dateStatus" role="status">Choose a date to check availability.</div>
-    </div>
-  </section>
-
-  <nav class="steps" aria-label="Reservation steps">
-    <span>01 / Choose date</span>
-    <span>02 / Find your slides</span>
-    <span>03 / Checkout & pay</span>
-  </nav>
-
-  <div id="notice" role="status" tabindex="-1" hidden></div>
-
-  <div class="layout" id="shopping">
-    <section aria-labelledby="browseTitle">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">MAKE IT A SLIDE DAY</p>
-          <h2 id="browseTitle">Find your fun</h2>
-        </div>
-        <span id="browseDate">Choose a date above</span>
-      </div>
-      <p class="muted">
-        Add multiple units to your reservation.
-        Each unit can be reserved once per date.
-      </p>
-      <div id="unitGrid" class="unit-grid" aria-live="polite">
-        <p>Loading slides…</p>
-      </div>
-      <button id="retry" class="secondary" hidden>Retry loading slides</button>
-    </section>
-
-    <aside id="cartSection" class="cart panel">
-      <p class="eyebrow">YOUR GOOD DAY, PLANNED</p>
-      <h2>Your reservation</h2>
-      <p id="emptyCart" class="empty">
-        Your next great day starts with a slide.
-        Choose a date and add your favorites.
-      </p>
-      <ul id="cartList"></ul>
-
-      <div class="totals">
-        <div>
-          <span>Rental total</span>
-          <strong id="cartTotal">$0.00</strong>
-        </div>
-        <div>
-          <span>Deposit due now</span>
-          <strong id="cartDeposit">$0.00</strong>
-        </div>
-      </div>
-
-      <p class="fine">
-        $50 non-refundable deposit per unit.
-        Travel fees, if applicable, are additional and not included in these totals.
-      </p>
-      <button id="checkoutBtn" class="primary" disabled>
-        Continue to checkout
-      </button>
-      <p class="fine center">
-        Your reservation is confirmed after payment and successful booking.
-      </p>
-    </aside>
-  </div>
-
-  <section
-    id="checkout"
-    class="panel checkout"
-    hidden
-    aria-labelledby="checkoutTitle"
-  >
-    <p class="eyebrow">LET’S MAKE IT OFFICIAL</p>
-    <h2 id="checkoutTitle" tabindex="-1">Checkout</h2>
-    <p class="muted">Tell us where the fun is happening.</p>
-
-    <form id="bookingForm">
-      <fieldset id="customerFields">
-        <div class="fields">
-          <label>
-            Full name
-            <input id="name" autocomplete="name" required>
-          </label>
-          <label>
-            Phone number
-            <input id="phone" type="tel" autocomplete="tel" required>
-          </label>
-          <label class="wide">
-            Email address
-            <input id="email" type="email" autocomplete="email" required>
-          </label>
-          <label>
-            Delivery address
-            <input id="address" autocomplete="street-address" required>
-          </label>
-          <label>
-            City
-            <input id="city" autocomplete="address-level2" required>
-          </label>
-        </div>
-
-        <div class="agreement">
-          <h3>One last thing before the fun</h3>
-          <p>
-            No cancellations. Rescheduling is subject to availability.
-            The $50 deposit per unit is non-refundable.
-          </p>
-          <p>
-            Please review our
-            <a
-              href="https://www.canva.com/design/DAGvLXmYrCQ/urL0oPQKv3g2IDZnXb7URw/view?utm_content=DAGvLXmYrCQ&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hcf7d7df185"
-              target="_blank"
-              rel="noopener noreferrer"
-            >liability release form ↗</a>.
-            By making a reservation and payment, you are agreeing to the
-            terms and conditions.
-          </p>
-          <label class="checkbox">
-            <input type="checkbox" id="agreeTerms" required>
-            <span>
-              I have read and agree to the terms, conditions, and liability release.
-            </span>
-          </label>
-        </div>
-
-        <h3>Choose how much to pay today</h3>
-        <div class="pay-choices">
-          <button
-            type="button"
-            id="payDepositBtn"
-            class="secondary"
-            aria-pressed="false"
-          >Pay deposit</button>
-          <button
-            type="button"
-            id="payFullBtn"
-            class="secondary"
-            aria-pressed="false"
-          >Pay full amount</button>
-        </div>
-        <p class="fine">
-          Pay securely with PayPal, Venmo, or card.
-          Available payment methods are shown below.
-        </p>
-      </fieldset>
-    </form>
-
-    <div id="paymentOptions" hidden>
-      <div id="paypalButtons"></div>
-    </div>
-    <p id="paypalStatus" role="status" tabindex="-1"></p>
-  </section>
-
-  <section
-    id="confirmation"
-    class="panel confirmation"
-    hidden
-    tabindex="-1"
-    aria-labelledby="confirmedTitle"
-  >
-    <div class="checkmark">✓</div>
-    <p class="eyebrow">GET READY FOR A GREAT DAY</p>
-    <h1 id="confirmedTitle">You’re booked!</h1>
-    <p id="confirmationGreeting"></p>
-    <div id="confirmationDetails"></div>
-    <p id="emailStatus" role="status"></p>
-    <p>
-      Travel fees are additional and are not included above.
-      No cancellations. Rescheduling is subject to availability.
-    </p>
-    <button class="secondary" id="printBtn">Print confirmation</button>
-  </section>
-</main>
-
-<footer>
-  SLIDE GUYS <span>Big slides. Bigger smiles.</span>
-</footer>
-
-<div id="toast" role="status" hidden></div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-<script src="https://www.paypal.com/sdk/js?client-id=ARPujaExbPU50Hj0kqNpn9j0yx-oPf96whc5YgreLWcPrkWzlVzOwDxO3teVJjBG2-WCsgzSh45Xpbi2&components=buttons&enable-funding=card,venmo&currency=USD&intent=capture"></script>
-
-<script>
-'use strict';
-
+.hero .policies{margin:18px 0 0;padding:14px 0 0;border-top:1px solid #bad9df;border-bottom:0}.hero .policy-content p:last-child{margin-bottom:0}
+</style></head>
+<body><header><a class="brand" href="#"><img src="https://lh3.googleusercontent.com/a-/ALV-UjUTAoSFAR5OUMj0ZCkgLF1RMYoE-Q85G0HPftaFEBBIjjzw9cQ=s265-w265-h265" alt="Slide Guys"><span>SLIDE GUYS<small>Big slides. Bigger smiles.</small></span></a><a class="cart-link" href="#cartSection">Your reservation <span id="cartCount">0</span></a></header>
+<main><section class="hero"><div><p class="eyebrow">GOOD TIMES START HERE</p><h1>A big splash.<br>A day to remember.</h1><p>Pick your date, find your favorite slide, and make it official.</p><div class="hero-tags"><span>$50 deposit per unit</span><span>Free delivery within 10 miles of Richfield</span></div><details class="policies"><summary>Delivery, deposits & reservation policies</summary><div class="policy-content"><p>Deliveries within 10 miles of Richfield are free.</p><p>All other outlying areas are available with a Travel Fee. $35 for 10–20 miles, $52 for 20–30 miles, $96 for 30–40 miles. <strong>Travel fees are not included in the total price.</strong></p><p>No cancellations. Rescheduling is subject to availability.</p><p>A non-refundable $50 deposit is due at time of reservation (per unit). We accept Venmo, credit card, and PayPal for the deposit. We can collect cash, check, Cash App, Venmo, or PayPal the day of.</p></div></details></div><div class="date-panel"><label for="date"><span class="step">1</span> Choose your rental date</label><input type="date" id="date" required aria-describedby="dateHelp"><p id="dateHelp">Booking dates available through December 31 of this year.</p><div id="dateStatus" role="status">Choose a date to check availability.</div></div></section>
+<nav class="steps" aria-label="Reservation steps"><span>01 / Choose date</span><span>02 / Find your slides</span><span>03 / Checkout & pay</span></nav>
+<div id="notice" role="status" tabindex="-1" hidden></div>
+<div class="layout" id="shopping"><section aria-labelledby="browseTitle"><div class="section-head"><div><p class="eyebrow">MAKE IT A SLIDE DAY</p><h2 id="browseTitle">Find your fun</h2></div><span id="browseDate">Choose a date above</span></div><p class="muted">Add multiple units to your reservation. Each unit can be reserved once per date.</p><div id="unitGrid" class="unit-grid" aria-live="polite"><p>Loading slides…</p></div><button id="retry" class="secondary" hidden>Retry loading slides</button>
+</section>
+<aside id="cartSection" class="cart panel"><p class="eyebrow">YOUR GOOD DAY, PLANNED</p><h2>Your reservation</h2><p id="emptyCart" class="empty">Your next great day starts with a slide. Choose a date and add your favorites.</p><ul id="cartList"></ul><div class="totals"><div><span>Rental total</span><strong id="cartTotal">$0.00</strong></div><div><span>Deposit due now</span><strong id="cartDeposit">$0.00</strong></div></div><p class="fine">$50 non-refundable deposit per unit. Travel fees, if applicable, are additional and not included in these totals.</p><button id="checkoutBtn" class="primary" disabled>Continue to checkout</button><p class="fine center">Your reservation is confirmed after payment and successful booking.</p></aside></div>
+<section id="checkout" class="panel checkout" hidden aria-labelledby="checkoutTitle"><p class="eyebrow">LET’S MAKE IT OFFICIAL</p><h2 id="checkoutTitle" tabindex="-1">Checkout</h2><p class="muted">Tell us where the fun is happening.</p><form id="bookingForm"><fieldset id="customerFields"><div class="fields"><label>Full name<input id="name" autocomplete="name" required></label><label>Phone number<input id="phone" type="tel" autocomplete="tel" required></label><label class="wide">Email address<input id="email" type="email" autocomplete="email" required></label><label>Delivery address<input id="address" autocomplete="street-address" required></label><label>City<input id="city" autocomplete="address-level2" required></label></div><div class="agreement"><h3>One last thing before the fun</h3><p>No cancellations. Rescheduling is subject to availability. The $50 deposit per unit is non-refundable.</p><p>Please review our <a href="https://www.canva.com/design/DAGvLXmYrCQ/urL0oPQKv3g2IDZnXb7URw/view?utm_content=DAGvLXmYrCQ&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hcf7d7df185" target="_blank" rel="noopener noreferrer">liability release form ↗</a>. By making a reservation and payment, you are agreeing to the terms and conditions.</p><label class="checkbox"><input type="checkbox" id="agreeTerms" required><span>I have read and agree to the terms, conditions, and liability release.</span></label></div><h3>Choose how much to pay today</h3><div class="pay-choices"><button type="button" id="payDepositBtn" class="secondary" aria-pressed="false">Pay deposit</button><button type="button" id="payFullBtn" class="secondary" aria-pressed="false">Pay full amount</button></div><p class="fine">Pay securely with PayPal, Venmo, or card. Available payment methods are shown below.</p></fieldset></form><div id="paymentOptions" hidden><div id="paypalButtons"></div></div><div id="recoveryPanel" class="agreement" hidden><h3>Recover your checkout</h3><p id="recoveryReference" class="fine" style="overflow-wrap:anywhere"></p><p>Keep this browser’s saved data until your reservation is confirmed. Recovery checks the same payment instead of starting another.</p><button type="button" id="recoverBtn" class="secondary">Check checkout</button><button type="button" id="cancelTestBtn" class="secondary" style="margin-top:12px">Release unpaid hold</button></div><p id="paypalStatus" role="status" tabindex="-1"></p></section>
+<section id="confirmation" class="panel confirmation" hidden tabindex="-1" aria-labelledby="confirmedTitle"><div class="checkmark">✓</div><p class="eyebrow">GET READY FOR A GREAT DAY</p><h1 id="confirmedTitle">You’re booked!</h1><p id="confirmationGreeting"></p><div id="confirmationDetails"></div><p id="emailStatus" role="status"></p><p>Travel fees are additional and are not included above. No cancellations. Rescheduling is subject to availability.</p><button class="secondary" id="printBtn">Print confirmation</button><button type="button" class="secondary" id="newTestBtn" style="margin:12px">Start another reservation</button></section>
+</main><footer>SLIDE GUYS <span>Big slides. Bigger smiles.</span></footer><div id="toast" role="status" hidden></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>'use strict';
 document.addEventListener('DOMContentLoaded', async () => {
-  const config = {
-    url: 'https://vaobmohukgcqfvnclqyh.supabase.co',
-    key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M',
-    liability: 'https://www.canva.com/design/DAGvLXmYrCQ/urL0oPQKv3g2IDZnXb7URw/view?utm_content=DAGvLXmYrCQ&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hcf7d7df185'
-  };
-
+  const config = {"url":"https://vaobmohukgcqfvnclqyh.supabase.co","key":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M"};
+  if(location.origin!=='https://slideguys-calendar.vercel.app'){document.getElementById('notice').hidden=false;document.getElementById('notice').textContent='Open this booking page at https://slideguys-calendar.vercel.app/ to connect to the booking checkout.';document.getElementById('unitGrid').textContent='Booking checkout requires the hosted booking page.';return;}
   const $ = id => document.getElementById(id);
   const money = value => '$' + Number(value).toFixed(2);
-
-  const dateText = value =>
-    new Date(value + 'T12:00:00').toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-
-  const localDate = date =>
-    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-
-  const today = new Date();
-  const year = today.getFullYear();
-  const DEPOSIT_PER_UNIT = 50;
-
-  $('date').min = localDate(today);
-  $('date').max = `${year}-12-31`;
-
-  $('dateHelp').textContent =
-    `Choose a date from today through December 31, ${year}. Bookings for next year open January 1st.`;
-
-  let units = [];
-  let booked = new Set();
-  let cart = [];
-  let checking = false;
-  let availabilityReady = false;
-  let request = 0;
-  let payType = null;
-  let locked = false;
-  let captured = false;
-  let finalized = false;
-  let snapshot = null;
-  let paypalRendered = false;
-  let toastTimer;
-
-  const total = items =>
-    items.reduce((sum, item) => sum + Number(item.price), 0);
-
+  const dateText = value => new Date(value + 'T12:00:00').toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
+  const localDate = date => `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+  const today = new Date(), year = today.getFullYear(), DEPOSIT_PER_UNIT = 50;
+  $('date').min = localDate(today); $('date').max = `${year}-12-31`;
+  $('dateHelp').textContent = `Choose a date from today through December 31, ${year}. Bookings for next year open January 1st.`;
+  let units = [], booked = new Set(), cart = [], checking = false, availabilityReady = false, request = 0;
+  let payType = null, locked = false, captured = false, finalized = false, snapshot = null, paypalRendered = false, toastTimer;
+  const total = items => items.reduce((sum,item) => sum + Number(item.price), 0);
   const key = item => `${item.unitId}|${item.date}`;
-
-  const validDate = value =>
-    !!value &&
-    value >= localDate(new Date()) &&
-    value <= `${new Date().getFullYear()}-12-31` &&
-    value.startsWith(`${new Date().getFullYear()}-`);
-
-  function notice(message) {
-    $('notice').textContent = message;
-    $('notice').hidden = !message;
-  }
-
-  function status(message, error = false) {
-    $('paypalStatus').textContent = message;
-    $('paypalStatus').classList.toggle('error', error);
-  }
-
-  function toast(message) {
-    clearTimeout(toastTimer);
-    $('toast').textContent = message;
-    $('toast').hidden = false;
-    toastTimer = setTimeout(() => {
-      $('toast').hidden = true;
-    }, 3200);
-  }
-
-  function element(tag, text, className) {
-    const node = document.createElement(tag);
-    if (text !== undefined) node.textContent = text;
-    if (className) node.className = className;
-    return node;
-  }
-
-  function resetPayment() {
-    payType = null;
-    $('paymentOptions').hidden = true;
-
-    for (const id of ['payFullBtn', 'payDepositBtn']) {
-      $(id).classList.remove('active');
-      $(id).setAttribute('aria-pressed', 'false');
-    }
-
-    status('');
-  }
-
-  function lock(value) {
-    locked = value;
-    $('date').disabled = value;
-    $('customerFields').disabled = value;
-    $('checkoutBtn').disabled = value || !cart.length;
-    renderCart();
-    renderUnits();
-  }
-
+  const validDate = value => !!value && value >= localDate(new Date()) && value <= `${new Date().getFullYear()}-12-31` && value.startsWith(`${new Date().getFullYear()}-`);
+  function notice(message) { $('notice').textContent = message; $('notice').hidden = !message; }
+  function status(message, error=false) { $('paypalStatus').textContent = message; $('paypalStatus').classList.toggle('error',error); }
+  function toast(message) {clearTimeout(toastTimer);$('toast').textContent=message;$('toast').hidden=false;toastTimer=setTimeout(()=>$('toast').hidden=true,3200);}
+  function element(tag,text,className) {const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(className)node.className=className;return node;}
+  function resetPayment() {payType=null;$('paymentOptions').hidden=true;for(const id of ['payFullBtn','payDepositBtn']){$(id).classList.remove('active');$(id).setAttribute('aria-pressed','false');}status('');}
+  function lock(value) {locked=value;$('date').disabled=value;$('customerFields').disabled=value;$('checkoutBtn').disabled=value||!cart.length;renderCart();renderUnits();}
   let db;
-
-  try {
-    db = window.supabase.createClient(config.url, config.key);
-    window.emailjs?.init('PXm_wNk9aIao8Hlpp');
-  } catch (error) {
-    notice(
-      'The booking service could not load. Please reload this page before continuing.'
-    );
-    return;
-  }
-
+  try {db=window.supabase.createClient(config.url,config.key);}
+  catch(error){notice('The booking service could not load. Please reload this page before continuing.');return;}
   function renderUnits() {
-    const grid = $('unitGrid');
-    grid.replaceChildren();
-
-    if (!units.length) {
-      grid.append(
-        element('p', 'No slides are available to display right now.')
-      );
-      return;
-    }
-
-    for (const unit of units) {
-      const inCart = cart.some(
-        item => key(item) === `${unit.id}|${$('date').value}`
-      );
-
-      const isBooked = booked.has(String(unit.id));
-
-      const label = !$('date').value
-        ? 'Choose a date'
-        : checking
-          ? 'Checking availability…'
-          : !availabilityReady
-            ? 'Availability unavailable'
-            : isBooked
-              ? 'Booked for this date'
-              : inCart
-                ? 'In your reservation'
-                : 'Available';
-
-      const card = element('article', undefined, 'unit-card');
-      const media = element('div', undefined, 'unit-image');
-      const img = element('img');
-
-      img.src = unit.thumbnail_url || '';
-      img.alt = unit.name;
-      img.loading = 'lazy';
-
-      img.addEventListener('error', () => {
-        img.hidden = true;
-        media.append(
-          element('p', 'Slide photo unavailable', 'fine center')
-        );
-      }, { once: true });
-
-      media.append(
-        img,
-        element(
-          'span',
-          label,
-          'badge' + (label === 'Available' ? ' available' : '')
-        )
-      );
-
-      const body = element('div', undefined, 'card-body');
-      const price = element('div', money(unit.price) + ' ', 'price');
-
-      price.append(element('small', '/ rental'));
-
-      const button = element(
-        'button',
-        inCart
-          ? '✓ Added'
-          : isBooked
-            ? 'Unavailable'
-            : !$('date').value
-              ? 'Choose a date'
-              : 'Add to reservation',
-        'primary'
-      );
-
-      button.type = 'button';
-      button.disabled =
-        locked ||
-        checking ||
-        !availabilityReady ||
-        isBooked ||
-        inCart;
-
-      button.setAttribute(
-        'aria-label',
-        `${button.textContent}: ${unit.name}`
-      );
-
-      button.addEventListener('click', () => addUnit(unit));
-
-      body.append(element('h3', unit.name), price, button);
-      card.append(media, body);
-      grid.append(card);
+    const grid=$('unitGrid');grid.replaceChildren();
+    if(!units.length){grid.append(element('p','No slides are available to display right now.'));return;}
+    for(const unit of units){
+      const inCart=cart.some(item=>key(item)===`${unit.id}|${$('date').value}`), isBooked=booked.has(String(unit.id));
+      const label=!$('date').value?'Choose a date':checking?'Checking availability…':!availabilityReady?'Availability unavailable':isBooked?'Booked for this date':inCart?'In your reservation':'Available';
+      const card=element('article',undefined,'unit-card'),media=element('div',undefined,'unit-image'),img=element('img');
+      img.src=unit.thumbnail_url||'';img.alt=unit.name;img.loading='lazy';img.addEventListener('error',()=>{img.hidden=true;media.append(element('p','Slide photo unavailable','fine center'));},{once:true});
+      media.append(img,element('span',label,'badge'+(label==='Available'?' available':'')));
+      const body=element('div',undefined,'card-body'),price=element('div',money(unit.price)+' ','price');price.append(element('small','/ rental'));
+      const button=element('button',inCart?'✓ Added':isBooked?'Unavailable':!$('date').value?'Choose a date':'Add to reservation','primary');
+      button.type='button';button.disabled=locked||checking||!availabilityReady||isBooked||inCart;button.setAttribute('aria-label',`${button.textContent}: ${unit.name}`);button.addEventListener('click',()=>addUnit(unit));
+      body.append(element('h3',unit.name),price,button);card.append(media,body);grid.append(card);
     }
   }
-
-  function renderCart() {
-    $('cartList').replaceChildren();
-    $('emptyCart').hidden = cart.length > 0;
-    $('cartCount').textContent = cart.length;
-
-    for (const item of cart) {
-      const li = element('li');
-      const info = element('div');
-
-      info.append(
-        element('strong', item.unitName),
-        element('small', dateText(item.date))
-      );
-
-      const remove = element('button', 'Remove', 'remove');
-      remove.type = 'button';
-      remove.disabled = locked;
-
-      remove.setAttribute(
-        'aria-label',
-        `Remove ${item.unitName} for ${dateText(item.date)}`
-      );
-
-      remove.addEventListener('click', () => {
-        if (locked) return;
-
-        cart = cart.filter(other => key(other) !== key(item));
-        resetPayment();
-        renderCart();
-        renderUnits();
-
-        if (!cart.length) $('checkout').hidden = true;
-      });
-
-      info.append(remove);
-      li.append(info, element('strong', money(item.price)));
-      $('cartList').append(li);
+  function renderCart(){
+    $('cartList').replaceChildren();$('emptyCart').hidden=cart.length>0;$('cartCount').textContent=cart.length;
+    for(const item of cart){const li=element('li'),info=element('div');info.append(element('strong',item.unitName),element('small',dateText(item.date)));
+      const remove=element('button','Remove','remove');remove.type='button';remove.disabled=locked;remove.setAttribute('aria-label',`Remove ${item.unitName} for ${dateText(item.date)}`);
+      remove.addEventListener('click',()=>{if(locked)return;cart=cart.filter(other=>key(other)!==key(item));resetPayment();renderCart();renderUnits();if(!cart.length)$('checkout').hidden=true;});
+      info.append(remove);li.append(info,element('strong',money(item.price)));$('cartList').append(li);
     }
-
-    $('cartTotal').textContent = money(total(cart));
-    $('cartDeposit').textContent =
-      money(cart.length * DEPOSIT_PER_UNIT);
-
-    $('payFullBtn').textContent =
-      `Pay full amount · ${money(total(cart))}`;
-
-    $('payDepositBtn').textContent =
-      `Pay deposit · ${money(cart.length * DEPOSIT_PER_UNIT)}`;
-
-    $('checkoutBtn').disabled = locked || !cart.length;
+    $('cartTotal').textContent=money(total(cart));$('cartDeposit').textContent=money(cart.length*DEPOSIT_PER_UNIT);
+    $('payFullBtn').textContent=`Pay full amount · ${money(total(cart))}`;$('payDepositBtn').textContent=`Pay deposit · ${money(cart.length*DEPOSIT_PER_UNIT)}`;
+    $('checkoutBtn').disabled=locked||!cart.length;
   }
-
-  async function loadUnits() {
-    $('retry').hidden = true;
-
-    try {
-      const { data, error } = await db
-        .from('units')
-        .select('id, name, thumbnail_url, price, order')
-        .order('order', { ascending: true });
-
-      if (error) throw error;
-
-      units = data || [];
-
-      if (units.some(unit =>
-        !Number.isFinite(Number(unit.price)) ||
-        Number(unit.price) < 0
-      )) {
-        throw new Error('Invalid unit price');
-      }
-
-      renderUnits();
-
-      if ($('date').value) {
-        await refreshAvailability($('date').value);
-      }
-    } catch (error) {
-      units = [];
-      renderUnits();
-      notice('We could not load the slide catalog. Please try again.');
-      $('retry').hidden = false;
-    }
+  async function loadUnits(){
+    $('retry').hidden=true;
+    try{const {data,error}=await db.from('units').select('id, name, thumbnail_url, price, order').order('order',{ascending:true});if(error)throw error;
+      units=data||[];if(units.some(unit=>!Number.isFinite(Number(unit.price))||Number(unit.price)<0))throw new Error('Invalid unit price');
+      renderUnits();if($('date').value)await refreshAvailability($('date').value);
+    }catch(error){units=[];renderUnits();notice('We could not load the slide catalog. Please try again.');$('retry').hidden=false;}
   }
-
-  async function refreshAvailability(value) {
-    const token = ++request;
-
-    checking = true;
-    availabilityReady = false;
-    booked = new Set();
-
-    renderUnits();
-    $('dateStatus').textContent = 'Checking your date…';
-
-    try {
-      const { data, error } = await db
-        .from('bookings')
-        .select('unit')
-        .eq('date', value);
-
-      if (error) throw error;
-
-      if (token !== request || $('date').value !== value) {
-        return false;
-      }
-
-      booked = new Set((data || []).map(row => String(row.unit)));
-      availabilityReady = true;
-
-      $('dateStatus').textContent =
-        `Availability for ${dateText(value)} is ready.`;
-
-      return true;
-    } catch (error) {
-      if (token === request) {
-        $('dateStatus').textContent =
-          'Unable to check availability. Choose your date again to retry.';
-      }
-
-      return false;
-    } finally {
-      if (token === request) {
-        checking = false;
-        renderUnits();
-      }
-    }
+  async function refreshAvailability(value){
+    const token=++request;checking=true;availabilityReady=false;booked=new Set();renderUnits();$('dateStatus').textContent='Checking your date…';
+    try{const {data,error}=await db.rpc('sg_live_availability',{p_date:value});if(error)throw error;if(token!==request||$('date').value!==value)return false;
+      booked=new Set((data||[]).map(row=>String(row.unit)));availabilityReady=true;$('dateStatus').textContent=`Availability for ${dateText(value)} is ready.`;return true;
+    }catch(error){if(token===request)$('dateStatus').textContent='Unable to check availability. Choose your date again to retry.';return false;}
+    finally{if(token===request){checking=false;renderUnits();}}
   }
-
-  $('date').addEventListener('change', async () => {
-    resetPayment();
-    notice('');
-
-    const value = $('date').value;
-
-    if (!validDate(value)) {
-      ++request;
-      availabilityReady = false;
-      checking = false;
-      $('date').value = '';
-
-      $('dateStatus').textContent =
-        'Choose a date from today through December 31 of this year.';
-
-      $('browseDate').textContent = 'Choose a date above';
-      renderUnits();
-      return;
-    }
-
-    $('browseDate').textContent = dateText(value);
-    await refreshAvailability(value);
+  $('date').addEventListener('change',async()=>{resetPayment();notice('');const value=$('date').value;
+    if(!validDate(value)){++request;availabilityReady=false;checking=false;$('date').value='';$('dateStatus').textContent='Choose a date from today through December 31 of this year.';$('browseDate').textContent='Choose a date above';renderUnits();return;}
+    $('browseDate').textContent=dateText(value);await refreshAvailability(value);
   });
-
-  async function addUnit(unit) {
-    if (locked || checking) return;
-
-    const date = $('date').value;
-
-    if (!validDate(date)) {
-      return notice(
-        'Please choose a date within the current booking year.'
-      );
-    }
-
-    if (
-      !await refreshAvailability(date) ||
-      date !== $('date').value
-    ) {
-      return;
-    }
-
-    const item = {
-      unitId: String(unit.id),
-      unitName: unit.name,
-      price: Number(unit.price),
-      date
-    };
-
-    if (booked.has(item.unitId)) {
-      return notice(
-        'That unit has just been booked for this date. Please choose another slide or date.'
-      );
-    }
-
-    if (cart.some(other => key(other) === key(item))) return;
-
-    cart.push(item);
-    resetPayment();
-    notice('');
-    renderCart();
-    renderUnits();
-
-    toast(`${unit.name} added to your reservation`);
+  async function addUnit(unit){
+    if(locked||checking)return;const date=$('date').value;if(!validDate(date))return notice('Please choose a date within the current booking year.');
+    if(!await refreshAvailability(date)||date!==$('date').value)return;
+    const item={unitId:String(unit.id),unitName:unit.name,price:Number(unit.price),date};
+    if(booked.has(item.unitId))return notice('That unit has just been booked for this date. Please choose another slide or date.');
+    if(cart.some(other=>key(other)===key(item)))return;
+    cart.push(item);resetPayment();notice('');renderCart();renderUnits();toast(`${unit.name} added to your reservation`);
   }
-
-  $('retry').addEventListener('click', loadUnits);
-
-  $('bookingForm').addEventListener('submit', event => {
-    event.preventDefault();
-  });
-
-  $('checkoutBtn').addEventListener('click', () => {
-    if (!cart.length || locked) return;
-
-    $('checkout').hidden = false;
-    $('checkoutTitle').focus();
-    $('checkout').scrollIntoView({ behavior: 'smooth' });
-  });
-
-  for (const id of [
-    'name',
-    'phone',
-    'email',
-    'address',
-    'city',
-    'agreeTerms'
-  ]) {
-    $(id).addEventListener('input', () => {
-      if (!locked) resetPayment();
-    });
-  }
-
-  function validate() {
-    if (!cart.length) {
-      notice('Add at least one slide to your reservation.');
-      return false;
-    }
-
-    if (cart.some(item => !validDate(item.date))) {
-      notice(
-        'Every rental date must be from today through December 31 of this year. Remove any invalid dates from your reservation.'
-      );
-      return false;
-    }
-
-    for (const id of ['name', 'phone', 'email', 'address', 'city']) {
-      const input = $(id);
-      input.value = input.value.trim();
-    }
-
+  $('retry').addEventListener('click',loadUnits);
+  $('bookingForm').addEventListener('submit',event=>event.preventDefault());
+  $('checkoutBtn').addEventListener('click',()=>{if(!cart.length||locked)return;$('checkout').hidden=false;$('checkoutTitle').focus();$('checkout').scrollIntoView({behavior:'smooth'});});
+  for(const id of ['name','phone','email','address','city','agreeTerms'])$(id).addEventListener('input',()=>{if(!locked)resetPayment();});
+  function validate(){
+    if(!cart.length){notice('Add at least one slide to your reservation.');return false;}
+    if(cart.some(item=>!validDate(item.date))){notice('Every rental date must be from today through December 31 of this year. Remove any invalid dates from your reservation.');return false;}
+    for(const id of ['name','phone','email','address','city']){const input=$(id);input.value=input.value.trim();}
     return $('bookingForm').reportValidity();
   }
-
-  async function ensureAvailable(items) {
-    for (const item of items) {
-      // Unit IDs are UUIDs. Preserve them as strings.
-      const { data, error } = await db
-        .from('bookings')
-        .select('id')
-        .eq('unit', item.unitId)
-        .eq('date', item.date)
-        .limit(1);
-
-      if (error) {
-        throw new Error(
-          'We could not verify availability. Please try again.'
-        );
-      }
-
-      if (data?.length) {
-        throw new Error(
-          `${item.unitName} is already booked for ${dateText(item.date)}. Please remove it from your reservation.`
-        );
-      }
+  async function ensureAvailable(items){
+    for(const item of items){const {data,error}=await db.rpc('sg_live_availability',{p_date:item.date});
+      if(error)throw new Error('We could not verify availability. Please try again.');
+      if(data?.some(row=>row.unit===item.unitId))throw new Error(`${item.unitName} is already booked for ${dateText(item.date)}. Please remove it from your reservation.`);
     }
   }
-
-  function choosePayment(type) {
-    if (locked || !validate()) return;
-
-    payType = type;
-
-    for (const [id, value] of [
-      ['payFullBtn', 'full'],
-      ['payDepositBtn', 'deposit']
-    ]) {
-      $(id).classList.toggle('active', value === type);
-      $(id).setAttribute('aria-pressed', String(value === type));
-    }
-
-    $('paymentOptions').hidden = false;
-
-    status(
-      `Paying ${money(type === 'full' ? total(cart) : cart.length * DEPOSIT_PER_UNIT)} today. Travel fees are not included.`
-    );
-
-    renderPayPal();
+  function choosePayment(type){if(locked||!validate())return;payType=type;for(const [id,value]of [['payFullBtn','full'],['payDepositBtn','deposit']]){$(id).classList.toggle('active',value===type);$(id).setAttribute('aria-pressed',String(value===type));}
+    $('paymentOptions').hidden=false;status(`Paying ${money(type==='full'?total(cart):cart.length*DEPOSIT_PER_UNIT)} today. Travel fees are not included.`);renderPayPal();
   }
-
-  $('payFullBtn').addEventListener('click', () => {
-    choosePayment('full');
-  });
-
-  $('payDepositBtn').addEventListener('click', () => {
-    choosePayment('deposit');
-  });
-
-  function renderPayPal() {
-    if (paypalRendered) return;
-
-    if (!window.paypal) {
-      status(
-        'Payment options could not load. Please reload the page or check your connection.',
-        true
-      );
+  $('payFullBtn').addEventListener('click',()=>choosePayment('full'));$('payDepositBtn').addEventListener('click',()=>choosePayment('deposit'));
+  const STORAGE_KEY = 'slide-guys-live-checkout-v1';
+  let recovery = null, serverCheckout = null, operationBusy = false, sdkLoading = null;
+  function storedRecovery() {
+    const value = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+    if (value && (!/^[0-9a-f-]{36}$/.test(value.id) || !/^[0-9a-f]{64}$/.test(value.recovery_token))) {
+      throw new Error('The saved checkout is invalid. Contact Slide Guys before starting another reservation.');
+    }
+    return value;
+  }
+  function rememberRecovery() {
+    // Persist BEFORE any network request. No customer contact details are stored.
+    const current = storedRecovery();
+    if (current) { recovery = current; return; }
+    const value = {id:crypto.randomUUID(),recovery_token:Array.from(crypto.getRandomValues(new Uint8Array(32))).map(n=>n.toString(16).padStart(2,'0')).join('')};
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(value));
+    recovery = storedRecovery();
+    if (!recovery || recovery.id !== value.id) throw new Error('Could not save the checkout recovery reference.');
+  }
+  async function api(action, payload = {}) {
+    let response, data;
+    try {
+      response = await fetch(config.url+'/functions/v1/sg-live-checkout',{
+        method:'POST',headers:{'Content-Type':'application/json',apikey:config.key,Authorization:'Bearer '+config.key},
+        body:JSON.stringify({...payload,...(recovery || {}),action}),signal:AbortSignal.timeout(45000)
+      });
+      data = await response.json();
+    } catch { throw new Error(recovery ? 'The connection was interrupted. Use “Check checkout” to recover this same attempt.' : 'Could not connect to the checkout server. Check that its allowed website is https://slideguys-calendar.vercel.app and redeploy the function. No checkout has been started.'); }
+    if (!response.ok || !data.ok) {const error=new Error(data.message || data.code || 'The checkout could not continue.');error.code=data.code;throw error;}
+    if (data.environment !== 'live' && data.checkout?.environment !== 'live') throw new Error('Payment environment verification failed. Payment is blocked.');
+    return data;
+  }
+  function recoveryControls() {
+    $('recoveryPanel').hidden = !recovery;
+    $('recoveryReference').textContent = recovery ? 'Reservation: '+recovery.id : '';
+    $('recoverBtn').disabled = operationBusy;
+    $('cancelTestBtn').disabled = operationBusy || !serverCheckout || !['held','order_created'].includes(serverCheckout.status);
+  }
+  function showTestConfirmation(checkout) {
+    finalized = true;
+    $('shopping').hidden = true; $('checkout').hidden = true; $('confirmation').hidden = false;
+    $('confirmedTitle').textContent = 'You’re booked!';
+    $('confirmationGreeting').textContent = 'Your payment and reservation were recorded successfully.';
+    const list = element('ul');
+    for (const item of checkout.items) list.append(element('li',`${item.unit_name} · ${dateText(item.rental_date)} · ${money(item.price_cents/100)}`));
+    const totals = element('div',undefined,'totals');
+    for (const [label,value] of [['Rental total',checkout.rental_total_cents],['Amount paid',checkout.paid_cents],['Remaining rental balance',checkout.rental_total_cents-checkout.paid_cents]]) {
+      const row = element('div');row.append(element('span',label),element('strong',money(value/100)));totals.append(row);
+    }
+    $('confirmationDetails').replaceChildren(list,totals,element('p','Reservation: '+checkout.id,'fine'),element('p','PayPal order: '+checkout.order_id,'fine'),element('p','Payment reference: '+checkout.capture_id,'fine'));
+    $('emailStatus').textContent = 'Your confirmation emails are queued for delivery. Keep this reservation reference for your records.';
+    if(checkout.reservation_changed){$('confirmedTitle').textContent='Reservation updated';$('confirmationGreeting').textContent='Slide Guys has changed or removed this reservation. The details below are your original payment receipt. Contact Slide Guys for the current rental details.';}
+    $('confirmation').focus();$('confirmation').scrollIntoView({behavior:'smooth'});
+  }
+  async function applyCheckout(checkout) {
+    if (!checkout || checkout.id !== recovery?.id || checkout.environment !== 'live') throw new Error('Unexpected checkout response. Do not submit another payment.');
+    serverCheckout = checkout;
+    cart = checkout.items.map(item=>({unitId:item.unit_id,unitName:item.unit_name,price:item.price_cents/100,date:item.rental_date}));
+    payType = checkout.payment_type;
+    lock(true);$('checkout').hidden = false;$('paymentOptions').hidden = true;
+    recoveryControls();
+    if (checkout.status === 'confirmed') { showTestConfirmation(checkout);return; }
+    if (checkout.status === 'expired') {
+      // The server releases only unpaid holds. Pending captures cannot reach here.
+      localStorage.removeItem(STORAGE_KEY);recovery = null;serverCheckout = null;
+      lock(false);resetPayment();recoveryControls();
+      status('The unpaid hold was released. You can choose a payment amount to start again.');
       return;
     }
-
-    paypalRendered = true;
-
-    window.paypal.Buttons({
-      style: {
-        layout: 'vertical',
-        shape: 'rect',
-        label: 'pay'
-      },
-
-      createOrder: async (data, actions) => {
-        if (locked || captured || !validate() || !payType) {
-          throw new Error('Please complete checkout before paying.');
-        }
-
-        snapshot = {
-          items: cart.map(item => ({ ...item })),
-          type: payType,
-          amount: payType === 'full'
-            ? total(cart)
-            : cart.length * DEPOSIT_PER_UNIT,
-          customer: Object.fromEntries(
-            ['name', 'phone', 'email', 'address', 'city'].map(
-              id => [id, $(id).value.trim()]
-            )
-          )
-        };
-
-        lock(true);
-
-        try {
-          await ensureAvailable(snapshot.items);
-
-          const orderId = await actions.order.create({
-            purchase_units: [{
-              amount: {
-                currency_code: 'USD',
-                value: snapshot.amount.toFixed(2)
-              },
-              description:
-                `Slide Guys Booking (${snapshot.items.length} unit${snapshot.items.length > 1 ? 's' : ''}) — ${snapshot.type === 'full' ? 'Full' : 'Deposit'}`
-            }]
-          });
-
-          snapshot.orderId = orderId;
-          return orderId;
-        } catch (error) {
-          lock(false);
-          status(error.message, true);
-          throw error;
-        }
-      },
-
-      onApprove: async (data, actions) => {
-        if (captured || finalized) return;
-
-        try {
-          status('Verifying availability…');
-          await ensureAvailable(snapshot.items);
-        } catch (error) {
-          lock(false);
-          status(error.message + ' Payment was not captured.', true);
-          return;
-        }
-
-        status('Processing payment… Please keep this page open.');
-
-        let details;
-
-        try {
-          details = await actions.order.capture();
-        } catch (error) {
-          captured = true;
-          lock(true);
-          $('paymentOptions').hidden = true;
-
-          status(
-            `We could not verify the payment result. Do not submit another payment. Check your PayPal receipt and contact Slide Guys with order ${snapshot.orderId || data.orderID}.`,
-            true
-          );
-          return;
-        }
-
-        // After a capture response, never offer a second payment
-        // for this reservation.
-        captured = true;
-        lock(true);
-        $('paymentOptions').hidden = true;
-
-        if (details.status !== 'COMPLETED') {
-          status(
-            `Payment is ${details.status || 'unconfirmed'}. Your reservation is not confirmed. Contact Slide Guys with PayPal order ${details.id || snapshot.orderId} before trying again.`,
-            true
-          );
-          return;
-        }
-
-        try {
-          await finalizeReservation(details);
-        } catch (error) {
-          status(
-            `Payment succeeded, but one or more bookings could not be saved. Some units may already be reserved. Do not pay again. Contact Slide Guys with your PayPal receipt (order ${details.id || snapshot.orderId}) to complete your reservation.`,
-            true
-          );
-
-          $('paypalStatus').focus();
-        }
-      },
-
-      onCancel: () => {
-        if (!captured) {
-          lock(false);
-          snapshot = null;
-          status('Payment canceled. Your cart is ready when you are.');
-        }
-      },
-
-      onError: () => {
-        if (!captured) {
-          lock(false);
-
-          if (!$('paypalStatus').classList.contains('error')) {
-            status(
-              'Payment could not start. Please check your details and try again.',
-              true
-            );
-          }
-        }
-      }
-    }).render('#paypalButtons').catch(() => {
-      paypalRendered = false;
-
-      status(
-        'Payment options could not load. Choose your payment amount again to retry.',
-        true
-      );
-    });
+    if (checkout.status === 'order_created') {
+      status(`Payment: ${money(checkout.payment_due_cents/100)}. Hold expires ${new Date(checkout.hold_expires_at).toLocaleTimeString()}.`);
+      $('paymentOptions').hidden = false;await renderPayPal();
+    } else if (checkout.status === 'held') {
+      status('An unpaid hold was found. Release the unpaid hold, then select your payment amount again.');
+    } else {
+      status(checkout.status === 'needs_review'
+        ? 'This payment needs review. Keep this checkout reference; do not start another payment.'
+        : 'The payment result is being verified. Use “Check checkout” to recover the same attempt. Do not pay again.',true);
+    }
+  }
+  async function checkRecovery() {
+    if (operationBusy || !recovery) return;
+    operationBusy = true;recoveryControls();
+    try { await applyCheckout((await api('status')).checkout); }
+    catch (error) { lock(true);$('checkout').hidden=false;status(error.message,true); }
+    finally { operationBusy=false;recoveryControls(); }
+  }
+  async function loadSandboxSDK() {
+    if (window.sgLivePayPal) return;
+    if (!sdkLoading) sdkLoading = (async()=>{
+      const data = await api('config');
+      if (!data.client_id || data.environment !== 'live') throw new Error('Missing payment configuration.');
+      await new Promise((resolve,reject)=>{
+        const script=document.createElement('script');
+        script.setAttribute('data-namespace','sgLivePayPal');
+        script.src='https://www.paypal.com/sdk/js?'+new URLSearchParams({'client-id':data.client_id,components:'buttons','enable-funding':'card,venmo',currency:'USD',intent:'capture'});
+        script.onload=resolve;script.onerror=()=>{script.remove();reject(new Error('PayPal buttons could not load. Please retry.'));};
+        document.head.append(script);
+      });
+      if (!window.sgLivePayPal) throw new Error('PayPal SDK did not initialize.');
+    })().catch(error=>{sdkLoading=null;throw error;});
+    await sdkLoading;
+  }
+  async function renderPayPal() {
+    if (paypalRendered) return;
+    try {
+      await loadSandboxSDK();
+      if (paypalRendered) return;
+      paypalRendered=true;
+      await window.sgLivePayPal.Buttons({style:{layout:'vertical',shape:'rect',label:'pay'},
+        createOrder:async()=>{
+          if (operationBusy) throw new Error('Checkout is already processing.');
+          operationBusy=true;
+          try {
+            if (recovery) {
+              const checkout=(await api('status')).checkout;
+              if (checkout.status!=='order_created') {await applyCheckout(checkout);throw new Error('Check this checkout before continuing.');}
+              serverCheckout=checkout;
+              return checkout.order_id;
+            }
+            if (!validate() || !payType) throw new Error('Complete your details and choose a payment amount.');
+            const payload={items:cart.map(item=>({unit_id:item.unitId,date:item.date})),payment_type:payType,
+              expected_due_cents:Math.round((payType==='full'?total(cart):cart.length*DEPOSIT_PER_UNIT)*100),agreed:$('agreeTerms').checked,
+              customer:Object.fromEntries(['name','phone','email','address','city'].map(id=>[id,$(id).value.trim()]))};
+            rememberRecovery();lock(true);recoveryControls();
+            const checkout=(await api('create',payload)).checkout;
+            await applyCheckout(checkout);
+            if(checkout.status!=='order_created'||!checkout.order_id)throw new Error('The checkout is not payable.');
+            return checkout.order_id;
+          } catch(error) {
+            if(['CHECKOUT_PAUSED','UNIT_UNAVAILABLE','PRICE_CHANGED','INVALID_CART','INVALID_CUSTOMER','INVALID_CATALOG_PRICE','UNIT_NOT_FOUND','INVALID_RENTAL_DATE','DUPLICATE_CART_ITEM','AGREEMENT_REQUIRED','CHECKOUT_CAPACITY','INVALID_PAYMENT_AMOUNT','INVALID_REQUEST'].includes(error.code)){localStorage.removeItem(STORAGE_KEY);recovery=null;serverCheckout=null;lock(false);resetPayment();}
+            if(recovery){lock(true);$('paymentOptions').hidden=true;}
+            status(error.message,true);throw error;
+          } finally {operationBusy=false;recoveryControls();}
+        },
+        onApprove:async()=>{
+          if(operationBusy||finalized||!recovery)return;
+          operationBusy=true;lock(true);$('paymentOptions').hidden=true;status('Verifying your payment…');recoveryControls();
+          try{await applyCheckout((await api('capture')).checkout);}
+          catch(error){status(error.message,true);}
+          finally{operationBusy=false;recoveryControls();}
+        },
+        onCancel:()=>{status('PayPal was closed. Your checkout is saved. Resume payment, or release the unpaid hold.');checkRecovery();},
+        onError:()=>{if(recovery){lock(true);$('paymentOptions').hidden=true;recoveryControls();status('The payment did not finish. Use “Check checkout” before trying again.',true);}
+          else if(!$('paypalStatus').classList.contains('error'))status('PayPal could not start. Please try again.',true);}
+      }).render('#paypalButtons');
+    } catch(error){paypalRendered=false;status(error.message,true);}
+  }
+  $('recoverBtn').addEventListener('click',checkRecovery);
+  $('cancelTestBtn').addEventListener('click',async()=>{
+    if(operationBusy||!recovery)return;operationBusy=true;recoveryControls();
+    try{await applyCheckout((await api('cancel')).checkout);}catch(error){status(error.message,true);}
+    finally{operationBusy=false;recoveryControls();}
+  });
+  $('newTestBtn').addEventListener('click',()=>{
+    if(!finalized)return;
+    localStorage.removeItem(STORAGE_KEY);location.reload();
+  });
+  window.addEventListener('storage',event=>{
+    if(event.key===STORAGE_KEY){lock(true);$('paymentOptions').hidden=true;notice('The checkout changed in another tab. Reload this page to recover its current state.');}
+  });
+  async function restoreCheckout(){
+    try{recovery=storedRecovery();if(recovery){lock(true);$('checkout').hidden=false;recoveryControls();await checkRecovery();}}
+    catch(error){lock(true);notice(error.message);}
   }
 
-  async function finalizeReservation(details) {
-    if (finalized) return;
-
-    const { items, customer, type, amount } = snapshot;
-
-    // Preserve the existing table fields and per-unit inserts.
-    // No database schema changes.
-    let allSuccessful = true;
-    const reservedLines = [];
-
-    for (const item of items) {
-      // Keep the original UUID in the final availability check.
-      const { data: existing, error: checkError } = await db
-        .from('bookings')
-        .select('*')
-        .eq('unit', item.unitId)
-        .eq('date', item.date);
-
-      if (checkError || existing?.length) {
-        allSuccessful = false;
-        continue;
-      }
-
-      // Keep the original UUID when saving the booking.
-      const { error } = await db.from('bookings').insert([{
-        ...customer,
-        unit: item.unitId,
-        date: item.date
-      }]);
-
-      if (error) {
-        allSuccessful = false;
-      } else {
-        reservedLines.push(
-          `${item.unitName} — ${money(item.price)}`
-        );
-      }
-    }
-
-    if (!allSuccessful) {
-      throw new Error('One or more inserts failed');
-    }
-
-    finalized = true;
-
-    // Preserve both email templates and all existing parameters.
-    // Send emails only after every booking insert succeeds.
-    const params = {
-      ...customer,
-      items_summary: reservedLines.join('\n'),
-      total_price: money(total(items)),
-      deposit_total: money(items.length * DEPOSIT_PER_UNIT),
-      payment_type: type === 'full' ? 'Full Amount' : 'Deposit Amount',
-      paid_amount: money(amount),
-      paypal_order_id: details.id || '',
-      paypal_payer_email: details.payer?.email_address || '',
-      unit: items[0]?.unitName || '',
-      date: items[0]?.date || ''
-    };
-
-    showConfirmation(details);
-
-    const send = template =>
-      Promise.resolve().then(() =>
-        window.emailjs.send('service_1zxrd0j', template, params)
-      );
-
-    const emailResults = [];
-
-    for (const template of ['template_nqep0gt', 'template_6z2dcsj']) {
-      try {
-        await send(template);
-        emailResults.push(true);
-      } catch (error) {
-        emailResults.push(false);
-      }
-    }
-
-    $('emailStatus').textContent = emailResults.every(Boolean)
-      ? `Confirmation emails sent. Check ${customer.email} for your details.`
-      : 'Your reservation is confirmed, but one or more confirmation emails could not be sent. Please save this confirmation and contact Slide Guys for help.';
-  }
-
-  function showConfirmation(details) {
-    const { items, customer, amount, type } = snapshot;
-
-    $('shopping').hidden = true;
-    $('checkout').hidden = true;
-    $('confirmation').hidden = false;
-    notice('');
-
-    $('confirmationGreeting').textContent =
-      `Thanks, ${customer.name}! Your reservation is confirmed.`;
-
-    const container = $('confirmationDetails');
-    const list = element('ul');
-
-    for (const item of items) {
-      list.append(
-        element(
-          'li',
-          `${item.unitName} · ${dateText(item.date)} · ${money(item.price)}`
-        )
-      );
-    }
-
-    const totals = element('div', undefined, 'totals');
-
-    for (const [label, value] of [
-      ['Rental total', money(total(items))],
-      [
-        'Paid today (' + (type === 'full' ? 'full payment' : 'deposit') + ')',
-        money(amount)
-      ],
-      ['Remaining rental balance', money(total(items) - amount)]
-    ]) {
-      const row = element('div');
-
-      row.append(
-        element('span', label),
-        element('strong', value)
-      );
-
-      totals.append(row);
-    }
-
-    container.replaceChildren(
-      list,
-      totals,
-      element(
-        'p',
-        `Delivery: ${customer.address}, ${customer.city}`
-      ),
-      element(
-        'p',
-        `PayPal order: ${details.id || snapshot.orderId}`,
-        'fine'
-      )
-    );
-
-    $('emailStatus').textContent =
-      'Your reservation is saved. Sending confirmation emails…';
-
-    $('confirmation').focus();
-    $('confirmation').scrollIntoView({ behavior: 'smooth' });
-  }
-
-  $('printBtn').addEventListener('click', () => window.print());
-
-  renderCart();
-  await loadUnits();
+  $('printBtn').addEventListener('click',()=>window.print());renderCart();await restoreCheckout();await loadUnits();
 });
-</script>
-</body>
-</html>
+</script></body></html>
