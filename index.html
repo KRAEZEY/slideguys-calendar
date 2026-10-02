@@ -10,7 +10,7 @@
 <div class="layout" id="shopping"><section aria-labelledby="browseTitle"><div class="section-head"><div><p class="eyebrow">MAKE IT A SLIDE DAY</p><h2 id="browseTitle">Find your fun</h2></div><span id="browseDate">Choose a date above</span></div><p class="muted">Add multiple units to your reservation. Each unit can be reserved once per date.</p><div id="unitGrid" class="unit-grid" aria-live="polite"><p>Loading slides…</p></div><button id="retry" class="secondary" hidden>Retry loading slides</button>
 </section>
 <aside id="cartSection" class="cart panel"><p class="eyebrow">YOUR GOOD DAY, PLANNED</p><h2>Your reservation</h2><p id="emptyCart" class="empty">Your next great day starts with a slide. Choose a date and add your favorites.</p><ul id="cartList"></ul><div class="totals"><div><span>Rental total</span><strong id="cartTotal">$0.00</strong></div><div><span>Deposit due now</span><strong id="cartDeposit">$0.00</strong></div></div><p class="fine">Deposits shown above are non-refundable. Travel fees, if applicable, are additional and not included in these totals.</p><button id="checkoutBtn" class="primary" disabled>Continue to checkout</button><p class="fine center">Your reservation is confirmed after payment and successful booking.</p></aside></div>
-<section id="checkout" class="panel checkout" hidden aria-labelledby="checkoutTitle"><p class="eyebrow">LET’S MAKE IT OFFICIAL</p><h2 id="checkoutTitle" tabindex="-1">Checkout</h2><p class="muted">Tell us where the fun is happening.</p><form id="bookingForm"><fieldset id="customerFields"><div class="fields"><label>Full name<input id="name" autocomplete="name" required></label><label>Phone number<input id="phone" type="tel" autocomplete="tel" required></label><label class="wide">Email address<input id="email" type="email" autocomplete="email" required></label><label>Delivery address<input id="address" autocomplete="street-address" required></label><label>City<input id="city" autocomplete="address-level2" required></label></div><div class="agreement"><h3>One last thing before the fun</h3><p>No cancellations. Rescheduling is subject to availability. Each unit’s deposit is non-refundable. <span id="depositAgreement"></span></p><p>Please review our <a href="https://www.canva.com/design/DAGvLXmYrCQ/urL0oPQKv3g2IDZnXb7URw/view?utm_content=DAGvLXmYrCQ&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hcf7d7df185" target="_blank" rel="noopener noreferrer">liability release form ↗</a>. By making a reservation and payment, you are agreeing to the terms and conditions.</p><label class="checkbox"><input type="checkbox" id="agreeTerms" required><span>I have read and agree to the terms, conditions, and liability release.</span></label></div><h3>Choose how much to pay today</h3><div class="pay-choices"><button type="button" id="payDepositBtn" class="secondary" aria-pressed="false">Pay deposit</button><button type="button" id="payFullBtn" class="secondary" aria-pressed="false">Pay full amount</button></div><p class="fine">Pay securely with PayPal, Venmo, or card. Available payment methods are shown below.</p></fieldset></form><div id="paymentOptions" hidden><div id="paypalButtons"></div></div><div id="recoveryPanel" class="agreement" hidden><h3>Recover your checkout</h3><p id="recoveryReference" class="fine" style="overflow-wrap:anywhere"></p><p>Keep this browser’s saved data until your reservation is confirmed. Recovery checks the same payment instead of starting another.</p><button type="button" id="recoverBtn" class="secondary">Check checkout</button><button type="button" id="cancelTestBtn" class="secondary" style="margin-top:12px">Release unpaid hold</button></div><p id="paypalStatus" role="status" tabindex="-1"></p></section>
+<section id="checkout" class="panel checkout" hidden aria-labelledby="checkoutTitle"><p class="eyebrow">LET’S MAKE IT OFFICIAL</p><h2 id="checkoutTitle" tabindex="-1">Checkout</h2><p class="muted">Tell us where the fun is happening.</p><form id="bookingForm"><fieldset id="customerFields"><div class="fields"><label>Full name<input id="name" autocomplete="name" required></label><label>Phone number<input id="phone" type="tel" autocomplete="tel" required></label><label class="wide">Email address<input id="email" type="email" autocomplete="email" required></label><label>Delivery address<input id="address" autocomplete="street-address" required></label><label>City<input id="city" autocomplete="address-level2" required></label></div><div class="agreement"><h3>One last thing before the fun</h3><p>No cancellations. Rescheduling is subject to availability. Each unit’s deposit is non-refundable. <span id="depositAgreement"></span></p><p>Please review our <a href="https://www.canva.com/design/DAGvLXmYrCQ/urL0oPQKv3g2IDZnXb7URw/view?utm_content=DAGvLXmYrCQ&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hcf7d7df185" target="_blank" rel="noopener noreferrer">liability release form ↗</a>. By making a reservation and payment, you are agreeing to the terms and conditions.</p><label class="checkbox"><input type="checkbox" id="agreeTerms" required><span>I have read and agree to the terms, conditions, and liability release.</span></label></div><h3>Choose how much to pay today</h3><div class="pay-choices"><button type="button" id="payDepositBtn" class="secondary" aria-pressed="false">Pay deposit</button><button type="button" id="payFullBtn" class="secondary" aria-pressed="false">Pay full amount</button></div><p class="fine">Pay securely with PayPal, Venmo, or card. Available payment methods are shown below.</p></fieldset></form><div id="paymentOptions" hidden><div id="paypalButtons"></div></div><div id="recoveryPanel" class="agreement" hidden><h3>Let’s check your reservation.</h3><p>We’ll check your payment before you try again.</p><button type="button" id="recoverBtn" class="secondary">Check reservation status</button><button type="button" id="cancelTestBtn" class="secondary" style="margin-top:12px" hidden>Release unpaid reservation</button></div><p id="paypalStatus" role="status" tabindex="-1"></p></section>
 <section id="confirmation" class="panel confirmation" hidden tabindex="-1" aria-labelledby="confirmedTitle"><div class="checkmark">✓</div><p class="eyebrow">GET READY FOR A GREAT DAY</p><h1 id="confirmedTitle">You’re booked!</h1><p id="confirmationGreeting"></p><div id="confirmationDetails"></div><p id="emailStatus" role="status"></p><p>Travel fees are additional and are not included above. No cancellations. Rescheduling is subject to availability.</p><button class="secondary" id="printBtn">Print confirmation</button><button type="button" class="secondary" id="newTestBtn" style="margin:12px">Start another reservation</button></section>
 </main><footer>SLIDE GUYS <span>Big slides. Bigger smiles.</span></footer><div id="toast" role="status" hidden></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>'use strict';
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const key = item => `${item.unitId}|${item.date}`;
   const validDate = value => !!value && value >= localDate(new Date()) && value <= `${new Date().getFullYear()}-12-31` && value.startsWith(`${new Date().getFullYear()}-`);
   function notice(message) { $('notice').textContent = message; $('notice').hidden = !message; }
-  function status(message, error=false) { $('paypalStatus').textContent = message; $('paypalStatus').classList.toggle('error',error); }
+  function status(message, error=false) { $('paypalStatus').textContent = message; $('paypalStatus').classList.toggle('error',error); if(error && recovery){recoveryNeedsAttention=true;recoveryControls();} }
   function toast(message) {clearTimeout(toastTimer);$('toast').textContent=message;$('toast').hidden=false;toastTimer=setTimeout(()=>$('toast').hidden=true,3200);}
   function element(tag,text,className) {const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(className)node.className=className;return node;}
   function resetPayment() {payType=null;$('paymentOptions').hidden=true;for(const id of ['payFullBtn','payDepositBtn']){$(id).classList.remove('active');$(id).setAttribute('aria-pressed','false');}status('');}
@@ -114,6 +114,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   $('payFullBtn').addEventListener('click',()=>choosePayment('full'));$('payDepositBtn').addEventListener('click',()=>choosePayment('deposit'));
   const STORAGE_KEY = 'slide-guys-live-checkout-v1';
   let recovery = null, serverCheckout = null, operationBusy = false, sdkLoading = null;
+  let recoveryNeedsAttention=false, recoveryVerified=false;
   function storedRecovery() {
     const value = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
     if (value && (!/^[0-9a-f-]{36}$/.test(value.id) || !/^[0-9a-f]{64}$/.test(value.recovery_token))) {
@@ -131,6 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!recovery || recovery.id !== value.id) throw new Error('Could not save the checkout recovery reference.');
   }
   async function api(action, payload = {}) {
+    recoveryVerified=false;recoveryControls();
     let response, data;
     try {
       response = await fetch(config.url+'/functions/v1/sg-live-checkout',{
@@ -138,14 +140,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         body:JSON.stringify({...payload,...(recovery || {}),action}),signal:AbortSignal.timeout(45000)
       });
       data = await response.json();
-    } catch { throw new Error(recovery ? 'The connection was interrupted. Use “Check checkout” to recover this same attempt.' : 'Could not connect to the checkout server. Check that its allowed website is https://slideguys-calendar.vercel.app and redeploy the function. No checkout has been started.'); }
+    } catch { throw new Error(recovery ? 'Your connection was interrupted. Select “Check reservation status” before trying again.' : 'Could not connect to the checkout server. Check that its allowed website is https://slideguys-calendar.vercel.app and redeploy the function. No checkout has been started.'); }
     if (!response.ok || !data.ok) {const error=new Error(data.message || data.code || 'The checkout could not continue.');error.code=data.code;throw error;}
     if (data.environment !== 'live' && data.checkout?.environment !== 'live') throw new Error('Payment environment verification failed. Payment is blocked.');
     return data;
   }
   function recoveryControls() {
-    $('recoveryPanel').hidden = !recovery;
-    $('recoveryReference').textContent = recovery ? 'Reservation: '+recovery.id : '';
+    $('recoveryPanel').hidden = !recovery || !recoveryNeedsAttention || finalized;
+    $('cancelTestBtn').hidden = !recoveryVerified || !serverCheckout || !['held','order_created'].includes(serverCheckout.status);
     $('recoverBtn').disabled = operationBusy;
     $('cancelTestBtn').disabled = operationBusy || !serverCheckout || !['held','order_created'].includes(serverCheckout.status);
   }
@@ -167,7 +169,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   async function applyCheckout(checkout) {
     if (!checkout || checkout.id !== recovery?.id || checkout.environment !== 'live') throw new Error('Unexpected checkout response. Do not submit another payment.');
-    serverCheckout = checkout;
+    serverCheckout = checkout;recoveryVerified=true;
+    if(['held','capture_pending','needs_review'].includes(checkout.status))recoveryNeedsAttention=true;
     cart = checkout.items.map(item=>({unitId:item.unit_id,unitName:item.unit_name,price:item.price_cents/100,deposit:Number(item.deposit_cents??5000)/100,date:item.rental_date}));
     payType = checkout.payment_type;
     lock(true);$('checkout').hidden = false;$('paymentOptions').hidden = true;
@@ -177,23 +180,23 @@ document.addEventListener('DOMContentLoaded', async () => {
       // The server releases only unpaid holds. Pending captures cannot reach here.
       localStorage.removeItem(STORAGE_KEY);recovery = null;serverCheckout = null;
       lock(false);resetPayment();recoveryControls();
-      status('The unpaid hold was released. You can choose a payment amount to start again.');
+      status('Your unpaid reservation was released. You can choose a payment amount to start again.');
       return;
     }
     if (checkout.status === 'order_created') {
-      status(`Payment: ${money(checkout.payment_due_cents/100)}. Hold expires ${new Date(checkout.hold_expires_at).toLocaleTimeString()}.`);
+      status(`Payment: ${money(checkout.payment_due_cents/100)}. Complete your payment below.`);
       $('paymentOptions').hidden = false;await renderPayPal();
     } else if (checkout.status === 'held') {
-      status('An unpaid hold was found. Release the unpaid hold, then select your payment amount again.');
+      status('Your payment hasn’t started. Release the unpaid reservation below to choose your payment amount again.');
     } else {
       status(checkout.status === 'needs_review'
-        ? 'This payment needs review. Keep this checkout reference; do not start another payment.'
-        : 'The payment result is being verified. Use “Check checkout” to recover the same attempt. Do not pay again.',true);
+        ? 'We’re reviewing your payment. Please contact Slide Guys before trying to pay again.'
+        : 'The payment result is being verified. Use “Check reservation status” to recover the same attempt. Do not pay again.',true);
     }
   }
   async function checkRecovery() {
     if (operationBusy || !recovery) return;
-    operationBusy = true;recoveryControls();
+    recoveryNeedsAttention=true;operationBusy = true;recoveryControls();
     try { await applyCheckout((await api('status')).checkout); }
     catch (error) { lock(true);$('checkout').hidden=false;status(error.message,true); }
     finally { operationBusy=false;recoveryControls(); }
@@ -253,8 +256,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           catch(error){status(error.message,true);}
           finally{operationBusy=false;recoveryControls();}
         },
-        onCancel:()=>{status('PayPal was closed. Your checkout is saved. Resume payment, or release the unpaid hold.');checkRecovery();},
-        onError:()=>{if(recovery){lock(true);$('paymentOptions').hidden=true;recoveryControls();status('The payment did not finish. Use “Check checkout” before trying again.',true);}
+        onCancel:()=>{status('PayPal was closed. Your checkout is saved. Resume payment, or release the unpaid reservation.');checkRecovery();},
+        onError:()=>{if(recovery){lock(true);$('paymentOptions').hidden=true;recoveryControls();status('The payment did not finish. Use “Check reservation status” before trying again.',true);}
           else if(!$('paypalStatus').classList.contains('error'))status('PayPal could not start. Please try again.',true);}
       }).render('#paypalButtons');
     } catch(error){paypalRendered=false;status(error.message,true);}
