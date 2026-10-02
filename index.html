@@ -4,13 +4,13 @@
 .hero .policies{margin:18px 0 0;padding:14px 0 0;border-top:1px solid #bad9df;border-bottom:0}.hero .policy-content p:last-child{margin-bottom:0}
 </style></head>
 <body><header><a class="brand" href="#"><img src="https://lh3.googleusercontent.com/a-/ALV-UjUTAoSFAR5OUMj0ZCkgLF1RMYoE-Q85G0HPftaFEBBIjjzw9cQ=s265-w265-h265" alt="Slide Guys"><span>SLIDE GUYS<small>Big slides. Bigger smiles.</small></span></a><a class="cart-link" href="#cartSection">Your reservation <span id="cartCount">0</span></a></header>
-<main><section class="hero"><div><p class="eyebrow">GOOD TIMES START HERE</p><h1>A big splash.<br>A day to remember.</h1><p>Pick your date, find your favorite slide, and make it official.</p><div class="hero-tags"><span>$50 deposit per unit</span><span>Free delivery within 10 miles of Richfield</span></div><details class="policies"><summary>Delivery, deposits & reservation policies</summary><div class="policy-content"><p>Deliveries within 10 miles of Richfield are free.</p><p>All other outlying areas are available with a Travel Fee. $35 for 10–20 miles, $52 for 20–30 miles, $96 for 30–40 miles. <strong>Travel fees are not included in the total price.</strong></p><p>No cancellations. Rescheduling is subject to availability.</p><p>A non-refundable $50 deposit is due at time of reservation (per unit). We accept Venmo, credit card, and PayPal for the deposit. We can collect cash, check, Cash App, Venmo, or PayPal the day of.</p></div></details></div><div class="date-panel"><label for="date"><span class="step">1</span> Choose your rental date</label><input type="date" id="date" required aria-describedby="dateHelp"><p id="dateHelp">Booking dates available through December 31 of this year.</p><div id="dateStatus" role="status">Choose a date to check availability.</div></div></section>
+<main><section class="hero"><div><p class="eyebrow">GOOD TIMES START HERE</p><h1>A big splash.<br>A day to remember.</h1><p>Pick your date, find your favorite slide, and make it official.</p><div class="hero-tags"><span>Deposits vary by unit</span><span>Free delivery within 10 miles of Richfield</span></div><details class="policies"><summary>Delivery, deposits & reservation policies</summary><div class="policy-content"><p>Deliveries within 10 miles of Richfield are free.</p><p>All other outlying areas are available with a Travel Fee. $35 for 10–20 miles, $52 for 20–30 miles, $96 for 30–40 miles. <strong>Travel fees are not included in the total price.</strong></p><p>No cancellations. Rescheduling is subject to availability.</p><p>A non-refundable deposit is due at reservation for each unit. Each unit’s deposit is shown with its rental price. We accept Venmo, credit card, and PayPal for the deposit. We can collect cash, check, Cash App, Venmo, or PayPal the day of.</p></div></details></div><div class="date-panel"><label for="date"><span class="step">1</span> Choose your rental date</label><input type="date" id="date" required aria-describedby="dateHelp"><p id="dateHelp">Booking dates available through December 31 of this year.</p><div id="dateStatus" role="status">Choose a date to check availability.</div></div></section>
 <nav class="steps" aria-label="Reservation steps"><span>01 / Choose date</span><span>02 / Find your slides</span><span>03 / Checkout & pay</span></nav>
 <div id="notice" role="status" tabindex="-1" hidden></div>
 <div class="layout" id="shopping"><section aria-labelledby="browseTitle"><div class="section-head"><div><p class="eyebrow">MAKE IT A SLIDE DAY</p><h2 id="browseTitle">Find your fun</h2></div><span id="browseDate">Choose a date above</span></div><p class="muted">Add multiple units to your reservation. Each unit can be reserved once per date.</p><div id="unitGrid" class="unit-grid" aria-live="polite"><p>Loading slides…</p></div><button id="retry" class="secondary" hidden>Retry loading slides</button>
 </section>
-<aside id="cartSection" class="cart panel"><p class="eyebrow">YOUR GOOD DAY, PLANNED</p><h2>Your reservation</h2><p id="emptyCart" class="empty">Your next great day starts with a slide. Choose a date and add your favorites.</p><ul id="cartList"></ul><div class="totals"><div><span>Rental total</span><strong id="cartTotal">$0.00</strong></div><div><span>Deposit due now</span><strong id="cartDeposit">$0.00</strong></div></div><p class="fine">$50 non-refundable deposit per unit. Travel fees, if applicable, are additional and not included in these totals.</p><button id="checkoutBtn" class="primary" disabled>Continue to checkout</button><p class="fine center">Your reservation is confirmed after payment and successful booking.</p></aside></div>
-<section id="checkout" class="panel checkout" hidden aria-labelledby="checkoutTitle"><p class="eyebrow">LET’S MAKE IT OFFICIAL</p><h2 id="checkoutTitle" tabindex="-1">Checkout</h2><p class="muted">Tell us where the fun is happening.</p><form id="bookingForm"><fieldset id="customerFields"><div class="fields"><label>Full name<input id="name" autocomplete="name" required></label><label>Phone number<input id="phone" type="tel" autocomplete="tel" required></label><label class="wide">Email address<input id="email" type="email" autocomplete="email" required></label><label>Delivery address<input id="address" autocomplete="street-address" required></label><label>City<input id="city" autocomplete="address-level2" required></label></div><div class="agreement"><h3>One last thing before the fun</h3><p>No cancellations. Rescheduling is subject to availability. The $50 deposit per unit is non-refundable.</p><p>Please review our <a href="https://www.canva.com/design/DAGvLXmYrCQ/urL0oPQKv3g2IDZnXb7URw/view?utm_content=DAGvLXmYrCQ&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hcf7d7df185" target="_blank" rel="noopener noreferrer">liability release form ↗</a>. By making a reservation and payment, you are agreeing to the terms and conditions.</p><label class="checkbox"><input type="checkbox" id="agreeTerms" required><span>I have read and agree to the terms, conditions, and liability release.</span></label></div><h3>Choose how much to pay today</h3><div class="pay-choices"><button type="button" id="payDepositBtn" class="secondary" aria-pressed="false">Pay deposit</button><button type="button" id="payFullBtn" class="secondary" aria-pressed="false">Pay full amount</button></div><p class="fine">Pay securely with PayPal, Venmo, or card. Available payment methods are shown below.</p></fieldset></form><div id="paymentOptions" hidden><div id="paypalButtons"></div></div><div id="recoveryPanel" class="agreement" hidden><h3>Recover your checkout</h3><p id="recoveryReference" class="fine" style="overflow-wrap:anywhere"></p><p>Keep this browser’s saved data until your reservation is confirmed. Recovery checks the same payment instead of starting another.</p><button type="button" id="recoverBtn" class="secondary">Check checkout</button><button type="button" id="cancelTestBtn" class="secondary" style="margin-top:12px">Release unpaid hold</button></div><p id="paypalStatus" role="status" tabindex="-1"></p></section>
+<aside id="cartSection" class="cart panel"><p class="eyebrow">YOUR GOOD DAY, PLANNED</p><h2>Your reservation</h2><p id="emptyCart" class="empty">Your next great day starts with a slide. Choose a date and add your favorites.</p><ul id="cartList"></ul><div class="totals"><div><span>Rental total</span><strong id="cartTotal">$0.00</strong></div><div><span>Deposit due now</span><strong id="cartDeposit">$0.00</strong></div></div><p class="fine">Deposits shown above are non-refundable. Travel fees, if applicable, are additional and not included in these totals.</p><button id="checkoutBtn" class="primary" disabled>Continue to checkout</button><p class="fine center">Your reservation is confirmed after payment and successful booking.</p></aside></div>
+<section id="checkout" class="panel checkout" hidden aria-labelledby="checkoutTitle"><p class="eyebrow">LET’S MAKE IT OFFICIAL</p><h2 id="checkoutTitle" tabindex="-1">Checkout</h2><p class="muted">Tell us where the fun is happening.</p><form id="bookingForm"><fieldset id="customerFields"><div class="fields"><label>Full name<input id="name" autocomplete="name" required></label><label>Phone number<input id="phone" type="tel" autocomplete="tel" required></label><label class="wide">Email address<input id="email" type="email" autocomplete="email" required></label><label>Delivery address<input id="address" autocomplete="street-address" required></label><label>City<input id="city" autocomplete="address-level2" required></label></div><div class="agreement"><h3>One last thing before the fun</h3><p>No cancellations. Rescheduling is subject to availability. Each unit’s deposit is non-refundable. <span id="depositAgreement"></span></p><p>Please review our <a href="https://www.canva.com/design/DAGvLXmYrCQ/urL0oPQKv3g2IDZnXb7URw/view?utm_content=DAGvLXmYrCQ&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hcf7d7df185" target="_blank" rel="noopener noreferrer">liability release form ↗</a>. By making a reservation and payment, you are agreeing to the terms and conditions.</p><label class="checkbox"><input type="checkbox" id="agreeTerms" required><span>I have read and agree to the terms, conditions, and liability release.</span></label></div><h3>Choose how much to pay today</h3><div class="pay-choices"><button type="button" id="payDepositBtn" class="secondary" aria-pressed="false">Pay deposit</button><button type="button" id="payFullBtn" class="secondary" aria-pressed="false">Pay full amount</button></div><p class="fine">Pay securely with PayPal, Venmo, or card. Available payment methods are shown below.</p></fieldset></form><div id="paymentOptions" hidden><div id="paypalButtons"></div></div><div id="recoveryPanel" class="agreement" hidden><h3>Recover your checkout</h3><p id="recoveryReference" class="fine" style="overflow-wrap:anywhere"></p><p>Keep this browser’s saved data until your reservation is confirmed. Recovery checks the same payment instead of starting another.</p><button type="button" id="recoverBtn" class="secondary">Check checkout</button><button type="button" id="cancelTestBtn" class="secondary" style="margin-top:12px">Release unpaid hold</button></div><p id="paypalStatus" role="status" tabindex="-1"></p></section>
 <section id="confirmation" class="panel confirmation" hidden tabindex="-1" aria-labelledby="confirmedTitle"><div class="checkmark">✓</div><p class="eyebrow">GET READY FOR A GREAT DAY</p><h1 id="confirmedTitle">You’re booked!</h1><p id="confirmationGreeting"></p><div id="confirmationDetails"></div><p id="emailStatus" role="status"></p><p>Travel fees are additional and are not included above. No cancellations. Rescheduling is subject to availability.</p><button class="secondary" id="printBtn">Print confirmation</button><button type="button" class="secondary" id="newTestBtn" style="margin:12px">Start another reservation</button></section>
 </main><footer>SLIDE GUYS <span>Big slides. Bigger smiles.</span></footer><div id="toast" role="status" hidden></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>'use strict';
@@ -21,11 +21,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   const money = value => '$' + Number(value).toFixed(2);
   const dateText = value => new Date(value + 'T12:00:00').toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
   const localDate = date => `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
-  const today = new Date(), year = today.getFullYear(), DEPOSIT_PER_UNIT = 50;
+  const today = new Date(), year = today.getFullYear();
   $('date').min = localDate(today); $('date').max = `${year}-12-31`;
   $('dateHelp').textContent = `Choose a date from today through December 31, ${year}. Bookings for next year open January 1st.`;
   let units = [], booked = new Set(), cart = [], checking = false, availabilityReady = false, request = 0;
   let payType = null, locked = false, captured = false, finalized = false, snapshot = null, paypalRendered = false, toastTimer;
+  const depositTotal = items => items.reduce((sum,item)=>sum+Math.round(Number(item.deposit)*100),0)/100;
   const total = items => items.reduce((sum,item) => sum + Number(item.price), 0);
   const key = item => `${item.unitId}|${item.date}`;
   const validDate = value => !!value && value >= localDate(new Date()) && value <= `${new Date().getFullYear()}-12-31` && value.startsWith(`${new Date().getFullYear()}-`);
@@ -49,8 +50,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       media.append(img,element('span',label,'badge'+(label==='Available'?' available':'')));
       const body=element('div',undefined,'card-body'),price=element('div',money(unit.price)+' ','price');price.append(element('small','/ rental'));
       const button=element('button',inCart?'✓ Added':isBooked?'Unavailable':!$('date').value?'Choose a date':'Add to reservation','primary');
-      button.type='button';button.disabled=locked||checking||!availabilityReady||isBooked||inCart;button.setAttribute('aria-label',`${button.textContent}: ${unit.name}`);button.addEventListener('click',()=>addUnit(unit));
-      body.append(element('h3',unit.name),price,button);card.append(media,body);grid.append(card);
+      button.type='button';button.disabled=locked||checking||!availabilityReady||isBooked||inCart||!Number.isFinite(Number(unit.deposit_amount))||Number(unit.deposit_amount)<0.01||Number(unit.deposit_amount)>Number(unit.price);button.setAttribute('aria-label',`${button.textContent}: ${unit.name}`);button.addEventListener('click',()=>addUnit(unit));
+      body.append(element('h3',unit.name),price,element('p','Deposit: '+money(unit.deposit_amount),'fine'),button);card.append(media,body);grid.append(card);
     }
   }
   function renderCart(){
@@ -58,15 +59,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     for(const item of cart){const li=element('li'),info=element('div');info.append(element('strong',item.unitName),element('small',dateText(item.date)));
       const remove=element('button','Remove','remove');remove.type='button';remove.disabled=locked;remove.setAttribute('aria-label',`Remove ${item.unitName} for ${dateText(item.date)}`);
       remove.addEventListener('click',()=>{if(locked)return;cart=cart.filter(other=>key(other)!==key(item));resetPayment();renderCart();renderUnits();if(!cart.length)$('checkout').hidden=true;});
-      info.append(remove);li.append(info,element('strong',money(item.price)));$('cartList').append(li);
+      info.append(element('small','Deposit: '+money(item.deposit)),remove);li.append(info,element('strong',money(item.price)));$('cartList').append(li);
     }
-    $('cartTotal').textContent=money(total(cart));$('cartDeposit').textContent=money(cart.length*DEPOSIT_PER_UNIT);
-    $('payFullBtn').textContent=`Pay full amount · ${money(total(cart))}`;$('payDepositBtn').textContent=`Pay deposit · ${money(cart.length*DEPOSIT_PER_UNIT)}`;
+    $('depositAgreement').textContent='Your non-refundable deposit total is '+money(depositTotal(cart))+'.';
+    $('cartTotal').textContent=money(total(cart));$('cartDeposit').textContent=money(depositTotal(cart));
+    $('payFullBtn').textContent=`Pay full amount · ${money(total(cart))}`;$('payDepositBtn').textContent=`Pay deposit · ${money(depositTotal(cart))}`;
     $('checkoutBtn').disabled=locked||!cart.length;
   }
   async function loadUnits(){
     $('retry').hidden=true;
-    try{const {data,error}=await db.from('units').select('id, name, thumbnail_url, price, order').order('order',{ascending:true});if(error)throw error;
+    try{const {data,error}=await db.from('units').select('id, name, thumbnail_url, price, deposit_amount, order').order('order',{ascending:true});if(error)throw error;
       units=data||[];if(units.some(unit=>!Number.isFinite(Number(unit.price))||Number(unit.price)<0))throw new Error('Invalid unit price');
       renderUnits();if($('date').value)await refreshAvailability($('date').value);
     }catch(error){units=[];renderUnits();notice('We could not load the slide catalog. Please try again.');$('retry').hidden=false;}
@@ -85,7 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function addUnit(unit){
     if(locked||checking)return;const date=$('date').value;if(!validDate(date))return notice('Please choose a date within the current booking year.');
     if(!await refreshAvailability(date)||date!==$('date').value)return;
-    const item={unitId:String(unit.id),unitName:unit.name,price:Number(unit.price),date};
+    const item={unitId:String(unit.id),unitName:unit.name,price:Number(unit.price),deposit:Number(unit.deposit_amount),date};
     if(booked.has(item.unitId))return notice('That unit has just been booked for this date. Please choose another slide or date.');
     if(cart.some(other=>key(other)===key(item)))return;
     cart.push(item);resetPayment();notice('');renderCart();renderUnits();toast(`${unit.name} added to your reservation`);
@@ -107,7 +109,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
   function choosePayment(type){if(locked||!validate())return;payType=type;for(const [id,value]of [['payFullBtn','full'],['payDepositBtn','deposit']]){$(id).classList.toggle('active',value===type);$(id).setAttribute('aria-pressed',String(value===type));}
-    $('paymentOptions').hidden=false;status(`Paying ${money(type==='full'?total(cart):cart.length*DEPOSIT_PER_UNIT)} today. Travel fees are not included.`);renderPayPal();
+    $('paymentOptions').hidden=false;status(`Paying ${money(type==='full'?total(cart):depositTotal(cart))} today. Travel fees are not included.`);renderPayPal();
   }
   $('payFullBtn').addEventListener('click',()=>choosePayment('full'));$('payDepositBtn').addEventListener('click',()=>choosePayment('deposit'));
   const STORAGE_KEY = 'slide-guys-live-checkout-v1';
@@ -166,7 +168,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function applyCheckout(checkout) {
     if (!checkout || checkout.id !== recovery?.id || checkout.environment !== 'live') throw new Error('Unexpected checkout response. Do not submit another payment.');
     serverCheckout = checkout;
-    cart = checkout.items.map(item=>({unitId:item.unit_id,unitName:item.unit_name,price:item.price_cents/100,date:item.rental_date}));
+    cart = checkout.items.map(item=>({unitId:item.unit_id,unitName:item.unit_name,price:item.price_cents/100,deposit:Number(item.deposit_cents??5000)/100,date:item.rental_date}));
     payType = checkout.payment_type;
     lock(true);$('checkout').hidden = false;$('paymentOptions').hidden = true;
     recoveryControls();
@@ -231,7 +233,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             if (!validate() || !payType) throw new Error('Complete your details and choose a payment amount.');
             const payload={items:cart.map(item=>({unit_id:item.unitId,date:item.date})),payment_type:payType,
-              expected_due_cents:Math.round((payType==='full'?total(cart):cart.length*DEPOSIT_PER_UNIT)*100),agreed:$('agreeTerms').checked,
+              expected_due_cents:Math.round((payType==='full'?total(cart):depositTotal(cart))*100),expected_deposit_cents:Math.round(depositTotal(cart)*100),agreed:$('agreeTerms').checked,
               customer:Object.fromEntries(['name','phone','email','address','city'].map(id=>[id,$(id).value.trim()]))};
             rememberRecovery();lock(true);recoveryControls();
             const checkout=(await api('create',payload)).checkout;
@@ -239,7 +241,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if(checkout.status!=='order_created'||!checkout.order_id)throw new Error('The checkout is not payable.');
             return checkout.order_id;
           } catch(error) {
-            if(['CHECKOUT_PAUSED','UNIT_UNAVAILABLE','PRICE_CHANGED','INVALID_CART','INVALID_CUSTOMER','INVALID_CATALOG_PRICE','UNIT_NOT_FOUND','INVALID_RENTAL_DATE','DUPLICATE_CART_ITEM','AGREEMENT_REQUIRED','CHECKOUT_CAPACITY','INVALID_PAYMENT_AMOUNT','INVALID_REQUEST'].includes(error.code)){localStorage.removeItem(STORAGE_KEY);recovery=null;serverCheckout=null;lock(false);resetPayment();}
+            if(['INVALID_UNIT_DEPOSIT','CHECKOUT_PAUSED','UNIT_UNAVAILABLE','PRICE_CHANGED','INVALID_CART','INVALID_CUSTOMER','INVALID_CATALOG_PRICE','UNIT_NOT_FOUND','INVALID_RENTAL_DATE','DUPLICATE_CART_ITEM','AGREEMENT_REQUIRED','CHECKOUT_CAPACITY','INVALID_PAYMENT_AMOUNT','INVALID_REQUEST'].includes(error.code)){localStorage.removeItem(STORAGE_KEY);recovery=null;serverCheckout=null;lock(false);resetPayment();}
             if(recovery){lock(true);$('paymentOptions').hidden=true;}
             status(error.message,true);throw error;
           } finally {operationBusy=false;recoveryControls();}
