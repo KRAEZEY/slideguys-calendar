@@ -196,7 +196,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         : 'The payment result is being verified. Use “Check reservation status” to recover the same attempt. Do not pay again.',true);
     }
   }
-  async function checkRecovery() {
   async function checkRecovery(releaseUnpaid=false) {
     if(releaseUnpaid===true && recovery){
       recovery.releaseRequested=true;
@@ -204,7 +203,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     if (operationBusy || !recovery) return;
     recoveryNeedsAttention=true;operationBusy = true;recoveryControls();
-    try { await applyCheckout((await api('status')).checkout); }
     try {
       let checkout=(await api('status')).checkout;
       if(recovery?.releaseRequested===true && ['held','order_created'].includes(checkout.status)){
@@ -270,7 +268,6 @@ document.addEventListener('DOMContentLoaded', async () => {
           catch(error){status(error.message,true);}
           finally{operationBusy=false;recoveryControls();}
         },
-        onCancel:()=>{status('PayPal was closed. You can continue with the payment buttons below.');checkRecovery();},
         onCancel:()=>{status('Checking your payment and getting checkout ready…');checkRecovery(true);},
         onError:()=>{if(recovery){lock(true);$('paymentOptions').hidden=true;recoveryControls();status('The payment did not finish. Use “Check reservation status” before trying again.',true);}
           else if(!$('paypalStatus').classList.contains('error'))status('PayPal could not start. Please try again.',true);}
@@ -290,5 +287,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     catch(error){lock(true);notice(error.message);}
   }
   $('printBtn').addEventListener('click',()=>window.print());renderCart();await restoreCheckout();await loadUnits();
+  $('printBtn').addEventListener('click',()=>window.print());renderCart();await Promise.all([restoreCheckout(),loadUnits()]);
 });
 </script></body></html>
