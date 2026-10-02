@@ -10,7 +10,7 @@
 <div class="layout" id="shopping"><section aria-labelledby="browseTitle"><div class="section-head"><div><p class="eyebrow">MAKE IT A SLIDE DAY</p><h2 id="browseTitle">Find your fun</h2></div><span id="browseDate">Choose a date above</span></div><p class="muted">Add multiple units to your reservation. Each unit can be reserved once per date.</p><div id="unitGrid" class="unit-grid" aria-live="polite"><p>Loading slides…</p></div><button id="retry" class="secondary" hidden>Retry loading slides</button>
 </section>
 <aside id="cartSection" class="cart panel"><p class="eyebrow">YOUR GOOD DAY, PLANNED</p><h2>Your reservation</h2><p id="emptyCart" class="empty">Your next great day starts with a slide. Choose a date and add your favorites.</p><ul id="cartList"></ul><div class="totals"><div><span>Rental total</span><strong id="cartTotal">$0.00</strong></div><div><span>Deposit due now</span><strong id="cartDeposit">$0.00</strong></div></div><p class="fine">Deposits shown above are non-refundable. Travel fees, if applicable, are additional and not included in these totals.</p><button id="checkoutBtn" class="primary" disabled>Continue to checkout</button><p class="fine center">Your reservation is confirmed after payment and successful booking.</p></aside></div>
-<section id="checkout" class="panel checkout" hidden aria-labelledby="checkoutTitle"><p class="eyebrow">LET’S MAKE IT OFFICIAL</p><h2 id="checkoutTitle" tabindex="-1">Checkout</h2><p class="muted">Tell us where the fun is happening.</p><form id="bookingForm"><fieldset id="customerFields"><div class="fields"><label>Full name<input id="name" autocomplete="name" required></label><label>Phone number<input id="phone" type="tel" autocomplete="tel" required></label><label class="wide">Email address<input id="email" type="email" autocomplete="email" required></label><label>Delivery address<input id="address" autocomplete="street-address" required></label><label>City<input id="city" autocomplete="address-level2" required></label></div><div class="agreement"><h3>One last thing before the fun</h3><p>No cancellations. Rescheduling is subject to availability. Each unit’s deposit is non-refundable. <span id="depositAgreement"></span></p><p>Please review our <a href="https://www.canva.com/design/DAGvLXmYrCQ/urL0oPQKv3g2IDZnXb7URw/view?utm_content=DAGvLXmYrCQ&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hcf7d7df185" target="_blank" rel="noopener noreferrer">liability release form ↗</a>. By making a reservation and payment, you are agreeing to the terms and conditions.</p><label class="checkbox"><input type="checkbox" id="agreeTerms" required><span>I have read and agree to the terms, conditions, and liability release.</span></label></div><h3>Choose how much to pay today</h3><div class="pay-choices"><button type="button" id="payDepositBtn" class="secondary" aria-pressed="false">Pay deposit</button><button type="button" id="payFullBtn" class="secondary" aria-pressed="false">Pay full amount</button></div><p class="fine">Pay securely with PayPal, Venmo, or card. Available payment methods are shown below.</p></fieldset></form><div id="paymentOptions" hidden><div id="paypalButtons"></div></div><div id="recoveryPanel" class="agreement" hidden><h3>Let’s check your reservation.</h3><p>We’ll check your payment before you try again.</p><button type="button" id="recoverBtn" class="secondary">Check reservation status</button><button type="button" id="cancelTestBtn" class="secondary" style="margin-top:12px" hidden>Release unpaid reservation</button></div><p id="paypalStatus" role="status" tabindex="-1"></p></section>
+<section id="checkout" class="panel checkout" hidden aria-labelledby="checkoutTitle"><p class="eyebrow">LET’S MAKE IT OFFICIAL</p><h2 id="checkoutTitle" tabindex="-1">Checkout</h2><p class="muted">Tell us where the fun is happening.</p><form id="bookingForm"><fieldset id="customerFields"><div class="fields"><label>Full name<input id="name" autocomplete="name" required></label><label>Phone number<input id="phone" type="tel" autocomplete="tel" required></label><label class="wide">Email address<input id="email" type="email" autocomplete="email" required></label><label>Delivery address<input id="address" autocomplete="street-address" required></label><label>City<input id="city" autocomplete="address-level2" required></label></div><div class="agreement"><h3>One last thing before the fun</h3><p>No cancellations. Rescheduling is subject to availability. Each unit’s deposit is non-refundable. <span id="depositAgreement"></span></p><p>Please review our <a href="https://www.canva.com/design/DAGvLXmYrCQ/urL0oPQKv3g2IDZnXb7URw/view?utm_content=DAGvLXmYrCQ&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hcf7d7df185" target="_blank" rel="noopener noreferrer">liability release form ↗</a>. By making a reservation and payment, you are agreeing to the terms and conditions.</p><label class="checkbox"><input type="checkbox" id="agreeTerms" required><span>I have read and agree to the terms, conditions, and liability release.</span></label></div><h3>Choose how much to pay today</h3><div class="pay-choices"><button type="button" id="payDepositBtn" class="secondary" aria-pressed="false">Pay deposit</button><button type="button" id="payFullBtn" class="secondary" aria-pressed="false">Pay full amount</button></div><p class="fine">Pay securely with PayPal, Venmo, or card. Available payment methods are shown below.</p></fieldset></form><div id="paymentOptions" hidden><div id="paypalButtons"></div></div><div id="recoveryPanel" class="agreement" hidden><h3>Let’s check your reservation.</h3><p>We’ll check your payment before you try again.</p><button type="button" id="recoverBtn" class="secondary">Check reservation status</button></div><p id="paypalStatus" role="status" tabindex="-1"></p></section>
 <section id="confirmation" class="panel confirmation" hidden tabindex="-1" aria-labelledby="confirmedTitle"><div class="checkmark">✓</div><p class="eyebrow">GET READY FOR A GREAT DAY</p><h1 id="confirmedTitle">You’re booked!</h1><p id="confirmationGreeting"></p><div id="confirmationDetails"></div><p id="emailStatus" role="status"></p><p>Travel fees are additional and are not included above. No cancellations. Rescheduling is subject to availability.</p><button class="secondary" id="printBtn">Print confirmation</button><button type="button" class="secondary" id="newTestBtn" style="margin:12px">Start another reservation</button></section>
 </main><footer>SLIDE GUYS <span>Big slides. Bigger smiles.</span></footer><div id="toast" role="status" hidden></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>'use strict';
@@ -147,9 +147,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   function recoveryControls() {
     $('recoveryPanel').hidden = !recovery || !recoveryNeedsAttention || finalized;
-    $('cancelTestBtn').hidden = !recoveryVerified || !serverCheckout || !['held','order_created'].includes(serverCheckout.status);
+
     $('recoverBtn').disabled = operationBusy;
-    $('cancelTestBtn').disabled = operationBusy || !serverCheckout || !['held','order_created'].includes(serverCheckout.status);
+
   }
   function showTestConfirmation(checkout) {
     finalized = true;
@@ -180,14 +180,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       // The server releases only unpaid holds. Pending captures cannot reach here.
       localStorage.removeItem(STORAGE_KEY);recovery = null;serverCheckout = null;
       lock(false);resetPayment();recoveryControls();
-      status('Your unpaid reservation was released. You can choose a payment amount to start again.');
+      status('You’re ready to continue. Choose your payment amount below.');
       return;
     }
     if (checkout.status === 'order_created') {
       status(`Payment: ${money(checkout.payment_due_cents/100)}. Complete your payment below.`);
       $('paymentOptions').hidden = false;await renderPayPal();
     } else if (checkout.status === 'held') {
-      status('Your payment hasn’t started. Release the unpaid reservation below to choose your payment amount again.');
+      status('Getting checkout ready for you…');
+      // Only a server-reported held checkout enters this branch. The server
+      // rechecks under its lock and refuses release if capture has started.
+      const next=(await api('cancel')).checkout;
+      if(!next || next.status==='held')throw new Error('We couldn’t finish checking your reservation. Please check its status again.');
+      await applyCheckout(next);
     } else {
       status(checkout.status === 'needs_review'
         ? 'We’re reviewing your payment. Please contact Slide Guys before trying to pay again.'
@@ -256,18 +261,13 @@ document.addEventListener('DOMContentLoaded', async () => {
           catch(error){status(error.message,true);}
           finally{operationBusy=false;recoveryControls();}
         },
-        onCancel:()=>{status('PayPal was closed. Your checkout is saved. Resume payment, or release the unpaid reservation.');checkRecovery();},
+        onCancel:()=>{status('PayPal was closed. You can continue with the payment buttons below.');checkRecovery();},
         onError:()=>{if(recovery){lock(true);$('paymentOptions').hidden=true;recoveryControls();status('The payment did not finish. Use “Check reservation status” before trying again.',true);}
           else if(!$('paypalStatus').classList.contains('error'))status('PayPal could not start. Please try again.',true);}
       }).render('#paypalButtons');
     } catch(error){paypalRendered=false;status(error.message,true);}
   }
   $('recoverBtn').addEventListener('click',checkRecovery);
-  $('cancelTestBtn').addEventListener('click',async()=>{
-    if(operationBusy||!recovery)return;operationBusy=true;recoveryControls();
-    try{await applyCheckout((await api('cancel')).checkout);}catch(error){status(error.message,true);}
-    finally{operationBusy=false;recoveryControls();}
-  });
   $('newTestBtn').addEventListener('click',()=>{
     if(!finalized)return;
     localStorage.removeItem(STORAGE_KEY);location.reload();
