@@ -395,26 +395,33 @@ img{
 .steve-card{
   min-height:420px;
   border-radius:30px;
-  background:
-    radial-gradient(circle at 55% 35%,#3db7ff 0,transparent 28%),
-    linear-gradient(145deg,#111,#006bf4);
+  background:#eaf1f6;
   display:grid;
   place-items:center;
-  padding:35px;
-  text-align:center;
+  overflow:hidden;
   box-shadow:var(--shadow);
 }
 
-.steve-emoji{
-  font-size:110px;
-  line-height:1;
+.steve-card img{
+  width:100%;
+  height:100%;
+  min-height:420px;
+  object-fit:cover;
+  display:block;
 }
 
 .steve h2{
   font-size:clamp(42px,6vw,72px);
   line-height:.95;
   letter-spacing:-.05em;
-  margin:10px 0 20px;
+  margin:0 0 18px;
+}
+
+.steve-description{
+  font-size:19px;
+  color:var(--muted);
+  margin:0 0 26px;
+  max-width:520px;
 }
 
 /* DELIVERY */
@@ -613,6 +620,11 @@ footer{
 
   .info-grid{
     grid-template-columns:1fr;
+  }
+
+  .steve-card,
+  .steve-card img{
+    min-height:300px;
   }
 
   .footer-row{
@@ -913,60 +925,33 @@ footer{
 </section>
 
 
-<section
-  class="section"
-  id="steve"
->
+<section class="section" id="steve">
 
   <div class="wrap steve">
 
-    <div
-      class="steve-card"
-      aria-label="Steve inflatable tube man"
-    >
+    <div class="steve-card" id="stevePhoto">
 
-      <div>
-
-        <div class="steve-emoji">
-          🕺
-        </div>
-
-        <strong style="font-size:30px;color:white">
-          STEVE
-        </strong>
-
+      <div class="loading">
+        Loading Steve…
       </div>
 
     </div>
 
-
     <div>
-
-      <div
-        class="kicker"
-        style="color:var(--blue)"
-      >
-        Yes, Steve stays.
-      </div>
 
       <h2>
         Meet Steve.
       </h2>
 
-      <p style="font-size:19px;color:var(--muted)">
+      <p class="steve-description">
         The inflatable tube man who refuses to let your party go unnoticed.
-      </p>
-
-      <p>
-        Steve is part of the Slide Guys personality, so he gets his own
-        spot instead of disappearing into a giant scrolling poster.
       </p>
 
       <a
         class="btn"
         href="/reservations"
       >
-        See what’s available
+        See what's available
       </a>
 
     </div>
@@ -1123,7 +1108,11 @@ footer{
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
 
-  const catalog = document.getElementById('catalog');
+  const catalog =
+    document.getElementById('catalog');
+
+  const stevePhoto =
+    document.getElementById('stevePhoto');
 
   const url =
     'https://vaobmohukgcqfvnclqyh.supabase.co';
@@ -1147,9 +1136,64 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (error) throw error;
 
+    const units =
+      data || [];
+
+
+    /* -------------------------
+       STEVE PHOTO
+    ------------------------- */
+
+    const steveUnit =
+      units.find(unit =>
+        String(unit.name || '')
+          .toLowerCase()
+          .includes('steve')
+      );
+
+    if (
+      steveUnit &&
+      steveUnit.thumbnail_url
+    ) {
+
+      stevePhoto.replaceChildren();
+
+      const steveImg =
+        document.createElement('img');
+
+      steveImg.src =
+        steveUnit.thumbnail_url;
+
+      steveImg.alt =
+        'Steve - Slide Guys';
+
+      steveImg.loading =
+        'lazy';
+
+      steveImg.onerror = () => {
+
+        stevePhoto.innerHTML =
+          '<div class="loading">Steve photo unavailable.</div>';
+
+      };
+
+      stevePhoto.append(steveImg);
+
+    } else {
+
+      stevePhoto.innerHTML =
+        '<div class="loading">Steve photo coming soon.</div>';
+
+    }
+
+
+    /* -------------------------
+       RENTAL CATALOG
+    ------------------------- */
+
     catalog.replaceChildren();
 
-    for (const unit of (data || [])) {
+    for (const unit of units) {
 
       const card =
         document.createElement('article');
@@ -1256,7 +1300,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
 
-    if (!(data || []).length) {
+    if (!units.length) {
 
       catalog.innerHTML =
         '<div class="loading">No rentals are currently listed.</div>';
@@ -1269,6 +1313,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     catalog.innerHTML =
       '<div class="loading">We couldn’t load the rental catalog right now. You can still check availability on the reservation page.</div>';
+
+    stevePhoto.innerHTML =
+      '<div class="loading">Steve photo unavailable.</div>';
 
   }
 
