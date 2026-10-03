@@ -280,8 +280,8 @@ if (!allowedOrigins.includes(location.origin)) {
     try{recovery=storedRecovery();if(recovery){lock(true);$('checkout').hidden=false;recoveryControls();await checkRecovery();}}
     catch(error){lock(true);notice(error.message);}
   }
-  $('printBtn').addEventListener('click',()=>window.print());
-renderCart();
+  $('printBtn').addEventListener('click',()=>window.print());renderCart();await restoreCheckout();await loadUnits();
+$('printBtn').addEventListener('click',()=>window.print());renderCart();await Promise.all([restoreCheckout(),loadUnits()]);
 await restoreCheckout();
 await loadUnits();
 </script></body></html>
