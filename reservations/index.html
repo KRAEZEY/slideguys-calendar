@@ -15,18 +15,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>'use strict';
 document.addEventListener('DOMContentLoaded', async () => {
   const config = {"url":"https://vaobmohukgcqfvnclqyh.supabase.co","key":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M"};
-const allowedOrigins = [
-  'https://slideguys.fun',
-  'https://www.slideguys.fun',
-  'https://slideguys-calendar.vercel.app'
-];
-
-if (!allowedOrigins.includes(location.origin)) {
-  document.getElementById('notice').hidden = false;
-  document.getElementById('notice').textContent = 'This booking page must be opened from the official Slide Guys website.';
-  document.getElementById('unitGrid').textContent = 'Booking checkout requires the official Slide Guys website.';
-  return;
-}  const $ = id => document.getElementById(id);
+  if(location.origin!=='https://slideguys-calendar.vercel.app'){document.getElementById('notice').hidden=false;document.getElementById('notice').textContent='Open this booking page at https://slideguys-calendar.vercel.app/ to connect to the booking checkout.';document.getElementById('unitGrid').textContent='Booking checkout requires the hosted booking page.';return;}
+  const $ = id => document.getElementById(id);
   const money = value => '$' + Number(value).toFixed(2);
   const dateText = value => new Date(value + 'T12:00:00').toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
   const localDate = date => `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
@@ -133,7 +123,23 @@ if (!allowedOrigins.includes(location.origin)) {
   }
   function rememberRecovery() {
     // Persist BEFORE any network request. No customer contact details are stored.
-    const current = storedRecovery();} catch { throw new Error(recovery ? 'Your connection was interrupted. Select “Check reservation status” before trying again.' : 'Could not connect to the checkout server. Please try again. No checkout has been started.'); }
+    const current = storedRecovery();
+    if (current) { recovery = current; return; }
+    const value = {id:crypto.randomUUID(),recovery_token:Array.from(crypto.getRandomValues(new Uint8Array(32))).map(n=>n.toString(16).padStart(2,'0')).join('')};
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(value));
+    recovery = storedRecovery();
+    if (!recovery || recovery.id !== value.id) throw new Error('Could not save the checkout recovery reference.');
+  }
+  async function api(action, payload = {}) {
+    recoveryVerified=false;recoveryControls();
+    let response, data;
+    try {
+      response = await fetch(config.url+'/functions/v1/sg-live-checkout',{
+        method:'POST',headers:{'Content-Type':'application/json',apikey:config.key,Authorization:'Bearer '+config.key},
+        body:JSON.stringify({...payload,...(recovery || {}),action}),signal:AbortSignal.timeout(45000)
+      });
+      data = await response.json();
+    } catch { throw new Error(recovery ? 'Your connection was interrupted. Select “Check reservation status” before trying again.' : 'Could not connect to the checkout server. Check that its allowed website is https://slideguys-calendar.vercel.app and redeploy the function. No checkout has been started.'); }
     if (!response.ok || !data.ok) {const error=new Error(data.message || data.code || 'The checkout could not continue.');error.code=data.code;throw error;}
     if (data.environment !== 'live' && data.checkout?.environment !== 'live') throw new Error('Payment environment verification failed. Payment is blocked.');
     return data;
@@ -281,7 +287,6 @@ if (!allowedOrigins.includes(location.origin)) {
     catch(error){lock(true);notice(error.message);}
   }
   $('printBtn').addEventListener('click',()=>window.print());renderCart();await restoreCheckout();await loadUnits();
-$('printBtn').addEventListener('click',()=>window.print());renderCart();await Promise.all([restoreCheckout(),loadUnits()]);
-await restoreCheckout();
-await loadUnits();
+  $('printBtn').addEventListener('click',()=>window.print());renderCart();await Promise.all([restoreCheckout(),loadUnits()]);
+});
 </script></body></html>
