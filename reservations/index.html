@@ -133,23 +133,7 @@ if (!allowedOrigins.includes(location.origin)) {
   }
   function rememberRecovery() {
     // Persist BEFORE any network request. No customer contact details are stored.
-    const current = storedRecovery();
-    if (current) { recovery = current; return; }
-    const value = {id:crypto.randomUUID(),recovery_token:Array.from(crypto.getRandomValues(new Uint8Array(32))).map(n=>n.toString(16).padStart(2,'0')).join('')};
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(value));
-    recovery = storedRecovery();
-    if (!recovery || recovery.id !== value.id) throw new Error('Could not save the checkout recovery reference.');
-  }
-  async function api(action, payload = {}) {
-    recoveryVerified=false;recoveryControls();
-    let response, data;
-    try {
-      response = await fetch(config.url+'/functions/v1/sg-live-checkout',{
-        method:'POST',headers:{'Content-Type':'application/json',apikey:config.key,Authorization:'Bearer '+config.key},
-        body:JSON.stringify({...payload,...(recovery || {}),action}),signal:AbortSignal.timeout(45000)
-      });
-      data = await response.json();
-    } catch { throw new Error(recovery ? 'Your connection was interrupted. Select “Check reservation status” before trying again.' : 'Could not connect to the checkout server. Check that its allowed website is https://slideguys-calendar.vercel.app and redeploy the function. No checkout has been started.'); }
+    const current = storedRecovery();} catch { throw new Error(recovery ? 'Your connection was interrupted. Select “Check reservation status” before trying again.' : 'Could not connect to the checkout server. Please try again. No checkout has been started.'); }
     if (!response.ok || !data.ok) {const error=new Error(data.message || data.code || 'The checkout could not continue.');error.code=data.code;throw error;}
     if (data.environment !== 'live' && data.checkout?.environment !== 'live') throw new Error('Payment environment verification failed. Payment is blocked.');
     return data;
