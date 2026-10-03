@@ -232,7 +232,7 @@ img{
   display:block;
 }
 
-/* SECTIONS */
+/* GENERAL SECTIONS */
 
 .section{
   padding:76px 0;
@@ -448,7 +448,7 @@ img{
   color:var(--muted);
 }
 
-/* CTA */
+/* FINAL CTA */
 
 .cta{
   text-align:center;
@@ -499,11 +499,7 @@ footer{
   color:var(--muted);
 }
 
-.mobile-book{
-  display:none;
-}
-
-/* MOBILE */
+/* TABLET */
 
 @media(max-width:900px){
 
@@ -536,6 +532,8 @@ footer{
     grid-template-columns:1fr;
   }
 }
+
+/* MOBILE */
 
 @media(max-width:620px){
 
@@ -634,19 +632,10 @@ footer{
   .footer-row p{
     margin-top:10px;
   }
-
-  .mobile-book{
-    display:flex;
-    position:fixed;
-    z-index:60;
-    bottom:14px;
-    left:14px;
-    right:14px;
-    box-shadow:0 12px 35px #001a4480;
-  }
 }
 
 @media(max-width:370px){
+
   .catalog{
     grid-template-columns:1fr;
   }
@@ -657,32 +646,58 @@ footer{
 <body>
 
 <header class="site-header">
+
   <div class="wrap nav">
 
     <a class="brand" href="/">
+
       <img
         src="https://lh3.googleusercontent.com/a-/ALV-UjUTAoSFAR5OUMj0ZCkgLF1RMYoE-Q85G0HPftaFEBBIjjzw9cQ=s265-w265-h265"
         alt="Slide Guys logo"
       >
+
       <span>
         SLIDE GUYS
         <small>Big slides. Bigger smiles.</small>
       </span>
+
     </a>
 
     <nav class="nav-links" aria-label="Main navigation">
-      <a href="#rentals">Rentals</a>
-      <a href="#party">Party Extras</a>
-      <a href="#steve">Steve</a>
-      <a href="#delivery">Delivery</a>
+
+      <a href="#rentals">
+        Rentals
+      </a>
+
+      <a href="#party">
+        Party Extras
+      </a>
+
+      <a href="#steve">
+        Steve
+      </a>
+
+      <a href="#delivery">
+        Delivery
+      </a>
+
     </nav>
 
-    <a class="btn" href="/reservations">Book now</a>
+    <a
+      class="btn"
+      href="/reservations"
+    >
+      Book now
+    </a>
 
   </div>
+
 </header>
 
+
 <main>
+
+<!-- HERO -->
 
 <section class="hero">
 
@@ -705,7 +720,10 @@ footer{
 
       <div class="hero-actions">
 
-        <a class="btn light" href="/reservations">
+        <a
+          class="btn light"
+          href="/reservations"
+        >
           Check availability
         </a>
 
@@ -721,6 +739,7 @@ footer{
 
     </div>
 
+
     <aside class="hero-card">
 
       <h2>
@@ -735,27 +754,38 @@ footer{
       <div class="hero-points">
 
         <div class="hero-point">
+
           <span>✓</span>
+
           <div>
             <b>Free local delivery</b>
             Within 10 miles of Richfield.
           </div>
+
         </div>
 
+
         <div class="hero-point">
+
           <span>✓</span>
+
           <div>
             <b>We set it up</b>
             Hoses and extension cords are included where needed.
           </div>
+
         </div>
 
+
         <div class="hero-point">
+
           <span>✓</span>
+
           <div>
             <b>Secure checkout</b>
             Pay the unit deposit or the full rental amount online.
           </div>
+
         </div>
 
       </div>
@@ -767,7 +797,12 @@ footer{
 </section>
 
 
-<section class="section" id="rentals">
+<!-- RENTALS -->
+
+<section
+  class="section"
+  id="rentals"
+>
 
   <div class="wrap">
 
@@ -794,6 +829,7 @@ footer{
       </p>
 
     </div>
+
 
     <div
       class="category-row"
@@ -822,6 +858,7 @@ footer{
 
     </div>
 
+
     <div
       id="catalog"
       class="catalog"
@@ -837,6 +874,8 @@ footer{
 
 </section>
 
+
+<!-- PARTY EXTRAS -->
 
 <section
   class="section dark"
@@ -865,6 +904,7 @@ footer{
       </p>
 
     </div>
+
 
     <div class="feature-grid">
 
@@ -925,17 +965,26 @@ footer{
 </section>
 
 
-<section class="section" id="steve">
+<!-- STEVE -->
+
+<section
+  class="section"
+  id="steve"
+>
 
   <div class="wrap steve">
 
-    <div class="steve-card" id="stevePhoto">
+    <div
+      class="steve-card"
+      id="stevePhoto"
+    >
 
       <div class="loading">
         Loading Steve…
       </div>
 
     </div>
+
 
     <div>
 
@@ -960,6 +1009,8 @@ footer{
 
 </section>
 
+
+<!-- DELIVERY -->
 
 <section
   class="section blue"
@@ -1052,6 +1103,8 @@ footer{
 </section>
 
 
+<!-- FINAL CTA -->
+
 <section class="cta">
 
   <div class="wrap">
@@ -1078,6 +1131,8 @@ footer{
 </main>
 
 
+<!-- FOOTER -->
+
 <footer>
 
   <div class="wrap footer-row">
@@ -1095,14 +1150,6 @@ footer{
 </footer>
 
 
-<a
-  class="btn mobile-book"
-  href="/reservations"
->
-  Check availability
-</a>
-
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -1114,16 +1161,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   const stevePhoto =
     document.getElementById('stevePhoto');
 
+
   const url =
     'https://vaobmohukgcqfvnclqyh.supabase.co';
+
 
   const key =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhb2Jtb2h1a2djcWZ2bmNscXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3NTcyNzksImV4cCI6MjA2MDMzMzI3OX0.6pl5QBTVUr8wu3bn4kXhI2kPE5qf97PrIbUw7-0382M';
 
+
   try {
 
     const db =
-      window.supabase.createClient(url, key);
+      window.supabase.createClient(
+        url,
+        key
+      );
+
 
     const { data, error } =
       await db
@@ -1131,25 +1185,44 @@ document.addEventListener('DOMContentLoaded', async () => {
         .select(
           'id,name,thumbnail_url,price,deposit_amount,order'
         )
-        .eq('is_hidden', false)
-        .order('order', { ascending:true });
+        .eq(
+          'is_hidden',
+          false
+        )
+        .order(
+          'order',
+          {
+            ascending:true
+          }
+        );
 
-    if (error) throw error;
+
+    if (error) {
+      throw error;
+    }
+
 
     const units =
       data || [];
 
 
-    /* -------------------------
+    /* =========================
        STEVE PHOTO
-    ------------------------- */
+       Uses Steve's actual
+       thumbnail from inventory.
+    ========================= */
 
     const steveUnit =
       units.find(unit =>
-        String(unit.name || '')
-          .toLowerCase()
-          .includes('steve')
+
+        String(
+          unit.name || ''
+        )
+        .toLowerCase()
+        .includes('steve')
+
       );
+
 
     if (
       steveUnit &&
@@ -1158,17 +1231,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       stevePhoto.replaceChildren();
 
+
       const steveImg =
         document.createElement('img');
+
 
       steveImg.src =
         steveUnit.thumbnail_url;
 
+
       steveImg.alt =
         'Steve - Slide Guys';
 
+
       steveImg.loading =
         'lazy';
+
 
       steveImg.onerror = () => {
 
@@ -1177,9 +1255,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       };
 
-      stevePhoto.append(steveImg);
 
-    } else {
+      stevePhoto.append(
+        steveImg
+      );
+
+    }
+
+    else {
 
       stevePhoto.innerHTML =
         '<div class="loading">Steve photo coming soon.</div>';
@@ -1187,39 +1270,54 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
 
-    /* -------------------------
+    /* =========================
        RENTAL CATALOG
-    ------------------------- */
+    ========================= */
 
     catalog.replaceChildren();
 
-    for (const unit of units) {
+
+    for (
+      const unit of units
+    ) {
 
       const card =
-        document.createElement('article');
+        document.createElement(
+          'article'
+        );
+
 
       card.className =
         'rental';
 
 
       const media =
-        document.createElement('div');
+        document.createElement(
+          'div'
+        );
+
 
       media.className =
         'rental-media';
 
 
       const img =
-        document.createElement('img');
+        document.createElement(
+          'img'
+        );
+
 
       img.src =
         unit.thumbnail_url || '';
 
+
       img.alt =
         unit.name;
 
+
       img.loading =
         'lazy';
+
 
       img.onerror = () => {
 
@@ -1230,54 +1328,80 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       };
 
-      media.append(img);
+
+      media.append(
+        img
+      );
 
 
       const body =
-        document.createElement('div');
+        document.createElement(
+          'div'
+        );
+
 
       body.className =
         'rental-body';
 
 
       const h =
-        document.createElement('h3');
+        document.createElement(
+          'h3'
+        );
+
 
       h.textContent =
         unit.name;
 
 
       const price =
-        document.createElement('div');
+        document.createElement(
+          'div'
+        );
+
 
       price.className =
         'price';
 
+
       price.textContent =
         '$' +
-        Number(unit.price).toFixed(2) +
+        Number(
+          unit.price
+        ).toFixed(2) +
         ' / rental';
 
 
       const dep =
-        document.createElement('p');
+        document.createElement(
+          'p'
+        );
+
 
       dep.className =
         'deposit';
 
+
       dep.textContent =
         'Deposit: $' +
-        Number(unit.deposit_amount).toFixed(2);
+        Number(
+          unit.deposit_amount
+        ).toFixed(2);
 
 
       const a =
-        document.createElement('a');
+        document.createElement(
+          'a'
+        );
+
 
       a.className =
         'btn';
 
+
       a.href =
         '/reservations';
+
 
       a.textContent =
         'Check availability';
@@ -1290,17 +1414,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         a
       );
 
+
       card.append(
         media,
         body
       );
 
-      catalog.append(card);
+
+      catalog.append(
+        card
+      );
 
     }
 
 
-    if (!units.length) {
+    if (
+      !units.length
+    ) {
 
       catalog.innerHTML =
         '<div class="loading">No rentals are currently listed.</div>';
@@ -1309,10 +1439,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   }
 
-  catch (e) {
+  catch (error) {
 
     catalog.innerHTML =
       '<div class="loading">We couldn’t load the rental catalog right now. You can still check availability on the reservation page.</div>';
+
 
     stevePhoto.innerHTML =
       '<div class="loading">Steve photo unavailable.</div>';
