@@ -445,6 +445,16 @@ button:disabled{
   color:var(--green);
 }
 
+.cart-city-select{
+  width:auto;
+  max-width:190px;
+  min-width:130px;
+  margin:0;
+  padding:8px 34px 8px 10px;
+  font-size:14px;
+  font-weight:700;
+}
+
 .policies{
   margin:28px 0;
   border-top:1px solid var(--line);
@@ -943,7 +953,13 @@ footer span{
 
     <div>
       <span>Delivery fee</span>
-      <strong id="cartDelivery">Choose city</strong>
+      <select
+        id="cartCity"
+        class="cart-city-select"
+        aria-label="Choose delivery city"
+      >
+        <option value="">Loading cities…</option>
+      </select>
     </div>
 
     <div class="grand-total">
@@ -1438,6 +1454,7 @@ function lock(value){
 
   $('date').disabled = value;
   $('customerFields').disabled = value;
+  $('cartCity').disabled = value || !deliveryAreasReady;
 
   $('checkoutBtn').disabled =
     value || !cart.length;
@@ -1470,15 +1487,18 @@ try{
 
 async function loadDeliveryAreas(){
 
-  const select = $('city');
+  const checkoutSelect = $('city');
+  const cartSelect = $('cartCity');
 
-  select.disabled = true;
+  checkoutSelect.disabled = true;
+  cartSelect.disabled = true;
 
-  select.replaceChildren(
-    new Option(
-      'Loading delivery areas…',
-      ''
-    )
+  checkoutSelect.replaceChildren(
+    new Option('Loading delivery areas…','')
+  );
+
+  cartSelect.replaceChildren(
+    new Option('Loading cities…','')
   );
 
   try{
@@ -1499,50 +1519,58 @@ async function loadDeliveryAreas(){
     }));
 
     if(!deliveryAreas.length){
-      throw new Error(
-        'No delivery areas are available.'
-      );
+      throw new Error('No delivery areas are available.');
     }
 
     deliveryAreasReady = true;
 
-    select.replaceChildren(
-      new Option(
-        'Choose delivery city',
-        ''
-      )
+    checkoutSelect.replaceChildren(
+      new Option('Choose delivery city','')
+    );
+
+    cartSelect.replaceChildren(
+      new Option('Choose city','')
     );
 
     for(const area of deliveryAreas){
 
-      const label =
+      const checkoutLabel =
         Number(area.delivery_fee) === 0
           ? `${area.city} — FREE delivery`
           : `${area.city} — ${money(area.delivery_fee)} delivery`;
 
-      select.append(
-        new Option(
-          label,
-          area.city
-        )
+      const cartLabel =
+        Number(area.delivery_fee) === 0
+          ? `${area.city} — FREE`
+          : `${area.city} — ${money(area.delivery_fee)}`;
+
+      checkoutSelect.append(
+        new Option(checkoutLabel,area.city)
+      );
+
+      cartSelect.append(
+        new Option(cartLabel,area.city)
       );
     }
 
-    select.disabled = locked;
+    checkoutSelect.disabled = locked;
+    cartSelect.disabled = locked;
 
   }catch(error){
 
     deliveryAreas = [];
     deliveryAreasReady = false;
 
-    select.replaceChildren(
-      new Option(
-        'Delivery areas unavailable',
-        ''
-      )
+    checkoutSelect.replaceChildren(
+      new Option('Delivery areas unavailable','')
     );
 
-    select.disabled = true;
+    cartSelect.replaceChildren(
+      new Option('Cities unavailable','')
+    );
+
+    checkoutSelect.disabled = true;
+    cartSelect.disabled = true;
 
     notice(
       'We could not load the delivery areas. Please reload the page before checking out.'
@@ -1887,33 +1915,11 @@ function renderCart(){
   $('cartRentalTotal').textContent =
     money(rental);
 
-  if(!area){
-
-    $('cartDelivery').textContent =
-      'Choose city';
-
-    $('cartDelivery').classList.remove(
-      'delivery-free'
-    );
-
-  }else if(fee === 0){
-
-    $('cartDelivery').textContent =
-      'FREE';
-
-    $('cartDelivery').classList.add(
-      'delivery-free'
-    );
-
-  }else{
-
-    $('cartDelivery').textContent =
-      money(fee);
-
-    $('cartDelivery').classList.remove(
-      'delivery-free'
-    );
+  if($('cartCity')){
+    $('cartCity').disabled =
+      locked || !deliveryAreasReady;
   }
+
 
   $('cartTotal').textContent =
     money(full);
@@ -2188,6 +2194,11 @@ $('checkoutBtn').addEventListener(
       return;
     }
 
+    if($('cartCity').value){
+      $('city').value = $('cartCity').value;
+      updateDeliveryDisplay();
+    }
+
     $('checkout').hidden = false;
 
     $('checkoutTitle').focus();
@@ -2228,6 +2239,23 @@ $('city').addEventListener(
     if(locked){
       return;
     }
+
+    $('cartCity').value = $('city').value;
+
+    resetPayment();
+    updateDeliveryDisplay();
+  }
+);
+
+$('cartCity').addEventListener(
+  'change',
+  () => {
+
+    if(locked){
+      return;
+    }
+
+    $('city').value = $('cartCity').value;
 
     resetPayment();
     updateDeliveryDisplay();
@@ -2789,6 +2817,11 @@ async function applyCheckout(checkout){
 
   payType =
     checkout.payment_type;
+
+  if(checkout.delivery_city){
+    $('city').value = checkout.delivery_city;
+    $('cartCity').value = checkout.delivery_city;
+  }
 
   lock(true);
 
